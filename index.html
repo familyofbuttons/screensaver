@@ -47,7 +47,7 @@
     body.night-mode { filter: brightness(0.12) contrast(1.1); }
     body.night-mode .saver-controls-top-right,
     body.night-mode .saver-controls-top-left,
-    body.night-mode .wobble-game-prompt { filter: brightness(8.5); }
+    body.night-mode .game-prompt-badge { filter: brightness(8.5); }
 
     .screen {
       position: absolute;
@@ -119,7 +119,7 @@
     select.btn-secondary { color: var(--text); background-color: rgba(15, 23, 42, 0.95); }
     select.btn-secondary option { background-color: #0f172a; color: var(--text); }
 
-    /* --- SCREENSAVER VIEW & WOBBLE PROMPT --- */
+    /* --- SCREENSAVER VIEW & DYNAMIC PROMPT BADGE --- */
     #screensaver-view { background: #0b0f19; z-index: 200; overflow: hidden; }
 
     #bg-blur-img {
@@ -211,8 +211,8 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.6);
     }
 
-    /* Wobbling Game Prompt Animation */
-    .wobble-game-prompt {
+    /* Game Prompt Badge Base Styles */
+    .game-prompt-badge {
       position: absolute;
       bottom: 30px;
       right: 30px;
@@ -228,6 +228,10 @@
       box-shadow: 0 10px 25px rgba(168, 85, 247, 0.5);
       z-index: 220;
       cursor: pointer;
+    }
+
+    /* Wobbling Animation for Saturday & Sunday */
+    .game-prompt-badge.wobbling {
       animation: controllerWobble 2s infinite ease-in-out;
     }
 
@@ -580,10 +584,10 @@
       <button class="saver-icon-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
     </div>
     
-    <!-- Wobbling Controller Reminder Prompt -->
-    <div id="wobble-game-prompt" class="wobble-game-prompt hidden" onclick="openCaptionContestView()">
-      <span>🎮</span>
-      <span id="wobble-prompt-text">Saturday Caption Challenge!</span>
+    <!-- Dynamic Caption Contest / Leaderboard Button on Screensaver -->
+    <div id="game-prompt-badge" class="game-prompt-badge" onclick="openCaptionContestView()">
+      <span id="prompt-icon">🏆</span>
+      <span id="game-prompt-text">Caption Leaderboard</span>
     </div>
 
     <div id="photo-container">
@@ -799,7 +803,7 @@
             if (w > h) {
               if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; }
             } else {
-              if (h > maxDimension) { w = Math.round((h * maxDimension) / h); h = maxDimension; }
+              if (h > maxDimension) { w = Math.round((w * maxDimension) / h); h = maxDimension; }
             }
 
             canvas.width = w; canvas.height = h;
@@ -823,7 +827,7 @@
       else testDayOverride = 'Saturday';
 
       showToast(`Test Mode: Simulating ${testDayOverride || 'Normal Real-Time'}`, 4000);
-      checkScreensaverWobblePrompt();
+      updateScreensaverPromptBadge();
       if (!document.getElementById('caption-contest-view').classList.contains('hidden')) {
         renderCaptionContest();
       }
@@ -884,7 +888,7 @@
 
     function saveContestState(state) {
       localStorage.setItem(`contest_${getWeekKey()}`, JSON.stringify(state));
-      checkScreensaverWobblePrompt();
+      updateScreensaverPromptBadge();
     }
 
     function getWeeklyPhoto() {
@@ -895,20 +899,28 @@
       return photosList[seed % photosList.length];
     }
 
-    function checkScreensaverWobblePrompt() {
+    function updateScreensaverPromptBadge() {
       const day = getSimulatedDay(); // 6 = Saturday, 0 = Sunday
-      const prompt = document.getElementById('wobble-game-prompt');
-      const promptText = document.getElementById('wobble-prompt-text');
+      const badge = document.getElementById('game-prompt-badge');
+      const promptIcon = document.getElementById('prompt-icon');
+      const promptText = document.getElementById('game-prompt-text');
       const state = getContestState();
 
       if (day === 6 && !state.finalized) {
-        promptText.innerText = testDayOverride ? "🎮 [TEST] Saturday Submission Live!" : "🎮 Saturday Caption Challenge is Live!";
-        prompt.classList.remove('hidden');
+        // Saturday: Wobbling submission prompt
+        promptIcon.innerText = '🎮';
+        promptText.innerText = testDayOverride ? "[TEST] Saturday Caption Challenge!" : "Saturday Caption Challenge!";
+        badge.classList.add('wobbling');
       } else if (day === 0 && !state.finalized) {
-        promptText.innerText = testDayOverride ? "🗳️ [TEST] Sunday Voting Open!" : "🗳️ Sunday Caption Voting is Open!";
-        prompt.classList.remove('hidden');
+        // Sunday: Wobbling voting prompt
+        promptIcon.innerText = '🗳️';
+        promptText.innerText = testDayOverride ? "[TEST] Sunday Caption Voting!" : "Sunday Caption Voting!";
+        badge.classList.add('wobbling');
       } else {
-        prompt.classList.add('hidden');
+        // Monday through Friday (or completed contest): Stable leaderboard button
+        promptIcon.innerText = '🏆';
+        promptText.innerText = "Caption Leaderboard";
+        badge.classList.remove('wobbling');
       }
     }
 
@@ -922,7 +934,7 @@
       const photo = getWeeklyPhoto();
 
       if (!photo) {
-        container.innerHTML = `<p style="text-align:center; color:var(--text-muted);">Upload photos to unlock the Saturday contest!</p>`;
+        container.innerHTML = `<p style="text-align:center; color:var$.text-muted);">Upload photos to unlock the Saturday contest!</p>`;
         return;
       }
 
@@ -937,7 +949,7 @@
         <div class="contest-body">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3>Week ${getWeekKey()} Contest ${testDayOverride ? `(Test: ${testDayOverride})` : ''}</h3>
-            <span style="color:var(--accent-gold); font-weight:bold;">${day === 6 ? "Saturday: Submit Captions" : "Sunday: Vote!"}</span>
+            <span style="color:var(--accent-gold); font-weight:bold;">${day === 6 ? "Saturday: Submit Captions" : day === 0 ? "Sunday: Vote!" : "Leaderboard Mode"}</span>
           </div>
           
           <div class="setting-group">
@@ -963,11 +975,16 @@
       const area = document.getElementById('contest-interactive-area');
       const day = getSimulatedDay();
 
-      if (state.finalized) {
+      if (state.finalized || (day !== 6 && day !== 0)) {
+        // Show Leaderboard / Final Results if game is over or it's mid-week (Mon-Fri)
+        const scores = JSON.parse(localStorage.getItem('coyla_caption_scores') || '{}');
         area.innerHTML = `
-          <div style="background:rgba(34,197,94,0.15); border:1px solid var(--accent-green); padding:16px; border-radius:12px; text-align:center;">
-            <h4 style="color:var(--accent-green); font-size:1.2rem;">🏆 Winner: ${state.winner || 'Nobody'}!</h4>
-            <p style="margin-top:6px; font-style:italic;">"${state.captions[state.winner] || 'Default win!'}"</p>
+          <div style="background:rgba(168,85,247,0.15); border:1px solid var(--accent-purple); padding:16px; border-radius:12px;">
+            <h4 style="color:var(--accent-purple); font-size:1.1rem; margin-bottom:8px;">👑 Caption Contest Leaderboard</h4>
+            ${state.winner ? `<p style="color:var(--accent-green); margin-bottom:10px;"><strong>Last Week Winner:</strong> ${state.winner} ("${state.captions[state.winner] || 'Default win'}")</p>` : ''}
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              ${PLAYERS.map(p => `<div style="display:flex; justify-content:space-between; font-size:0.9rem; border-bottom:1px dashed rgba(255,255,255,0.1); padding:4px 0;"><span>${p}</span><span style="color:var(--accent-gold); font-weight:bold;">${scores[p] || 0} pts</span></div>`).join('')}
+            </div>
           </div>
         `;
         return;
@@ -1092,7 +1109,7 @@
       initSparkleCanvas();
       buildEmojiModalPicker();
       checkNightMode();
-      checkScreensaverWobblePrompt();
+      updateScreensaverPromptBadge();
 
       if (photosList.length > 0) {
         startScreensaver();
@@ -1205,7 +1222,7 @@
 
       document.getElementById('empty-state').style.display = 'none';
       checkNightMode();
-      checkScreensaverWobblePrompt();
+      updateScreensaverPromptBadge();
 
       if (shuffledIndices.length !== activeScreensaverPool.length) {
         initScreensaverQueue();
