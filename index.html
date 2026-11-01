@@ -670,7 +670,11 @@
     let db = null;
     let photosList = [];
     let activeScreensaverPool = [];
-    let screensaverQueue = [];
+    
+    // Strict Fisher-Yates Shuffled Index Queue
+    let shuffledIndices = [];
+    let queueIndex = 0;
+
     let slideshowTimer = null;
     let currentSlideInterval = 6000;
     let idleTimer = null;
@@ -737,7 +741,6 @@
       });
     }
 
-    // Helper to generate a cryptographic hash of the image data to detect exact duplicates
     async function computeImageHash(dataUrl) {
       const encoder = new TextEncoder();
       const data = encoder.encode(dataUrl);
@@ -759,7 +762,7 @@
             if (w > h) {
               if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; }
             } else {
-              if (h > maxDimension) { w = Math.round((w * maxDimension) / h); h = maxDimension; }
+              if (h > maxDimension) { w = Math.round((h * maxDimension) / h); h = maxDimension; }
             }
 
             canvas.width = w;
@@ -780,6 +783,7 @@
       await initDB();
       photosList = await loadPhotosFromDB();
       activeScreensaverPool = [...photosList];
+      initScreensaverQueue();
       initSparkleCanvas();
       buildEmojiModalPicker();
 
@@ -796,7 +800,6 @@
         let addedCount = 0;
         let duplicateCount = 0;
 
-        // Build a lookup set of existing hashes in our photo library
         const existingHashes = new Set();
         for (let p of photosList) {
           if (p.hash) existingHashes.add(p.hash);
@@ -809,7 +812,7 @@
 
             if (existingHashes.has(fileHash)) {
               duplicateCount++;
-              continue; // Skip exact duplicate
+              continue;
             }
 
             existingHashes.add(fileHash);
@@ -832,7 +835,7 @@
           showToast(msg, 4000);
 
           activeScreensaverPool = [...photosList];
-          screensaverQueue = [];
+          initScreensaverQueue();
           toggleView('main');
           startScreensaver();
         }
@@ -897,6 +900,17 @@
       startScreensaver();
     }
 
+    function initScreensaverQueue() {
+      if (activeScreensaverPool.length === 0) return;
+      shuffledIndices = Array.from({ length: activeScreensaverPool.length }, (_, i) => i);
+      // Fisher-Yates shuffle
+      for (let i = shuffledIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+      }
+      queueIndex = 0;
+    }
+
     function startScreensaver() {
       if (activeScreensaverPool.length === 0) activeScreensaverPool = [...photosList];
       if (activeScreensaverPool.length === 0) return;
@@ -904,8 +918,8 @@
       document.getElementById('empty-state').style.display = 'none';
       document.getElementById('photo-img').style.display = 'block';
 
-      if (screensaverQueue.length === 0) {
-        refillScreensaverQueue();
+      if (shuffledIndices.length !== activeScreensaverPool.length) {
+        initScreensaverQueue();
       }
 
       displayCurrentPhoto();
@@ -913,17 +927,17 @@
       slideshowTimer = setInterval(nextPhoto, currentSlideInterval);
     }
 
-    function refillScreensaverQueue() {
-      screensaverQueue = [...activeScreensaverPool].sort(() => Math.random() - 0.5);
-    }
-
     function displayCurrentPhoto() {
       if (activeScreensaverPool.length === 0) return;
-      if (screensaverQueue.length === 0) {
-        refillScreensaverQueue();
+      
+      if (queueIndex >= shuffledIndices.length || shuffledIndices.length !== activeScreensaverPool.length) {
+        initScreensaverQueue();
       }
 
-      const photo = screensaverQueue.pop();
+      const photoIdx = shuffledIndices[queueIndex];
+      queueIndex++;
+
+      const photo = activeScreensaverPool[photoIdx];
       const img = document.getElementById('photo-img');
       const bgImg = document.getElementById('bg-blur-img');
 
@@ -1021,7 +1035,7 @@
     async function removePhoto(photoId) {
       photosList = photosList.filter(p => p.id !== photoId);
       activeScreensaverPool = activeScreensaverPool.filter(p => p.id !== photoId);
-      screensaverQueue = screensaverQueue.filter(p => p.id !== photoId);
+      initScreensaverQueue();
       await deletePhotoFromDB(photoId);
       renderGallery();
       showToast("Photo deleted!");
@@ -1049,7 +1063,7 @@
         return;
       }
       activeScreensaverPool = photosList.filter(p => selectedPhotoIds.has(p.id));
-      screensaverQueue = [];
+      initScreensaverQueue();
       toggleView('saver');
     }
 
