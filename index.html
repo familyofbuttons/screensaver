@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Kitchen Family Photo Hub</title>
+  
+  <!-- PWA & Mobile Fullscreen Meta Tags -->
   <link rel="manifest" href="./manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0b0f19">
+
   <style>
     :root {
       --bg: #0b0f19;
@@ -637,6 +644,26 @@
   </div>
 
   <script>
+    // --- SERVICE WORKER REGISTRATION FOR AUTO-INSTALLABILITY ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker Registered'))
+          .catch(err => console.log('SW Registration failed:', err));
+      });
+    }
+
+    // --- AUTOMATIC FULLSCREEN TRIGGER ON TOUCH ---
+    let fullscreenTriggered = false;
+    function autoEnterFullscreen() {
+      if (!fullscreenTriggered && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        fullscreenTriggered = true;
+      }
+    }
+    window.addEventListener('touchstart', autoEnterFullscreen, { once: true });
+    window.addEventListener('click', autoEnterFullscreen, { once: true });
+
     let db = null;
     let photosList = [];
     let activeScreensaverPool = [];
