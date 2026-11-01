@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Kitchen Family Photo Hub</title>
   
-  <!-- PWA & Mobile Fullscreen Meta Tags -->
   <link rel="manifest" href="./manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0b0f19">
 
   <style>
@@ -34,8 +32,10 @@
     }
 
     body, html {
+      position: fixed;
+      inset: 0;
       width: 100vw;
-      height: 100%;
+      height: 100vh;
       height: 100dvh;
       background-color: var(--bg);
       color: var(--text);
@@ -45,12 +45,16 @@
     .screen {
       position: absolute;
       inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       transition: opacity 0.3s ease;
       z-index: 10;
+      overflow: hidden;
     }
 
     .screen.hidden {
@@ -644,25 +648,11 @@
   </div>
 
   <script>
-    // --- SERVICE WORKER REGISTRATION FOR AUTO-INSTALLABILITY ---
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('Service Worker Registered'))
-          .catch(err => console.log('SW Registration failed:', err));
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
       });
     }
-
-    // --- AUTOMATIC FULLSCREEN TRIGGER ON TOUCH ---
-    let fullscreenTriggered = false;
-    function autoEnterFullscreen() {
-      if (!fullscreenTriggered && document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(() => {});
-        fullscreenTriggered = true;
-      }
-    }
-    window.addEventListener('touchstart', autoEnterFullscreen, { once: true });
-    window.addEventListener('click', autoEnterFullscreen, { once: true });
 
     let db = null;
     let photosList = [];
@@ -1192,7 +1182,10 @@
 
           if (matchedPairsCount === totalPairsCount) {
             saveScore(moveCount);
-            setTimeout(() => alert(`🎉 Great job ${currentGamePlayer}! You cleared the board in ${moveCount} moves!`), 300);
+            setTimeout(() => {
+              // Replaced browser alert with a non-disruptive toast/message so it never breaks screen context
+              showToast(`🎉 Great job ${currentGamePlayer}! Cleared in ${moveCount} moves!`, 5000);
+            }, 300);
           }
         } else {
           setTimeout(() => {
