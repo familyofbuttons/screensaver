@@ -163,6 +163,34 @@
       transition: opacity 0.5s ease-in-out;
     }
 
+    .saver-controls-top-left {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      gap: 6px;
+      z-index: 210;
+    }
+
+    .speed-btn {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.6);
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .speed-btn.active {
+      background: rgba(56, 189, 248, 0.3);
+      border-color: var(--accent-blue);
+      color: #fff;
+    }
+
     .exit-saver-btn {
       position: absolute;
       top: 20px;
@@ -500,6 +528,13 @@
     <img id="bg-blur-img" src="" alt="Ambient Background">
     <canvas id="sparkle-canvas"></canvas>
 
+    <!-- Top Left Speed Controls -->
+    <div class="saver-controls-top-left">
+      <button id="speed-slow" class="speed-btn" onclick="setScreensaverSpeed(12000, 'slow')" title="Slow (12s)">></button>
+      <button id="speed-med" class="speed-btn active" onclick="setScreensaverSpeed(6000, 'med')" title="Medium (6s)">>></button>
+      <button id="speed-fast" class="speed-btn" onclick="setScreensaverSpeed(3000, 'fast')" title="Fast (3s)">>>></button>
+    </div>
+
     <button class="exit-saver-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
     
     <div id="photo-container">
@@ -598,6 +633,7 @@
     let activeScreensaverPool = [];
     let currentPhotoIdx = 0;
     let slideshowTimer = null;
+    let currentSlideInterval = 6000; // default medium (6s)
     let idleTimer = null;
     let activeTargetPhotoId = null;
 
@@ -675,7 +711,7 @@
             if (w > h) {
               if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; }
             } else {
-              if (h > maxDimension) { w = Math.round((h * maxDimension) / h); h = maxDimension; }
+              if (h > maxDimension) { w = Math.round((w * maxDimension) / h); h = maxDimension; }
             }
 
             canvas.width = w;
@@ -785,6 +821,13 @@
       animate();
     }
 
+    function setScreensaverSpeed(ms, speedKey) {
+      currentSlideInterval = ms;
+      document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`speed-${speedKey}`).classList.add('active');
+      startScreensaver(); // Restart timer with new interval
+    }
+
     function startScreensaver() {
       if (activeScreensaverPool.length === 0) activeScreensaverPool = [...photosList];
       if (activeScreensaverPool.length === 0) return;
@@ -794,7 +837,7 @@
 
       displayCurrentPhoto();
       if (slideshowTimer) clearInterval(slideshowTimer);
-      slideshowTimer = setInterval(nextPhoto, 8000);
+      slideshowTimer = setInterval(nextPhoto, currentSlideInterval);
     }
 
     function displayCurrentPhoto() {
@@ -1045,6 +1088,17 @@
     let currentGamePlayer = 'Bee';
     let currentGameGrid = '12x10';
 
+    function getDailySeededRandom() {
+      const today = new Date().toISOString().slice(0, 10);
+      let hash = 0;
+      for (let i = 0; i < today.length; i++) {
+        hash = (hash << 5) - hash + today.charCodeAt(i);
+        hash |= 0;
+      }
+      const x = Math.sin(hash++) * 10000;
+      return x - Math.floor(x);
+    }
+
     function startMemoryGame(player, gridVal) {
       currentGamePlayer = player || modalPlayer;
       currentGameGrid = gridVal || document.getElementById('modal-grid-select').value;
@@ -1064,15 +1118,20 @@
       gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
       gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-      // Fully Random Shuffle with High Entropy (True Random New Pool Every Round)
-      const shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
+      let seed = getDailySeededRandom();
+      const seededRandom = () => {
+        seed = (seed * 9301 + 49297) % 233280;
+        return seed / 233280;
+      };
+
+      const shuffledPhotos = [...photosList].sort(() => seededRandom() - 0.5);
       let deck = [];
       for (let i = 0; i < totalPairsCount; i++) {
         const photo = shuffledPhotos[i % shuffledPhotos.length];
         deck.push(photo);
         deck.push(photo);
       }
-      deck.sort(() => Math.random() - 0.5);
+      deck.sort(() => seededRandom() - 0.5);
 
       deck.forEach((photo) => {
         const card = document.createElement('div');
@@ -1106,7 +1165,7 @@
 
           if (matchedPairsCount === totalPairsCount) {
             saveScore(moveCount);
-            setTimeout(() => alert(`🎉 Great job ${currentGamePlayer}! You cleared the board in ${moveCount} moves!`), 300);
+            setTimeout(() => alert(`🎉 Great job ${currentGamePlayer}! You cleared today's puzzle in ${moveCount} moves!`), 300);
           }
         } else {
           setTimeout(() => {
