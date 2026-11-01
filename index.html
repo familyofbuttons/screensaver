@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kitchen Family Photo Hub</title>
   <link rel="manifest" href="./manifest.json">
   <style>
@@ -1115,10 +1115,8 @@
       gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
       gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-      // Strict Unique Pool Selection: Randomize all photos first
       let shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
       
-      // Select unique photos for the pairs without repeating until pool is exhausted
       let chosenPhotos = [];
       while (chosenPhotos.length < totalPairsCount) {
         if (shuffledPhotos.length === 0) {
@@ -1127,7 +1125,6 @@
         chosenPhotos.push(shuffledPhotos.pop());
       }
 
-      // Create pairs and shuffle the final board deck
       let deck = [];
       chosenPhotos.forEach(photo => {
         deck.push(photo);
