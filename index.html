@@ -1045,17 +1045,6 @@
     let currentGamePlayer = 'Bee';
     let currentGameGrid = '12x10';
 
-    function getDailySeededRandom() {
-      const today = new Date().toISOString().slice(0, 10);
-      let hash = 0;
-      for (let i = 0; i < today.length; i++) {
-        hash = (hash << 5) - hash + today.charCodeAt(i);
-        hash |= 0;
-      }
-      const x = Math.sin(hash++) * 10000;
-      return x - Math.floor(x);
-    }
-
     function startMemoryGame(player, gridVal) {
       currentGamePlayer = player || modalPlayer;
       currentGameGrid = gridVal || document.getElementById('modal-grid-select').value;
@@ -1075,20 +1064,15 @@
       gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
       gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-      let seed = getDailySeededRandom();
-      const seededRandom = () => {
-        seed = (seed * 9301 + 49297) % 233280;
-        return seed / 233280;
-      };
-
-      const shuffledPhotos = [...photosList].sort(() => seededRandom() - 0.5);
+      // Fully Random Shuffle with High Entropy (True Random New Pool Every Round)
+      const shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
       let deck = [];
       for (let i = 0; i < totalPairsCount; i++) {
         const photo = shuffledPhotos[i % shuffledPhotos.length];
         deck.push(photo);
         deck.push(photo);
       }
-      deck.sort(() => seededRandom() - 0.5);
+      deck.sort(() => Math.random() - 0.5);
 
       deck.forEach((photo) => {
         const card = document.createElement('div');
@@ -1122,7 +1106,7 @@
 
           if (matchedPairsCount === totalPairsCount) {
             saveScore(moveCount);
-            setTimeout(() => alert(`🎉 Great job ${currentGamePlayer}! You cleared today's puzzle in ${moveCount} moves!`), 300);
+            setTimeout(() => alert(`🎉 Great job ${currentGamePlayer}! You cleared the board in ${moveCount} moves!`), 300);
           }
         } else {
           setTimeout(() => {
