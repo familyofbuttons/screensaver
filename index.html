@@ -737,6 +737,15 @@
       });
     }
 
+    // Helper to generate a cryptographic hash of the image data to detect exact duplicates
+    async function computeImageHash(dataUrl) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(dataUrl);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
     function resizeHighRes(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -785,13 +794,30 @@
 
         showToast(`Processing ${validFiles.length} photo(s)...`, 5000);
         let addedCount = 0;
+        let duplicateCount = 0;
+
+        // Build a lookup set of existing hashes in our photo library
+        const existingHashes = new Set();
+        for (let p of photosList) {
+          if (p.hash) existingHashes.add(p.hash);
+        }
 
         for (let file of validFiles) {
           const highResUrl = await resizeHighRes(file);
           if (highResUrl) {
+            const fileHash = await computeImageHash(highResUrl);
+
+            if (existingHashes.has(fileHash)) {
+              duplicateCount++;
+              continue; // Skip exact duplicate
+            }
+
+            existingHashes.add(fileHash);
+
             const photoObj = {
               id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
               dataUrl: highResUrl,
+              hash: fileHash,
               reactions: {}
             };
             photosList.push(photoObj);
@@ -800,10 +826,13 @@
           }
         }
 
-        if (addedCount > 0) {
-          showToast(`Added ${addedCount} photo(s)!`);
+        if (addedCount > 0 || duplicateCount > 0) {
+          let msg = `Added ${addedCount} new photo(s)!`;
+          if (duplicateCount > 0) msg += ` (${duplicateCount} duplicate skipped)`;
+          showToast(msg, 4000);
+
           activeScreensaverPool = [...photosList];
-          screensaverQueue = []; // Reset queue to include new photos
+          screensaverQueue = [];
           toggleView('main');
           startScreensaver();
         }
@@ -885,7 +914,6 @@
     }
 
     function refillScreensaverQueue() {
-      // Create a fresh randomized copy of the pool so every photo shows before repeating
       screensaverQueue = [...activeScreensaverPool].sort(() => Math.random() - 0.5);
     }
 
@@ -1021,7 +1049,7 @@
         return;
       }
       activeScreensaverPool = photosList.filter(p => selectedPhotoIds.has(p.id));
-      screensaverQueue = []; // Reset queue for selected subset
+      screensaverQueue = [];
       toggleView('saver');
     }
 
