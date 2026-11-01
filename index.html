@@ -140,7 +140,7 @@
       object-fit: cover;
       filter: blur(35px) brightness(0.45) saturate(1.3);
       transform: scale(1.08);
-      transition: opacity 0.8s ease-in-out;
+      transition: opacity 0.3s ease-in-out;
       z-index: 201;
     }
 
@@ -162,17 +162,39 @@
       overflow: hidden;
       position: relative;
       z-index: 203;
+      padding: 30px;
     }
 
-    #photo-img {
+    /* Single Landscape Photo Style */
+    .saver-single-img {
       max-width: 96vw;
-      max-height: 96dvh;
+      max-height: 94dvh;
       width: auto;
       height: auto;
       object-fit: contain;
       border-radius: 12px;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
-      transition: opacity 0.5s ease-in-out;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    /* Multi-Portrait Layout (3 Side by Side) */
+    .saver-triptych {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .saver-triptych img {
+      height: 88dvh;
+      max-width: 30vw;
+      width: auto;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
     }
 
     .saver-controls-top-left {
@@ -563,7 +585,7 @@
         <h2 style="color:var(--accent-gold); margin-bottom:12px;">No Photos Loaded</h2>
         <p style="color:var(--text-muted);">Tap <strong>"+ Select Photos"</strong> to load your family images.</p>
       </div>
-      <img id="photo-img" style="display: none;" src="" alt="Family Memory">
+      <div id="saver-content-wrap" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; opacity:0; transition: opacity 0.3s ease-in-out;"></div>
     </div>
   </div>
 
@@ -670,8 +692,6 @@
     let db = null;
     let photosList = [];
     let activeScreensaverPool = [];
-    
-    // Strict Fisher-Yates Shuffled Index Queue
     let shuffledIndices = [];
     let queueIndex = 0;
 
@@ -749,12 +769,22 @@
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
+    // Helper to detect if an image is portrait based on natural dimensions
+    function isPortrait(dataUrl) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img.height > img.width);
+        img.onerror = () => resolve(false);
+        img.src = dataUrl;
+      });
+    }
+
     function resizeHighRes(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = new Image();
-          img.onload = () => {
+          img.onload = async () => {
             const canvas = document.createElement('canvas');
             let w = img.width, h = img.height;
             const maxDimension = 1200;
@@ -769,7 +799,9 @@
             canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL('image/jpeg', 0.88));
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+            const portrait = h > w;
+            resolve({ dataUrl, portrait });
           };
           img.onerror = () => resolve(null);
           img.src = e.target.result;
@@ -782,6 +814,14 @@
     window.addEventListener('DOMContentLoaded', async () => {
       await initDB();
       photosList = await loadPhotosFromDB();
+      
+      // Ensure orientation flag exists on loaded items
+      for (let p of photosList) {
+        if (p.portrait === undefined) {
+          p.portrait = await isPortrait(p.dataUrl);
+        }
+      }
+
       activeScreensaverPool = [...photosList];
       initScreensaverQueue();
       initSparkleCanvas();
@@ -806,9 +846,9 @@
         }
 
         for (let file of validFiles) {
-          const highResUrl = await resizeHighRes(file);
-          if (highResUrl) {
-            const fileHash = await computeImageHash(highResUrl);
+          const res = await resizeHighRes(file);
+          if (res && res.dataUrl) {
+            const fileHash = await computeImageHash(res.dataUrl);
 
             if (existingHashes.has(fileHash)) {
               duplicateCount++;
@@ -818,8 +858,9 @@
             existingHashes.add(fileHash);
 
             const photoObj = {
-              id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-              dataUrl: highResUrl,
+              id: 'img_' + Date.now + '_' + Math.random().toString(36).substr(2, 4),
+              dataUrl: res.dataUrl,
+              portrait: res.portrait,
               hash: fileHash,
               reactions: {}
             };
@@ -903,7 +944,6 @@
     function initScreensaverQueue() {
       if (activeScreensaverPool.length === 0) return;
       shuffledIndices = Array.from({ length: activeScreensaverPool.length }, (_, i) => i);
-      // Fisher-Yates shuffle
       for (let i = shuffledIndices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
@@ -916,7 +956,6 @@
       if (activeScreensaverPool.length === 0) return;
 
       document.getElementById('empty-state').style.display = 'none';
-      document.getElementById('photo-img').style.display = 'block';
 
       if (shuffledIndices.length !== activeScreensaverPool.length) {
         initScreensaverQueue();
@@ -938,18 +977,44 @@
       queueIndex++;
 
       const photo = activeScreensaverPool[photoIdx];
-      const img = document.getElementById('photo-img');
+      const contentWrap = document.getElementById('saver-content-wrap');
       const bgImg = document.getElementById('bg-blur-img');
 
-      img.style.opacity = '0';
+      contentWrap.style.opacity = '0';
       bgImg.style.opacity = '0';
 
       setTimeout(() => {
-        img.src = photo.dataUrl;
         bgImg.src = photo.dataUrl;
-        img.style.opacity = '1';
+        contentWrap.innerHTML = '';
+
+        if (photo.portrait) {
+          // Find up to 2 other portrait photos to make 3 side-by-side
+          let portraitPool = activeScreensaverPool.filter(p => p.portrait && p.id !== photo.id);
+          portraitPool.sort(() => Math.random() - 0.5);
+          
+          const selectedPortraits = [photo, ...portraitPool.slice(0, 2)];
+          
+          const triptychDiv = document.createElement('div');
+          triptychDiv.className = 'saver-triptych';
+
+          selectedPortraits.forEach(p => {
+            const pImg = document.createElement('img');
+            pImg.src = p.dataUrl;
+            triptychDiv.appendChild(pImg);
+          });
+
+          contentWrap.appendChild(triptychDiv);
+        } else {
+          // Single landscape photo
+          const singleImg = document.createElement('img');
+          singleImg.className = 'saver-single-img';
+          singleImg.src = photo.dataUrl;
+          contentWrap.appendChild(singleImg);
+        }
+
+        contentWrap.style.opacity = '1';
         bgImg.style.opacity = '1';
-      }, 300);
+      }, 150);
     }
 
     function nextPhoto() {
