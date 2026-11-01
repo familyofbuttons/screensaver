@@ -541,7 +541,6 @@
       <button class="btn btn-secondary" onclick="toggleView('main')">📸 Gallery</button>
       <button class="btn btn-secondary" onclick="openGameSetupModal()">🎮 Memory Game</button>
       <button class="btn btn-secondary" onclick="toggleView('saver')">🖼️ Screensaver</button>
-      <!-- Manual Fullscreen Toggle for Cozyla Frames -->
       <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
     </div>
   </header>
@@ -656,7 +655,6 @@
       });
     }
 
-    // Manual Fullscreen Handler for Cozyla frame
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {
@@ -672,7 +670,7 @@
     let db = null;
     let photosList = [];
     let activeScreensaverPool = [];
-    let currentPhotoIdx = 0;
+    let screensaverQueue = [];
     let slideshowTimer = null;
     let currentSlideInterval = 6000;
     let idleTimer = null;
@@ -805,6 +803,7 @@
         if (addedCount > 0) {
           showToast(`Added ${addedCount} photo(s)!`);
           activeScreensaverPool = [...photosList];
+          screensaverQueue = []; // Reset queue to include new photos
           toggleView('main');
           startScreensaver();
         }
@@ -876,16 +875,27 @@
       document.getElementById('empty-state').style.display = 'none';
       document.getElementById('photo-img').style.display = 'block';
 
+      if (screensaverQueue.length === 0) {
+        refillScreensaverQueue();
+      }
+
       displayCurrentPhoto();
       if (slideshowTimer) clearInterval(slideshowTimer);
       slideshowTimer = setInterval(nextPhoto, currentSlideInterval);
     }
 
+    function refillScreensaverQueue() {
+      // Create a fresh randomized copy of the pool so every photo shows before repeating
+      screensaverQueue = [...activeScreensaverPool].sort(() => Math.random() - 0.5);
+    }
+
     function displayCurrentPhoto() {
       if (activeScreensaverPool.length === 0) return;
-      
-      currentPhotoIdx = Math.floor(Math.random() * activeScreensaverPool.length);
-      const photo = activeScreensaverPool[currentPhotoIdx];
+      if (screensaverQueue.length === 0) {
+        refillScreensaverQueue();
+      }
+
+      const photo = screensaverQueue.pop();
       const img = document.getElementById('photo-img');
       const bgImg = document.getElementById('bg-blur-img');
 
@@ -983,6 +993,7 @@
     async function removePhoto(photoId) {
       photosList = photosList.filter(p => p.id !== photoId);
       activeScreensaverPool = activeScreensaverPool.filter(p => p.id !== photoId);
+      screensaverQueue = screensaverQueue.filter(p => p.id !== photoId);
       await deletePhotoFromDB(photoId);
       renderGallery();
       showToast("Photo deleted!");
@@ -1010,7 +1021,7 @@
         return;
       }
       activeScreensaverPool = photosList.filter(p => selectedPhotoIds.has(p.id));
-      currentPhotoIdx = 0;
+      screensaverQueue = []; // Reset queue for selected subset
       toggleView('saver');
     }
 
