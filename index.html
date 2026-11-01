@@ -541,6 +541,8 @@
       <button class="btn btn-secondary" onclick="toggleView('main')">📸 Gallery</button>
       <button class="btn btn-secondary" onclick="openGameSetupModal()">🎮 Memory Game</button>
       <button class="btn btn-secondary" onclick="toggleView('saver')">🖼️ Screensaver</button>
+      <!-- Manual Fullscreen Toggle for Cozyla Frames -->
+      <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
     </div>
   </header>
 
@@ -652,6 +654,19 @@
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
       });
+    }
+
+    // Manual Fullscreen Handler for Cozyla frame
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {
+          showToast("Fullscreen mode restricted by browser");
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
     }
 
     let db = null;
@@ -1183,7 +1198,6 @@
           if (matchedPairsCount === totalPairsCount) {
             saveScore(moveCount);
             setTimeout(() => {
-              // Replaced browser alert with a non-disruptive toast/message so it never breaks screen context
               showToast(`🎉 Great job ${currentGamePlayer}! Cleared in ${moveCount} moves!`, 5000);
             }, 300);
           }
