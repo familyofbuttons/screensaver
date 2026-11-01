@@ -18,6 +18,7 @@
       --accent-gold: #fbbf24;
       --accent-green: #22c55e;
       --accent-red: #ef4444;
+      --accent-purple: #a855f7;
       --text: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -43,16 +44,10 @@
       transition: filter 0.5s ease;
     }
 
-    /* --- NIGHT MODE GLOBAL DIMMING --- */
-    body.night-mode {
-      filter: brightness(0.12) contrast(1.1);
-    }
-
-    /* Keep top controls fully accessible and visible during night mode */
+    body.night-mode { filter: brightness(0.12) contrast(1.1); }
     body.night-mode .saver-controls-top-right,
-    body.night-mode .saver-controls-top-left {
-      filter: brightness(8.5);
-    }
+    body.night-mode .saver-controls-top-left,
+    body.night-mode .wobble-game-prompt { filter: brightness(8.5); }
 
     .screen {
       position: absolute;
@@ -69,10 +64,7 @@
       overflow: hidden;
     }
 
-    .screen.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
+    .screen.hidden { opacity: 0; pointer-events: none; }
 
     header {
       position: fixed;
@@ -102,11 +94,7 @@
       color: var(--accent-gold);
     }
 
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .controls { display: flex; align-items: center; gap: 8px; }
 
     .btn {
       background: var(--accent-blue);
@@ -126,23 +114,13 @@
     .btn:active { transform: scale(0.95); }
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.15); }
     .btn-green { background: var(--accent-green); color: #0f172a; }
-    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-purple { background: var(--accent-purple); color: #fff; }
 
-    select.btn-secondary {
-      color: var(--text);
-      background-color: rgba(15, 23, 42, 0.95);
-    }
-    select.btn-secondary option {
-      background-color: #0f172a;
-      color: var(--text);
-    }
+    select.btn-secondary { color: var(--text); background-color: rgba(15, 23, 42, 0.95); }
+    select.btn-secondary option { background-color: #0f172a; color: var(--text); }
 
-    /* --- SCREENSAVER VIEW WITH AMBIENT SPARKLES --- */
-    #screensaver-view {
-      background: #0b0f19;
-      z-index: 200;
-      overflow: hidden;
-    }
+    /* --- SCREENSAVER VIEW & WOBBLE PROMPT --- */
+    #screensaver-view { background: #0b0f19; z-index: 200; overflow: hidden; }
 
     #bg-blur-img {
       position: absolute;
@@ -156,14 +134,7 @@
       z-index: 201;
     }
 
-    #sparkle-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100vw;
-      height: 100dvh;
-      z-index: 202;
-      pointer-events: none;
-    }
+    #sparkle-canvas { position: absolute; inset: 0; width: 100vw; height: 100dvh; z-index: 202; pointer-events: none; }
 
     #photo-container {
       width: 100vw;
@@ -207,24 +178,8 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
     }
 
-    .saver-controls-top-left {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      display: flex;
-      gap: 6px;
-      z-index: 210;
-    }
-
-    .saver-controls-top-right {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      z-index: 210;
-    }
+    .saver-controls-top-left { position: absolute; top: 20px; left: 20px; display: flex; gap: 6px; z-index: 210; }
+    .saver-controls-top-right { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; align-items: center; z-index: 210; }
 
     .speed-btn {
       background: rgba(15, 23, 42, 0.4);
@@ -236,14 +191,9 @@
       font-weight: 700;
       backdrop-filter: blur(8px);
       cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    .speed-btn.active {
-      background: rgba(56, 189, 248, 0.3);
-      border-color: var(--accent-blue);
-      color: #fff;
-    }
+    .speed-btn.active { background: rgba(56, 189, 248, 0.3); border-color: var(--accent-blue); color: #fff; }
 
     .saver-icon-btn {
       width: 48px;
@@ -259,9 +209,35 @@
       cursor: pointer;
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-      transition: transform 0.15s ease;
     }
-    .saver-icon-btn:active { transform: scale(0.95); }
+
+    /* Wobbling Game Prompt Animation */
+    .wobble-game-prompt {
+      position: absolute;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(168, 85, 247, 0.5);
+      z-index: 220;
+      cursor: pointer;
+      animation: controllerWobble 2s infinite ease-in-out;
+    }
+
+    @keyframes controllerWobble {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      15% { transform: translateY(-6px) rotate(-8deg); }
+      30% { transform: translateY(0) rotate(8deg); }
+      45% { transform: translateY(-4px) rotate(-4deg); }
+      60% { transform: translateY(0) rotate(4deg); }
+    }
 
     /* --- GALLERY VIEW --- */
     #main-view {
@@ -305,18 +281,8 @@
       box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
 
-    .photo-card-img-wrap {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1/1;
-      overflow: hidden;
-    }
-
-    .photo-card-img-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .photo-card-img-wrap { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
+    .photo-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
     .add-reaction-overlay-btn {
       position: absolute;
@@ -331,21 +297,9 @@
       font-weight: 700;
       backdrop-filter: blur(8px);
       z-index: 15;
-      cursor: pointer;
     }
 
-    .photo-checkbox {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 26px;
-      height: 26px;
-      accent-color: var(--accent-gold);
-      cursor: pointer;
-      z-index: 10;
-      display: none;
-    }
-
+    .photo-checkbox { position: absolute; top: 10px; right: 10px; width: 26px; height: 26px; accent-color: var(--accent-gold); display: none; z-index: 10; }
     .photo-card.selection-mode .photo-checkbox { display: block; }
 
     .card-reactions {
@@ -358,12 +312,7 @@
       min-height: 38px;
     }
 
-    .reaction-badge {
-      background: rgba(255, 255, 255, 0.12);
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-    }
+    .reaction-badge { background: rgba(255, 255, 255, 0.12); padding: 3px 8px; border-radius: 12px; font-size: 0.85rem; }
 
     .delete-card-btn {
       position: absolute;
@@ -376,31 +325,10 @@
       height: 32px;
       border-radius: 50%;
       font-size: 0.9rem;
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 10;
-    }
-
-    /* --- EMOJI PICKER OVERLAY MODAL --- */
-    .emoji-modal-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .emoji-select-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      font-size: 1.8rem;
-      padding: 10px;
-      border-radius: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     /* --- MEMORY GAME VIEW --- */
@@ -456,7 +384,6 @@
       overflow: hidden;
       width: 100%;
       height: 100%;
-      max-height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -470,7 +397,7 @@
     .memory-card.matched { border-color: var(--accent-green); opacity: 0.45; pointer-events: none; }
 
     .scoreboard-panel {
-      width: 260px;
+      width: 280px;
       flex-shrink: 0;
       background: var(--panel-bg);
       border-radius: 16px;
@@ -478,13 +405,71 @@
       padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       overflow-y: auto;
-      max-height: 100%;
     }
 
     .scoreboard-panel h3 { color: var(--accent-gold); font-size: 0.95rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 6px; }
     .score-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.08); }
+
+    /* --- CAPTION CONTEST VIEW --- */
+    #caption-contest-view {
+      padding-top: 84px;
+      padding-bottom: 20px;
+      width: 100vw;
+      height: 100dvh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--bg);
+    }
+
+    .contest-card {
+      background: var(--panel-bg);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      width: 90vw;
+      max-width: 900px;
+      padding: 24px;
+      display: flex;
+      gap: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    .contest-img {
+      width: 340px;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .contest-body { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+    .caption-input-box {
+      width: 100%;
+      height: 80px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: #fff;
+      padding: 10px;
+      font-size: 1rem;
+      resize: none;
+    }
+
+    .vote-item {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .vote-item:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--accent-blue); }
+    .vote-item.disabled { opacity: 0.5; pointer-events: none; }
 
     /* --- MODALS --- */
     .modal-overlay {
@@ -555,14 +540,7 @@
     }
     .toast-hidden { opacity: 0; pointer-events: none; }
 
-    #empty-state {
-      text-align: center;
-      padding: 40px;
-      background: var(--panel-bg);
-      border-radius: 24px;
-      max-width: 440px;
-      margin-top: 100px;
-    }
+    #empty-state { text-align: center; padding: 40px; background: var(--panel-bg); border-radius: 24px; max-width: 440px; margin-top: 100px; }
   </style>
 </head>
 <body>
@@ -579,6 +557,7 @@
 
       <button class="btn" onclick="document.getElementById('file-input').click()">+ Select Photos</button>
       <button class="btn btn-secondary" onclick="toggleView('main')">📸 Gallery</button>
+      <button class="btn btn-purple" onclick="openCaptionContestView()">🏆 Saturday Caption</button>
       <button class="btn btn-secondary" onclick="openGameSetupModal()">🎮 Memory Game</button>
       <button class="btn btn-secondary" onclick="toggleView('saver')">🖼️ Screensaver</button>
       <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
@@ -596,12 +575,17 @@
       <button id="speed-fast" class="speed-btn" onclick="setScreensaverSpeed(3000, 'fast')" title="Fast (3s)">>>></button>
     </div>
 
-    <!-- Top Right Controls: Night Mode Toggle right before the X exit button -->
     <div class="saver-controls-top-right">
       <button id="night-mode-toggle-btn" class="saver-icon-btn" onclick="toggleNightModeManual()" title="Toggle Night Mode">🌙</button>
       <button class="saver-icon-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
     </div>
     
+    <!-- Wobbling Controller Reminder Prompt -->
+    <div id="wobble-game-prompt" class="wobble-game-prompt hidden" onclick="openCaptionContestView()">
+      <span>🎮</span>
+      <span id="wobble-prompt-text">Saturday Caption Challenge!</span>
+    </div>
+
     <div id="photo-container">
       <div id="empty-state">
         <h2 style="color:var(--accent-gold); margin-bottom:12px;">No Photos Loaded</h2>
@@ -623,6 +607,12 @@
     <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 
+  <!-- Saturday Caption Contest View -->
+  <div id="caption-contest-view" class="screen hidden">
+    <h2 style="color:var(--accent-gold); margin-bottom:16px;">🏆 Saturday Caption Contest</h2>
+    <div id="contest-container" class="contest-card"></div>
+  </div>
+
   <!-- Memory Game View -->
   <div id="game-view" class="screen hidden">
     <div class="game-top-bar">
@@ -639,6 +629,9 @@
       <div class="scoreboard-panel">
         <h3>🏆 High Scores (<span id="score-grid-label">12x10</span>)</h3>
         <div id="scoreboard-list"></div>
+        
+        <h3 style="margin-top:10px;">👑 Caption Contest Wins</h3>
+        <div id="caption-scoreboard-list"></div>
       </div>
     </div>
   </div>
@@ -701,13 +694,9 @@
 
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {
-          showToast("Fullscreen mode restricted by browser");
-        });
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
+        document.documentElement.requestFullscreen().catch(() => showToast("Fullscreen mode restricted by browser"));
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
       }
     }
 
@@ -725,8 +714,10 @@
     let modalPlayer = 'Bee';
     let selectedPhotoIds = new Set();
     let isSelectionMode = false;
-    let manualNightOverride = null; // null = automatic, true/false = forced state
+    let manualNightOverride = null;
+    let testDayOverride = null; // 'Saturday', 'Sunday', or null
 
+    const PLAYERS = ['Bee', 'Les', 'Chrissy', 'Casey'];
     const EMOJI_PALETTE = ['❤️', '😂', '😍', '🔥', '🎉', '👑', '🥳', '🍕', '☕️', '🐶', '🐱', '🌟', '👍', '👏', '🥳', '🍦', '🏆', '🌈', '💡', '🍔', '🍿', '🎈', '🎁', '🚀'];
 
     function showToast(msg, duration = 3000) {
@@ -753,34 +744,28 @@
     async function savePhotoToDB(photoObj) {
       if (!db) return;
       return new Promise((resolve) => {
-        try {
-          const tx = db.transaction('photos', 'readwrite');
-          tx.objectStore('photos').put(photoObj);
-          tx.oncomplete = () => resolve();
-        } catch(e) { resolve(); }
+        const tx = db.transaction('photos', 'readwrite');
+        tx.objectStore('photos').put(photoObj);
+        tx.oncomplete = () => resolve();
       });
     }
 
     async function deletePhotoFromDB(photoId) {
       if (!db) return;
       return new Promise((resolve) => {
-        try {
-          const tx = db.transaction('photos', 'readwrite');
-          tx.objectStore('photos').delete(photoId);
-          tx.oncomplete = () => resolve();
-        } catch(e) { resolve(); }
+        const tx = db.transaction('photos', 'readwrite');
+        tx.objectStore('photos').delete(photoId);
+        tx.oncomplete = () => resolve();
       });
     }
 
     async function loadPhotosFromDB() {
       if (!db) return [];
       return new Promise((resolve) => {
-        try {
-          const tx = db.transaction('photos', 'readonly');
-          const req = tx.objectStore('photos').getAll();
-          req.onsuccess = () => resolve(req.result || []);
-          req.onerror = () => resolve([]);
-        } catch(e) { resolve([]); }
+        const tx = db.transaction('photos', 'readonly');
+        const req = tx.objectStore('photos').getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => resolve([]);
       });
     }
 
@@ -806,7 +791,7 @@
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = new Image();
-          img.onload = async () => {
+          img.onload = () => {
             const canvas = document.createElement('canvas');
             let w = img.width, h = img.height;
             const maxDimension = 1200;
@@ -814,16 +799,13 @@
             if (w > h) {
               if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; }
             } else {
-              if (h > maxDimension) { w = Math.round((w * maxDimension) / h); h = maxDimension; }
+              if (h > maxDimension) { w = Math.round((h * maxDimension) / h); h = maxDimension; }
             }
 
-            canvas.width = w;
-            canvas.height = h;
+            canvas.width = w; canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
-            const portrait = h > w;
-            resolve({ dataUrl, portrait });
+            resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.88), portrait: h > w });
           };
           img.onerror = () => resolve(null);
           img.src = e.target.result;
@@ -833,22 +815,44 @@
       });
     }
 
-    // --- NIGHT MODE CHECKER & TOGGLE ---
+    // --- TEST MODE HELPER ---
+    // Press Ctrl+Shift+T or call forceTestContest() in console to toggle Saturday/Sunday simulation!
+    function forceTestContest() {
+      if (testDayOverride === 'Saturday') testDayOverride = 'Sunday';
+      else if (testDayOverride === 'Sunday') testDayOverride = null;
+      else testDayOverride = 'Saturday';
+
+      showToast(`Test Mode: Simulating ${testDayOverride || 'Normal Real-Time'}`, 4000);
+      checkScreensaverWobblePrompt();
+      if (!document.getElementById('caption-contest-view').classList.contains('hidden')) {
+        renderCaptionContest();
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 't') {
+        forceTestContest();
+      }
+    });
+
+    function getSimulatedDay() {
+      if (testDayOverride) return testDayOverride === 'Saturday' ? 6 : 0;
+      return new Date().getDay();
+    }
+
+    // --- NIGHT MODE ---
     function checkNightMode() {
-      const now = new Date();
-      const hour = now.getHours();
-      // Between 22:00 (10 PM) and 07:00 (7 AM)
+      const hour = new Date().getHours();
       const isNightTime = (hour >= 22 || hour < 7);
-      
       const active = (manualNightOverride !== null) ? manualNightOverride : isNightTime;
       const btn = document.getElementById('night-mode-toggle-btn');
 
       if (active) {
         document.body.classList.add('night-mode');
-        if (btn) btn.innerText = '☀️'; // Sun icon to turn off night mode
+        if (btn) btn.innerText = '☀️';
       } else {
         document.body.classList.remove('night-mode');
-        if (btn) btn.innerText = '🌙'; // Moon icon to turn on night mode
+        if (btn) btn.innerText = '🌙';
       }
     }
 
@@ -856,20 +860,231 @@
       const isCurrentlyNight = document.body.classList.contains('night-mode');
       manualNightOverride = !isCurrentlyNight;
       checkNightMode();
-      showToast(manualNightOverride ? "Night mode enabled" : "Night mode disabled", 2000);
+    }
+    setInterval(checkNightMode, 60000);
+
+    // --- SATURDAY CAPTION CONTEST LOGIC ---
+    function getWeekKey() {
+      const now = new Date();
+      const onejan = new Date(now.getFullYear(), 0, 1);
+      const weekNum = Math.ceil((((now - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+      return `${now.getFullYear()}_W${weekNum}`;
     }
 
-    // Check night mode status every minute
-    setInterval(checkNightMode, 60000);
+    function getContestState() {
+      const key = `contest_${getWeekKey()}`;
+      return JSON.parse(localStorage.getItem(key) || JSON.stringify({
+        photoId: null,
+        captions: {}, 
+        votes: {},    
+        winner: null,
+        finalized: false
+      }));
+    }
+
+    function saveContestState(state) {
+      localStorage.setItem(`contest_${getWeekKey()}`, JSON.stringify(state));
+      checkScreensaverWobblePrompt();
+    }
+
+    function getWeeklyPhoto() {
+      if (photosList.length === 0) return null;
+      const weekKey = getWeekKey();
+      let seed = 0;
+      for (let i = 0; i < weekKey.length; i++) seed += weekKey.charCodeAt(i);
+      return photosList[seed % photosList.length];
+    }
+
+    function checkScreensaverWobblePrompt() {
+      const day = getSimulatedDay(); // 6 = Saturday, 0 = Sunday
+      const prompt = document.getElementById('wobble-game-prompt');
+      const promptText = document.getElementById('wobble-prompt-text');
+      const state = getContestState();
+
+      if (day === 6 && !state.finalized) {
+        promptText.innerText = testDayOverride ? "🎮 [TEST] Saturday Submission Live!" : "🎮 Saturday Caption Challenge is Live!";
+        prompt.classList.remove('hidden');
+      } else if (day === 0 && !state.finalized) {
+        promptText.innerText = testDayOverride ? "🗳️ [TEST] Sunday Voting Open!" : "🗳️ Sunday Caption Voting is Open!";
+        prompt.classList.remove('hidden');
+      } else {
+        prompt.classList.add('hidden');
+      }
+    }
+
+    function openCaptionContestView() {
+      toggleView('contest');
+      renderCaptionContest();
+    }
+
+    function renderCaptionContest() {
+      const container = document.getElementById('contest-container');
+      const photo = getWeeklyPhoto();
+
+      if (!photo) {
+        container.innerHTML = `<p style="text-align:center; color:var(--text-muted);">Upload photos to unlock the Saturday contest!</p>`;
+        return;
+      }
+
+      const state = getContestState();
+      state.photoId = photo.id;
+      saveContestState(state);
+
+      const day = getSimulatedDay();
+
+      container.innerHTML = `
+        <img class="contest-img" src="${photo.dataUrl}">
+        <div class="contest-body">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>Week ${getWeekKey()} Contest ${testDayOverride ? `(Test: ${testDayOverride})` : ''}</h3>
+            <span style="color:var(--accent-gold); font-weight:bold;">${day === 6 ? "Saturday: Submit Captions" : "Sunday: Vote!"}</span>
+          </div>
+          
+          <div class="setting-group">
+            <label>Select Your Player Name:</label>
+            <div class="player-pills-row">
+              ${PLAYERS.map(p => `<div class="player-pill ${modalPlayer === p ? 'active' : ''}" onclick="setContestPlayer('${p}')">${p}</div>`).join('')}
+            </div>
+          </div>
+
+          <div id="contest-interactive-area" style="margin-top:10px;"></div>
+        </div>
+      `;
+
+      renderContestInteractiveArea(photo, state);
+    }
+
+    function setContestPlayer(p) {
+      modalPlayer = p;
+      renderCaptionContest();
+    }
+
+    function renderContestInteractiveArea(photo, state) {
+      const area = document.getElementById('contest-interactive-area');
+      const day = getSimulatedDay();
+
+      if (state.finalized) {
+        area.innerHTML = `
+          <div style="background:rgba(34,197,94,0.15); border:1px solid var(--accent-green); padding:16px; border-radius:12px; text-align:center;">
+            <h4 style="color:var(--accent-green); font-size:1.2rem;">🏆 Winner: ${state.winner || 'Nobody'}!</h4>
+            <p style="margin-top:6px; font-style:italic;">"${state.captions[state.winner] || 'Default win!'}"</p>
+          </div>
+        `;
+        return;
+      }
+
+      const captionKeys = Object.keys(state.captions);
+      if (day === 0 && captionKeys.length === 1) {
+        state.winner = captionKeys[0];
+        state.finalized = true;
+        saveContestState(state);
+        awardContestPoint(state.winner);
+        renderContestInteractiveArea(photo, state);
+        return;
+      }
+
+      // Saturday Submission Phase
+      if (day === 6 || captionKeys.length < 2) {
+        const hasSubmitted = !!state.captions[modalPlayer];
+        area.innerHTML = `
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:8px;">
+            ${hasSubmitted ? `✅ You submitted your caption as <strong>${modalPlayer}</strong>!` : `Enter your caption as <strong>${modalPlayer}</strong>:`}
+          </p>
+          <textarea id="caption-input-text" class="caption-input-box" placeholder="Type something funny...">${state.captions[modalPlayer] || ''}</textarea>
+          <button class="btn btn-green" style="margin-top:10px; width:100%;" onclick="submitCaption()">Save Caption 💬</button>
+        `;
+      } 
+      // Sunday Voting Phase
+      else {
+        const hasVoted = !!state.votes[modalPlayer];
+        area.innerHTML = `
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:8px;">
+            ${hasVoted ? `✅ You voted as <strong>${modalPlayer}</strong>!` : `Vote for the funniest caption (You cannot vote for your own!):`}
+          </p>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            ${Object.entries(state.captions).map(([player, text]) => {
+              const isOwn = player === modalPlayer;
+              return `
+                <div class="vote-item ${isOwn ? 'disabled' : ''}" onclick="submitVote('${player}')">
+                  <span>"${text}"</span>
+                  <span style="font-size:0.8rem; opacity:0.6;">${isOwn ? '(Yours)' : 'Vote 🗳️'}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+    }
+
+    function submitCaption() {
+      const text = document.getElementById('caption-input-text').value.trim();
+      if (!text) { alert("Please enter a caption first!"); return; }
+
+      const state = getContestState();
+      state.captions[modalPlayer] = text;
+      saveContestState(state);
+      showToast(`Caption saved for ${modalPlayer}!`);
+      renderCaptionContest();
+    }
+
+    function submitVote(targetPlayer) {
+      const state = getContestState();
+      if (targetPlayer === modalPlayer) {
+        alert("You cannot vote for your own caption!");
+        return;
+      }
+
+      state.votes[modalPlayer] = targetPlayer;
+      
+      const totalPlayersWhoCaptioned = Object.keys(state.captions).length;
+      const totalVotesCast = Object.keys(state.votes).length;
+
+      if (totalVotesCast >= totalPlayersWhoCaptioned) {
+        const tally = {};
+        Object.values(state.votes).forEach(p => tally[p] = (tally[p] || 0) + 1);
+        let maxVotes = 0;
+        let winner = null;
+        Object.entries(tally).forEach(([p, count]) => {
+          if (count > maxVotes) { maxVotes = count; winner = p; }
+        });
+        state.winner = winner;
+        state.finalized = true;
+        awardContestPoint(winner);
+      }
+
+      saveContestState(state);
+      showToast(`Vote counted!`);
+      renderCaptionContest();
+    }
+
+    function awardContestPoint(player) {
+      if (!player) return;
+      const scores = JSON.parse(localStorage.getItem('coyla_caption_scores') || '{}');
+      scores[player] = (scores[player] || 0) + 1;
+      localStorage.setItem('coyla_caption_scores', JSON.stringify(scores));
+    }
+
+    function renderCaptionScoreboard() {
+      const list = document.getElementById('caption-scoreboard-list');
+      if (!list) return;
+      list.innerHTML = '';
+      const scores = JSON.parse(localStorage.getItem('coyla_caption_scores') || '{}');
+
+      PLAYERS.forEach(player => {
+        const pts = scores[player] || 0;
+        const row = document.createElement('div');
+        row.className = 'score-row';
+        row.innerHTML = `<span>${player}</span><span style="color:var(--accent-purple); font-weight:bold;">${pts} pts</span>`;
+        list.appendChild(row);
+      });
+    }
 
     window.addEventListener('DOMContentLoaded', async () => {
       await initDB();
       photosList = await loadPhotosFromDB();
-      
+
       for (let p of photosList) {
-        if (p.portrait === undefined) {
-          p.portrait = await isPortrait(p.dataUrl);
-        }
+        if (p.portrait === undefined) p.portrait = await isPortrait(p.dataUrl);
       }
 
       activeScreensaverPool = [...photosList];
@@ -877,6 +1092,7 @@
       initSparkleCanvas();
       buildEmojiModalPicker();
       checkNightMode();
+      checkScreensaverWobblePrompt();
 
       if (photosList.length > 0) {
         startScreensaver();
@@ -888,26 +1104,16 @@
         if (validFiles.length === 0) return;
 
         showToast(`Processing ${validFiles.length} photo(s)...`, 5000);
-        let addedCount = 0;
-        let duplicateCount = 0;
-
-        const existingHashes = new Set();
-        for (let p of photosList) {
-          if (p.hash) existingHashes.add(p.hash);
-        }
+        let addedCount = 0, duplicateCount = 0;
+        const existingHashes = new Set(photosList.map(p => p.hash));
 
         for (let file of validFiles) {
           const res = await resizeHighRes(file);
           if (res && res.dataUrl) {
             const fileHash = await computeImageHash(res.dataUrl);
-
-            if (existingHashes.has(fileHash)) {
-              duplicateCount++;
-              continue;
-            }
+            if (existingHashes.has(fileHash)) { duplicateCount++; continue; }
 
             existingHashes.add(fileHash);
-
             const photoObj = {
               id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
               dataUrl: res.dataUrl,
@@ -922,10 +1128,7 @@
         }
 
         if (addedCount > 0 || duplicateCount > 0) {
-          let msg = `Added ${addedCount} new photo(s)!`;
-          if (duplicateCount > 0) msg += ` (${duplicateCount} duplicate skipped)`;
-          showToast(msg, 4000);
-
+          showToast(`Added ${addedCount} new photo(s)!`, 4000);
           activeScreensaverPool = [...photosList];
           initScreensaverQueue();
           toggleView('main');
@@ -934,7 +1137,6 @@
       };
 
       document.getElementById('file-input').addEventListener('change', (e) => processBatchFiles(e.target.files));
-
       resetIdleTimer();
     });
 
@@ -943,10 +1145,7 @@
       const ctx = canvas.getContext('2d');
       let particles = [];
 
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
+      function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
       window.addEventListener('resize', resizeCanvas);
       resizeCanvas();
 
@@ -967,8 +1166,7 @@
         particles.forEach(p => {
           p.alpha += p.speed;
           if (p.alpha > 1 || p.alpha < 0) p.speed = -p.speed;
-          p.x += p.vx;
-          p.y += p.vy;
+          p.x += p.vx; p.y += p.vy;
           if (p.y < 0) p.y = canvas.height;
           if (p.x < 0) p.x = canvas.width;
           if (p.x > canvas.width) p.x = 0;
@@ -976,8 +1174,7 @@
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(251, 191, 36, ${Math.abs(p.alpha) * 0.8})`;
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = '#fbbf24';
+          ctx.shadowBlur = 10; ctx.shadowColor = '#fbbf24';
           ctx.fill();
         });
         requestAnimationFrame(animate);
@@ -1008,6 +1205,7 @@
 
       document.getElementById('empty-state').style.display = 'none';
       checkNightMode();
+      checkScreensaverWobblePrompt();
 
       if (shuffledIndices.length !== activeScreensaverPool.length) {
         initScreensaverQueue();
@@ -1020,7 +1218,6 @@
 
     function displayCurrentPhoto() {
       if (activeScreensaverPool.length === 0) return;
-      
       if (queueIndex >= shuffledIndices.length || shuffledIndices.length !== activeScreensaverPool.length) {
         initScreensaverQueue();
       }
@@ -1042,18 +1239,15 @@
         if (photo.portrait) {
           let portraitPool = activeScreensaverPool.filter(p => p.portrait && p.id !== photo.id);
           portraitPool.sort(() => Math.random() - 0.5);
-          
           const selectedPortraits = [photo, ...portraitPool.slice(0, 2)];
           
           const triptychDiv = document.createElement('div');
           triptychDiv.className = 'saver-triptych';
-
           selectedPortraits.forEach(p => {
             const pImg = document.createElement('img');
             pImg.src = p.dataUrl;
             triptychDiv.appendChild(pImg);
           });
-
           contentWrap.appendChild(triptychDiv);
         } else {
           const singleImg = document.createElement('img');
@@ -1085,9 +1279,7 @@
         deleteBtn.innerText = '🗑️';
         deleteBtn.onclick = async (e) => {
           e.stopPropagation();
-          if (confirm("Delete this photo from your family collection?")) {
-            await removePhoto(photo.id);
-          }
+          if (confirm("Delete photo?")) await removePhoto(photo.id);
         };
 
         const checkbox = document.createElement('input');
@@ -1102,17 +1294,13 @@
 
         const imgWrap = document.createElement('div');
         imgWrap.className = 'photo-card-img-wrap';
-
         const img = document.createElement('img');
         img.src = photo.dataUrl;
 
         const reactOverlayBtn = document.createElement('button');
         reactOverlayBtn.className = 'add-reaction-overlay-btn';
         reactOverlayBtn.innerText = '+ React 😀';
-        reactOverlayBtn.onclick = (e) => {
-          e.stopPropagation();
-          openEmojiModal(photo.id);
-        };
+        reactOverlayBtn.onclick = (e) => { e.stopPropagation(); openEmojiModal(photo.id); };
 
         imgWrap.appendChild(img);
         imgWrap.appendChild(reactOverlayBtn);
@@ -1122,9 +1310,7 @@
             checkbox.checked = !checkbox.checked;
             if (checkbox.checked) selectedPhotoIds.add(photo.id);
             else selectedPhotoIds.delete(photo.id);
-          } else {
-            openLightbox(photo.dataUrl);
-          }
+          } else openLightbox(photo.dataUrl);
         };
 
         const reactionsDiv = document.createElement('div');
@@ -1173,10 +1359,7 @@
     }
 
     function startCustomScreensaver() {
-      if (selectedPhotoIds.size === 0) {
-        alert("Please select at least 1 photo first!");
-        return;
-      }
+      if (selectedPhotoIds.size === 0) { alert("Select at least 1 photo!"); return; }
       activeScreensaverPool = photosList.filter(p => selectedPhotoIds.has(p.id));
       initScreensaverQueue();
       toggleView('saver');
@@ -1188,9 +1371,7 @@
       document.getElementById('lightbox-modal').classList.remove('hidden');
     }
 
-    function closeLightbox() {
-      document.getElementById('lightbox-modal').classList.add('hidden');
-    }
+    function closeLightbox() { document.getElementById('lightbox-modal').classList.add('hidden'); }
 
     function buildEmojiModalPicker() {
       const container = document.getElementById('emoji-picker-container');
@@ -1229,6 +1410,7 @@
       document.getElementById('screensaver-view').classList.add('hidden');
       document.getElementById('main-view').classList.add('hidden');
       document.getElementById('game-view').classList.add('hidden');
+      document.getElementById('caption-contest-view').classList.add('hidden');
       closeLightbox();
       closeGameSetupModal();
       closeEmojiModal();
@@ -1238,6 +1420,10 @@
         startScreensaver();
       } else if (view === 'game') {
         document.getElementById('game-view').classList.remove('hidden');
+        renderCaptionScoreboard();
+        if (slideshowTimer) clearInterval(slideshowTimer);
+      } else if (view === 'contest') {
+        document.getElementById('caption-contest-view').classList.remove('hidden');
         if (slideshowTimer) clearInterval(slideshowTimer);
       } else {
         document.getElementById('main-view').classList.remove('hidden');
@@ -1246,16 +1432,11 @@
     }
 
     function openGameSetupModal() {
-      if (photosList.length < 2) {
-        alert("Please upload at least 2 photos first!");
-        return;
-      }
+      if (photosList.length < 2) { alert("Upload at least 2 photos first!"); return; }
       document.getElementById('game-modal').classList.remove('hidden');
     }
 
-    function closeGameSetupModal() {
-      document.getElementById('game-modal').classList.add('hidden');
-    }
+    function closeGameSetupModal() { document.getElementById('game-modal').classList.add('hidden'); }
 
     function selectModalPlayer(name, el) {
       document.querySelectorAll('#game-modal .player-pill').forEach(p => p.classList.remove('active'));
@@ -1266,10 +1447,8 @@
     function confirmStartGame() {
       closeGameSetupModal();
       const gridVal = document.getElementById('modal-grid-select').value;
-      
       document.getElementById('current-player-display').innerText = modalPlayer;
       document.getElementById('current-grid-display').innerText = gridVal;
-
       toggleView('game');
       startMemoryGame(modalPlayer, gridVal);
     }
@@ -1278,10 +1457,9 @@
       document.getElementById('score-grid-label').innerText = gridVal;
       const list = document.getElementById('scoreboard-list');
       list.innerHTML = '';
-
       const scores = JSON.parse(localStorage.getItem(`coyla_scores_${gridVal}`) || '{}');
 
-      ['Bee', 'Les', 'Chrissy', 'Casey'].forEach(player => {
+      PLAYERS.forEach(player => {
         const pScore = scores[player] || { moves: '-' };
         const row = document.createElement('div');
         row.className = 'score-row';
@@ -1302,12 +1480,8 @@
       currentGameGrid = gridVal || document.getElementById('modal-grid-select').value;
 
       const [cols, rows] = currentGameGrid.split('x').map(Number);
-      const totalTiles = cols * rows;
-      totalPairsCount = totalTiles / 2;
-
-      matchedPairsCount = 0;
-      moveCount = 0;
-      flippedCards = [];
+      totalPairsCount = (cols * rows) / 2;
+      matchedPairsCount = 0; moveCount = 0; flippedCards = [];
 
       renderScoreboard(currentGameGrid);
 
@@ -1317,20 +1491,14 @@
       gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
       let shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
-      
       let chosenPhotos = [];
       while (chosenPhotos.length < totalPairsCount) {
-        if (shuffledPhotos.length === 0) {
-          shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
-        }
+        if (shuffledPhotos.length === 0) shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
         chosenPhotos.push(shuffledPhotos.pop());
       }
 
       let deck = [];
-      chosenPhotos.forEach(photo => {
-        deck.push(photo);
-        deck.push(photo);
-      });
+      chosenPhotos.forEach(photo => { deck.push(photo); deck.push(photo); });
       deck.sort(() => Math.random() - 0.5);
 
       deck.forEach((photo) => {
@@ -1355,26 +1523,17 @@
 
       if (flippedCards.length === 2) {
         moveCount++;
-
         const [c1, c2] = flippedCards;
         if (c1.dataset.photoId === c2.dataset.photoId) {
-          c1.classList.add('matched');
-          c2.classList.add('matched');
-          matchedPairsCount++;
-          flippedCards = [];
+          c1.classList.add('matched'); c2.classList.add('matched');
+          matchedPairsCount++; flippedCards = [];
 
           if (matchedPairsCount === totalPairsCount) {
             saveScore(moveCount);
-            setTimeout(() => {
-              showToast(`🎉 Great job ${currentGamePlayer}! Cleared in ${moveCount} moves!`, 5000);
-            }, 300);
+            setTimeout(() => showToast(`🎉 Great job ${currentGamePlayer}! Cleared in ${moveCount} moves!`, 5000), 300);
           }
         } else {
-          setTimeout(() => {
-            c1.classList.remove('flipped');
-            c2.classList.remove('flipped');
-            flippedCards = [];
-          }, 800);
+          setTimeout(() => { c1.classList.remove('flipped'); c2.classList.remove('flipped'); flippedCards = []; }, 800);
         }
       }
     }
@@ -1382,7 +1541,6 @@
     function saveScore(moves) {
       const key = `coyla_scores_${currentGameGrid}`;
       const scores = JSON.parse(localStorage.getItem(key) || '{}');
-
       if (!scores[currentGamePlayer] || moves < scores[currentGamePlayer].moves) {
         scores[currentGamePlayer] = { moves };
         localStorage.setItem(key, JSON.stringify(scores));
