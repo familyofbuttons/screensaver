@@ -40,6 +40,18 @@
       background-color: var(--bg);
       color: var(--text);
       overflow: hidden;
+      transition: filter 0.5s ease;
+    }
+
+    /* --- NIGHT MODE GLOBAL DIMMING --- */
+    body.night-mode {
+      filter: brightness(0.12) contrast(1.1);
+    }
+
+    /* Keep top controls fully accessible and visible during night mode */
+    body.night-mode .saver-controls-top-right,
+    body.night-mode .saver-controls-top-left {
+      filter: brightness(8.5);
     }
 
     .screen {
@@ -165,7 +177,6 @@
       padding: 30px;
     }
 
-    /* Single Landscape Photo Style */
     .saver-single-img {
       max-width: 96vw;
       max-height: 94dvh;
@@ -177,7 +188,6 @@
       transition: opacity 0.3s ease-in-out;
     }
 
-    /* Multi-Portrait Layout (3 Side by Side) */
     .saver-triptych {
       display: flex;
       gap: 20px;
@@ -206,6 +216,16 @@
       z-index: 210;
     }
 
+    .saver-controls-top-right {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      z-index: 210;
+    }
+
     .speed-btn {
       background: rgba(15, 23, 42, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -225,25 +245,23 @@
       color: #fff;
     }
 
-    .exit-saver-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
+    .saver-icon-btn {
       width: 48px;
       height: 48px;
       background: rgba(15, 23, 42, 0.75);
       border: 1px solid rgba(255, 255, 255, 0.25);
       border-radius: 50%;
       color: #fff;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 210;
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      transition: transform 0.15s ease;
     }
+    .saver-icon-btn:active { transform: scale(0.95); }
 
     /* --- GALLERY VIEW --- */
     #main-view {
@@ -578,7 +596,11 @@
       <button id="speed-fast" class="speed-btn" onclick="setScreensaverSpeed(3000, 'fast')" title="Fast (3s)">>>></button>
     </div>
 
-    <button class="exit-saver-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
+    <!-- Top Right Controls: Night Mode Toggle right before the X exit button -->
+    <div class="saver-controls-top-right">
+      <button id="night-mode-toggle-btn" class="saver-icon-btn" onclick="toggleNightModeManual()" title="Toggle Night Mode">🌙</button>
+      <button class="saver-icon-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
+    </div>
     
     <div id="photo-container">
       <div id="empty-state">
@@ -703,6 +725,7 @@
     let modalPlayer = 'Bee';
     let selectedPhotoIds = new Set();
     let isSelectionMode = false;
+    let manualNightOverride = null; // null = automatic, true/false = forced state
 
     const EMOJI_PALETTE = ['❤️', '😂', '😍', '🔥', '🎉', '👑', '🥳', '🍕', '☕️', '🐶', '🐱', '🌟', '👍', '👏', '🥳', '🍦', '🏆', '🌈', '💡', '🍔', '🍿', '🎈', '🎁', '🚀'];
 
@@ -769,7 +792,6 @@
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // Helper to detect if an image is portrait based on natural dimensions
     function isPortrait(dataUrl) {
       return new Promise((resolve) => {
         const img = new Image();
@@ -792,7 +814,7 @@
             if (w > h) {
               if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; }
             } else {
-              if (h > maxDimension) { w = Math.round((h * maxDimension) / h); h = maxDimension; }
+              if (h > maxDimension) { w = Math.round((w * maxDimension) / h); h = maxDimension; }
             }
 
             canvas.width = w;
@@ -811,11 +833,39 @@
       });
     }
 
+    // --- NIGHT MODE CHECKER & TOGGLE ---
+    function checkNightMode() {
+      const now = new Date();
+      const hour = now.getHours();
+      // Between 22:00 (10 PM) and 07:00 (7 AM)
+      const isNightTime = (hour >= 22 || hour < 7);
+      
+      const active = (manualNightOverride !== null) ? manualNightOverride : isNightTime;
+      const btn = document.getElementById('night-mode-toggle-btn');
+
+      if (active) {
+        document.body.classList.add('night-mode');
+        if (btn) btn.innerText = '☀️'; // Sun icon to turn off night mode
+      } else {
+        document.body.classList.remove('night-mode');
+        if (btn) btn.innerText = '🌙'; // Moon icon to turn on night mode
+      }
+    }
+
+    function toggleNightModeManual() {
+      const isCurrentlyNight = document.body.classList.contains('night-mode');
+      manualNightOverride = !isCurrentlyNight;
+      checkNightMode();
+      showToast(manualNightOverride ? "Night mode enabled" : "Night mode disabled", 2000);
+    }
+
+    // Check night mode status every minute
+    setInterval(checkNightMode, 60000);
+
     window.addEventListener('DOMContentLoaded', async () => {
       await initDB();
       photosList = await loadPhotosFromDB();
       
-      // Ensure orientation flag exists on loaded items
       for (let p of photosList) {
         if (p.portrait === undefined) {
           p.portrait = await isPortrait(p.dataUrl);
@@ -826,6 +876,7 @@
       initScreensaverQueue();
       initSparkleCanvas();
       buildEmojiModalPicker();
+      checkNightMode();
 
       if (photosList.length > 0) {
         startScreensaver();
@@ -858,7 +909,7 @@
             existingHashes.add(fileHash);
 
             const photoObj = {
-              id: 'img_' + Date.now + '_' + Math.random().toString(36).substr(2, 4),
+              id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
               dataUrl: res.dataUrl,
               portrait: res.portrait,
               hash: fileHash,
@@ -956,6 +1007,7 @@
       if (activeScreensaverPool.length === 0) return;
 
       document.getElementById('empty-state').style.display = 'none';
+      checkNightMode();
 
       if (shuffledIndices.length !== activeScreensaverPool.length) {
         initScreensaverQueue();
@@ -988,7 +1040,6 @@
         contentWrap.innerHTML = '';
 
         if (photo.portrait) {
-          // Find up to 2 other portrait photos to make 3 side-by-side
           let portraitPool = activeScreensaverPool.filter(p => p.portrait && p.id !== photo.id);
           portraitPool.sort(() => Math.random() - 0.5);
           
@@ -1005,7 +1056,6 @@
 
           contentWrap.appendChild(triptychDiv);
         } else {
-          // Single landscape photo
           const singleImg = document.createElement('img');
           singleImg.className = 'saver-single-img';
           singleImg.src = photo.dataUrl;
