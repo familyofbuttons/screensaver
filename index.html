@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
   <title>Kitchen Family Photo Hub</title>
+  <link rel="manifest" href="./manifest.json">
   <style>
     :root {
       --bg: #0b0f19;
@@ -799,7 +800,6 @@
     function displayCurrentPhoto() {
       if (activeScreensaverPool.length === 0) return;
       
-      // True Random Screensaver Selection
       currentPhotoIdx = Math.floor(Math.random() * activeScreensaverPool.length);
       const photo = activeScreensaverPool[currentPhotoIdx];
       const img = document.getElementById('photo-img');
@@ -1045,9 +1045,8 @@
     let currentGamePlayer = 'Bee';
     let currentGameGrid = '12x10';
 
-    /* Daily Seeded Random Generator for Grid Rotation */
     function getDailySeededRandom() {
-      const today = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+      const today = new Date().toISOString().slice(0, 10);
       let hash = 0;
       for (let i = 0; i < today.length; i++) {
         hash = (hash << 5) - hash + today.charCodeAt(i);
@@ -1076,7 +1075,6 @@
       gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
       gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-      // Daily Rotating Shuffle based on Date Seed
       let seed = getDailySeededRandom();
       const seededRandom = () => {
         seed = (seed * 9301 + 49297) % 233280;
