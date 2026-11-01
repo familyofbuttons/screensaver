@@ -354,11 +354,13 @@
     /* --- MEMORY GAME VIEW --- */
     #game-view {
       padding-top: 84px;
+      padding-bottom: 12px;
       width: 100vw;
       height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      overflow: hidden;
     }
 
     .game-top-bar {
@@ -367,43 +369,48 @@
       justify-content: space-between;
       width: 95vw;
       max-width: 1400px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
+      flex-shrink: 0;
     }
 
     .game-info-tag { font-weight: 700; color: var(--accent-gold); font-size: 1.1rem; }
 
     .game-layout {
       display: flex;
-      gap: 20px;
+      gap: 16px;
       width: 95vw;
       max-width: 1400px;
-      height: calc(100vh - 160px);
+      height: calc(100vh - 110px);
+      align-items: stretch;
+      padding-bottom: 10px;
     }
 
     .grid-container {
       flex: 1;
       display: grid;
-      gap: 6px;
+      gap: 4px;
       justify-content: center;
       align-content: center;
+      height: 100%;
+      overflow: hidden;
     }
 
     .memory-card {
       background: rgba(30, 41, 59, 0.9);
-      border-radius: 8px;
+      border-radius: 6px;
       border: 2px solid rgba(255, 255, 255, 0.15);
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      aspect-ratio: 1 / 1;
       width: 100%;
       height: 100%;
+      max-height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .memory-card::before { content: "❓"; font-size: 1.1rem; opacity: 0.4; }
+    .memory-card::before { content: "❓"; font-size: 0.9rem; opacity: 0.4; }
     .memory-card img { width: 100%; height: 100%; object-fit: cover; display: none; }
     .memory-card.flipped img { display: block; }
     .memory-card.flipped::before { display: none; }
@@ -411,19 +418,21 @@
     .memory-card.matched { border-color: var(--accent-green); opacity: 0.45; pointer-events: none; }
 
     .scoreboard-panel {
-      width: 280px;
+      width: 260px;
+      flex-shrink: 0;
       background: var(--panel-bg);
       border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
       overflow-y: auto;
+      max-height: 100%;
     }
 
-    .scoreboard-panel h3 { color: var(--accent-gold); font-size: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px; }
-    .score-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 6px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.08); }
+    .scoreboard-panel h3 { color: var(--accent-gold); font-size: 0.95rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 6px; }
+    .score-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.08); }
 
     /* --- MODALS --- */
     .modal-overlay {
@@ -528,7 +537,6 @@
     <img id="bg-blur-img" src="" alt="Ambient Background">
     <canvas id="sparkle-canvas"></canvas>
 
-    <!-- Top Left Speed Controls -->
     <div class="saver-controls-top-left">
       <button id="speed-slow" class="speed-btn" onclick="setScreensaverSpeed(12000, 'slow')" title="Slow (12s)">></button>
       <button id="speed-med" class="speed-btn active" onclick="setScreensaverSpeed(6000, 'med')" title="Medium (6s)">>></button>
@@ -633,7 +641,7 @@
     let activeScreensaverPool = [];
     let currentPhotoIdx = 0;
     let slideshowTimer = null;
-    let currentSlideInterval = 6000; // default medium (6s)
+    let currentSlideInterval = 6000;
     let idleTimer = null;
     let activeTargetPhotoId = null;
 
@@ -825,7 +833,7 @@
       currentSlideInterval = ms;
       document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(`speed-${speedKey}`).classList.add('active');
-      startScreensaver(); // Restart timer with new interval
+      startScreensaver();
     }
 
     function startScreensaver() {
@@ -1088,17 +1096,6 @@
     let currentGamePlayer = 'Bee';
     let currentGameGrid = '12x10';
 
-    function getDailySeededRandom() {
-      const today = new Date().toISOString().slice(0, 10);
-      let hash = 0;
-      for (let i = 0; i < today.length; i++) {
-        hash = (hash << 5) - hash + today.charCodeAt(i);
-        hash |= 0;
-      }
-      const x = Math.sin(hash++) * 10000;
-      return x - Math.floor(x);
-    }
-
     function startMemoryGame(player, gridVal) {
       currentGamePlayer = player || modalPlayer;
       currentGameGrid = gridVal || document.getElementById('modal-grid-select').value;
@@ -1118,20 +1115,25 @@
       gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
       gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-      let seed = getDailySeededRandom();
-      const seededRandom = () => {
-        seed = (seed * 9301 + 49297) % 233280;
-        return seed / 233280;
-      };
-
-      const shuffledPhotos = [...photosList].sort(() => seededRandom() - 0.5);
-      let deck = [];
-      for (let i = 0; i < totalPairsCount; i++) {
-        const photo = shuffledPhotos[i % shuffledPhotos.length];
-        deck.push(photo);
-        deck.push(photo);
+      // Strict Unique Pool Selection: Randomize all photos first
+      let shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
+      
+      // Select unique photos for the pairs without repeating until pool is exhausted
+      let chosenPhotos = [];
+      while (chosenPhotos.length < totalPairsCount) {
+        if (shuffledPhotos.length === 0) {
+          shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
+        }
+        chosenPhotos.push(shuffledPhotos.pop());
       }
-      deck.sort(() => seededRandom() - 0.5);
+
+      // Create pairs and shuffle the final board deck
+      let deck = [];
+      chosenPhotos.forEach(photo => {
+        deck.push(photo);
+        deck.push(photo);
+      });
+      deck.sort(() => Math.random() - 0.5);
 
       deck.forEach((photo) => {
         const card = document.createElement('div');
@@ -1165,7 +1167,7 @@
 
           if (matchedPairsCount === totalPairsCount) {
             saveScore(moveCount);
-            setTimeout(() => alert(`🎉 Great job ${currentGamePlayer}! You cleared today's puzzle in ${moveCount} moves!`), 300);
+            setTimeout(() => alert(`🎉 Great job ${currentGamePlayer}! You cleared the board in ${moveCount} moves!`), 300);
           }
         } else {
           setTimeout(() => {
