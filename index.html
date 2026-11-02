@@ -114,6 +114,7 @@
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.15); }
     .btn-green { background: var(--accent-green); color: #0f172a; }
     .btn-purple { background: var(--accent-purple); color: #fff; }
+    .btn-red { background: var(--accent-red); color: #fff; }
 
     select.btn-secondary { color: var(--text); background-color: rgba(15, 23, 42, 0.95); }
     select.btn-secondary option { background-color: #0f172a; color: var(--text); }
@@ -318,8 +319,8 @@
       z-index: 10;
     }
 
-    /* --- CAPTION ROYALE PARTY GAME VIEW --- */
-    #caption-royale-view {
+    /* --- ROAST BATTLE GAME VIEW --- */
+    #roast-game-view {
       padding-top: 84px;
       padding-bottom: 20px;
       width: 100vw;
@@ -331,51 +332,62 @@
       background: var(--bg);
     }
 
-    .royale-container {
+    .roast-container {
       width: 95vw;
-      max-width: 1200px;
+      max-width: 1100px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
       padding-bottom: 40px;
     }
 
-    .royale-arena {
-      display: grid;
-      grid-template-columns: 1fr 360px 1fr;
-      gap: 24px;
-      width: 100%;
+    .roast-arena {
+      display: flex;
+      flex-direction: column;
       align-items: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 700px;
+      background: var(--panel-bg);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
     }
 
-    .royale-photo {
+    .roast-photo {
       width: 100%;
-      max-height: 420px;
+      max-height: 380px;
       object-fit: contain;
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      border-radius: 14px;
       border: 2px solid rgba(255,255,255,0.2);
     }
 
-    .royale-card {
-      background: rgba(255, 255, 255, 0.08);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      padding: 18px;
+    .roast-card-deck {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .roast-card-option {
+      background: rgba(15, 23, 42, 0.9);
+      border: 2px solid rgba(239, 68, 68, 0.4);
+      border-radius: 14px;
+      padding: 16px 20px;
       font-size: 1.1rem;
       font-style: italic;
+      font-weight: 700;
+      color: #f8fafc;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      min-height: 90px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
-    .royale-card:hover {
-      background: rgba(56, 189, 248, 0.2);
-      border-color: var(--accent-blue);
+    .roast-card-option:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: var(--accent-red);
       transform: translateY(-2px);
     }
 
@@ -546,7 +558,7 @@
 
       <button class="btn" onclick="document.getElementById('file-input').click()">+ Select Photos</button>
       <button class="btn btn-secondary" onclick="toggleView('main')">📸 Gallery</button>
-      <button class="btn btn-purple" onclick="openRoyaleSetup()">👑 Caption Royale</button>
+      <button class="btn btn-red" onclick="startRoastBattle()">🔥 Roast Battle</button>
       <button class="btn btn-secondary" onclick="openGameSetupModal()">🎮 Memory Game</button>
       <button class="btn btn-secondary" onclick="toggleView('saver')">🖼️ Screensaver</button>
       <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
@@ -595,33 +607,11 @@
     <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 
-  <!-- Caption Royale Party Game View -->
-  <div id="caption-royale-view" class="screen hidden">
-    <div class="royale-container">
-      <h2 style="color:var(--accent-gold);">👑 Caption Royale</h2>
-      <div id="royale-main-content" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-    </div>
-  </div>
-
-  <!-- Caption Royale Setup Modal -->
-  <div id="royale-setup-modal" class="modal-overlay hidden">
-    <div class="modal-box">
-      <h2>👑 Start Caption Royale</h2>
-      <p style="color:var(--text-muted); font-size:0.9rem;">Select participating players:</p>
-      
-      <div class="setting-group">
-        <div class="player-pills-row" id="royale-players-select-row">
-          <div class="player-pill active" onclick="toggleRoyalePlayer('Bee', this)">Bee</div>
-          <div class="player-pill active" onclick="toggleRoyalePlayer('Les', this)">Les</div>
-          <div class="player-pill active" onclick="toggleRoyalePlayer('Chrissy', this)">Chrissy</div>
-          <div class="player-pill active" onclick="toggleRoyalePlayer('Casey', this)">Casey</div>
-        </div>
-      </div>
-
-      <div style="display:flex; gap:12px; margin-top:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="closeRoyaleSetup()">Cancel</button>
-        <button class="btn btn-purple" style="flex:1;" onclick="startRoyaleRound()">Start Game ▶️</button>
-      </div>
+  <!-- Roast Battle Game View -->
+  <div id="roast-game-view" class="screen hidden">
+    <div class="roast-container">
+      <h2 style="color:var(--accent-red);">🔥 Adult Roast Battle (CAH Edition)</h2>
+      <div id="roast-main-content" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
     </div>
   </div>
 
@@ -730,22 +720,24 @@
     let manualNightOverride = null;
 
     const PLAYERS = ['Bee', 'Les', 'Chrissy', 'Casey'];
-    let royaleActivePlayers = ['Bee', 'Les', 'Chrissy', 'Casey'];
-    let royalePhoto = null;
-    let royaleSubmissions = [];
-    let royaleSubmitIndex = 0;
 
-    const QUICK_QUIPS = [
-      "Zero thoughts, head completely empty",
-      "When the WiFi drops for 2 seconds",
-      "I regret nothing",
-      "Day 47: They still suspect nothing",
-      "Absolutely peak chaotic energy",
-      "Do I look like I know what's going on?",
-      "Nailed it.",
-      "Send help immediately",
-      "Just vibing in the chaos",
-      "Bro really thought he did something"
+    const ROAST_DECK = [
+      "Looking like a thumb with a wig on it.",
+      "The kind of face that makes birth control look like a fantastic idea.",
+      "Zero thoughts in that head, just dial-up internet noises and regret.",
+      "Looking like you smell faintly of boiled hotdog water and bad decisions.",
+      "An absolute waste of good oxygen.",
+      "Looking like you argue with cashiers about expired coupons.",
+      "The human embodiment of a wet pair of socks.",
+      "Looking like your main hobby is ruining family gatherings.",
+      "Fucking embarrassing energy right here.",
+      "Looking like you get rejected by dating apps for being too depressing.",
+      "Absolute donkey-brained behavior.",
+      "Looking like you explain board game rules uninvited at parties.",
+      "The exact face of someone who eats string cheese with a fork.",
+      "Looking like you owe your dealer drug money from 2014.",
+      "Pure unadulterated garbage disposal aesthetic.",
+      "Looking like you peaked in middle school detention."
     ];
 
     const EMOJI_PALETTE = ['❤️', '😂', '😍', '🔥', '🎉', '👑', '🥳', '🍕', '☕️', '🐶', '🐱', '🌟', '👍', '👏', '🥳', '🍦', '🏆', '🌈', '💡', '🍔', '🍿', '🎈', '🎁', '🚀'];
@@ -1125,126 +1117,48 @@
       }, 150);
     }
 
-    // --- CAPTION ROYALE PARTY GAME LOGIC ---
-    function openRoyaleSetup() {
+    // --- ROAST BATTLE GAME LOGIC ---
+    function startRoastBattle() {
       if (photosList.length === 0) { alert("Please upload some photos first!"); return; }
-      document.getElementById('royale-setup-modal').classList.remove('hidden');
+      toggleView('roast');
+      loadNewRoastRound();
     }
 
-    function closeRoyaleSetup() {
-      document.getElementById('royale-setup-modal').classList.add('hidden');
-    }
-
-    function toggleRoyalePlayer(name, el) {
-      el.classList.toggle('active');
-      if (royaleActivePlayers.includes(name)) {
-        royaleActivePlayers = royaleActivePlayers.filter(p => p !== name);
-      } else {
-        royaleActivePlayers.push(name);
-      }
-    }
-
-    function startRoyaleRound() {
-      if (royaleActivePlayers.length < 2) {
-        alert("Please select at least 2 players!");
-        return;
-      }
-      closeRoyaleSetup();
-      toggleView('royale');
-
-      royalePhoto = photosList[Math.floor(Math.random() * photosList.length)];
-      royaleSubmissions = [];
-      royaleSubmitIndex = 0;
-
-      renderRoyaleSubmissionStep();
-    }
-
-    function renderRoyaleSubmissionStep() {
-      const container = document.getElementById('royale-main-content');
-      if (royaleSubmitIndex < royaleActivePlayers.length) {
-        const currentPlayer = royaleActivePlayers[royaleSubmitIndex];
-        let shuffledQuips = [...QUICK_QUIPS].sort(() => Math.random() - 0.5).slice(0, 4);
-
-        container.innerHTML = `
-          <div class="modal-box" style="max-width:520px; text-align:center;">
-            <h3 style="color:var(--accent-gold);">Pass to: <span style="color:#fff; font-size:1.4rem;">${currentPlayer}</span></h3>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Close eyes or turn around while ${currentPlayer} picks or writes their caption!</p>
-            
-            <img src="${royalePhoto.dataUrl}" style="width:100%; max-height:200px; object-fit:contain; border-radius:12px; margin:10px 0;">
-            
-            <div class="setting-group" style="text-align:left;">
-              <label>Type or pick a quick quip:</label>
-              <input type="text" id="royale-caption-input" class="btn btn-secondary" style="width:100%; text-align:left; padding:10px; font-size:1rem;" placeholder="Type something funny...">
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
-              <p style="font-size:0.8rem; color:var(--accent-gold);">Or tap a quick meme quote:</p>
-              ${shuffledQuips.map(q => `<button class="btn btn-secondary" style="font-size:0.85rem; padding:6px 10px; justify-content:flex-start;" onclick="document.getElementById('royale-caption-input').value='${q}'">${q}</button>`).join('')}
-            </div>
-
-            <button class="btn btn-purple" style="width:100%; margin-top:14px;" onclick="submitRoyaleCaption('${currentPlayer}')">Lock In Caption 🔒</button>
-          </div>
-        `;
-      } else {
-        renderRoyaleVotingArena();
-      }
-    }
-
-    function submitRoyaleCaption(player) {
-      const txt = document.getElementById('royale-caption-input').value.trim();
-      if (!txt) { alert("Please enter or select a caption!"); return; }
-      royaleSubmissions.push({ text: txt, author: player });
-      royaleSubmitIndex++;
-      renderRoyaleSubmissionStep();
-    }
-
-    function renderRoyaleVotingArena() {
-      const container = document.getElementById('royale-main-content');
-      let shuffled = [...royaleSubmissions].sort(() => Math.random() - 0.5);
-
-      let cardsHTML = '';
-      shuffled.forEach((sub) => {
-        cardsHTML += `
-          <div class="royale-card" onclick="revealRoyaleWinner('${sub.author}', '${sub.text}')">
-            <span>"${sub.text}"</span>
-          </div>
-        `;
-      });
+    function loadNewRoastRound() {
+      const container = document.getElementById('roast-main-content');
+      const randomPhoto = photosList[Math.floor(Math.random() * photosList.length)];
+      let dealtCards = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 3);
 
       container.innerHTML = `
-        <p style="color:var(--text-muted); margin-bottom:14px; text-align:center;">Look at the photo in the center. Tap the caption you think is the funniest!</p>
-        
-        <div class="royale-arena">
-          <div style="display:flex; flex-direction:column; gap:14px;">
-            ${cardsHTML.slice(0, Math.ceil(cardsHTML.length / 2))}
-          </div>
-
-          <div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
-            <img src="${royalePhoto.dataUrl}" class="royale-photo">
-            <button class="btn btn-secondary" onclick="openRoyaleSetup()">🔄 New Round</button>
-          </div>
-
-          <div style="display:flex; flex-direction:column; gap:14px;">
-            ${cardsHTML.slice(Math.ceil(cardsHTML.length / 2))}
-          </div>
-        </div>
-      `;
-    }
-
-    function revealRoyaleWinner(author, text) {
-      const container = document.getElementById('royale-main-content');
-      container.innerHTML = `
-        <div class="modal-box" style="max-width:500px; text-align:center;">
-          <h2 style="color:var(--accent-gold);">🏆 Round Winner Crowned!</h2>
-          <p style="font-size:1.1rem; font-style:italic; margin:10px 0;">"${text}"</p>
-          <p style="color:var(--accent-purple); font-size:1.3rem; font-weight:bold;">Written by: ${author}</p>
+        <div class="roast-arena">
+          <img src="${randomPhoto.dataUrl}" class="roast-photo">
           
-          <div style="display:flex; gap:10px; margin-top:16px;">
-            <button class="btn btn-purple" style="flex:1;" onclick="openRoyaleSetup()">Play Again ▶️</button>
-            <button class="btn btn-secondary" style="flex:1;" onclick="toggleView('main')">Exit to Gallery</button>
+          <p style="color:var(--accent-red); font-weight:bold; font-size:0.95rem; margin-top:4px;">🔥 Draw 3 CAH Roast Cards & Read the Funniest:</p>
+          
+          <div class="roast-card-deck">
+            ${dealtCards.map(card => `
+              <div class="roast-card-option" onclick="selectRoastCard(this)">
+                "${card}"
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="display:flex; gap:12px; width:100%; margin-top:10px;">
+            <button class="btn btn-red" style="flex:1;" onclick="loadNewRoastRound()">🎲 Deal Next Round</button>
+            <button class="btn btn-secondary" onclick="toggleView('main')">Exit</button>
           </div>
         </div>
       `;
+    }
+
+    function selectRoastCard(el) {
+      document.querySelectorAll('.roast-card-option').forEach(c => {
+        c.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+        c.style.background = 'rgba(15, 23, 42, 0.9)';
+      });
+      el.style.borderColor = 'var(--accent-gold)';
+      el.style.background = 'rgba(251, 191, 36, 0.2)';
+      showToast("🔥 Brutal pick selected!");
     }
 
     function renderGallery() {
@@ -1391,11 +1305,10 @@
       document.getElementById('screensaver-view').classList.add('hidden');
       document.getElementById('main-view').classList.add('hidden');
       document.getElementById('game-view').classList.add('hidden');
-      document.getElementById('caption-royale-view').classList.add('hidden');
+      document.getElementById('roast-game-view').classList.add('hidden');
       closeLightbox();
       closeGameSetupModal();
       closeEmojiModal();
-      closeRoyaleSetup();
 
       if (view === 'saver') {
         document.getElementById('screensaver-view').classList.remove('hidden');
@@ -1403,8 +1316,8 @@
       } else if (view === 'game') {
         document.getElementById('game-view').classList.remove('hidden');
         if (slideshowTimer) clearInterval(slideshowTimer);
-      } else if (view === 'royale') {
-        document.getElementById('caption-royale-view').classList.remove('hidden');
+      } else if (view === 'roast') {
+        document.getElementById('roast-game-view').classList.remove('hidden');
         if (slideshowTimer) clearInterval(slideshowTimer);
       } else {
         document.getElementById('main-view').classList.remove('hidden');
