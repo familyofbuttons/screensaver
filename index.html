@@ -19,6 +19,7 @@
       --accent-green: #22c55e;
       --accent-red: #ef4444;
       --accent-purple: #a855f7;
+      --spotify-green: #1db954;
       --text: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -47,7 +48,8 @@
     body.night-mode { filter: brightness(0.12) contrast(1.1); }
     body.night-mode .saver-controls-top-right,
     body.night-mode .saver-controls-top-left,
-    body.night-mode .game-prompt-badge { filter: brightness(8.5); }
+    body.night-mode .game-prompt-badge,
+    body.night-mode .spotify-widget { filter: brightness(8.5); }
 
     .screen {
       position: absolute;
@@ -115,11 +117,12 @@
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.15); }
     .btn-green { background: var(--accent-green); color: #0f172a; }
     .btn-purple { background: var(--accent-purple); color: #fff; }
+    .btn-spotify { background: var(--spotify-green); color: #0f172a; }
 
     select.btn-secondary { color: var(--text); background-color: rgba(15, 23, 42, 0.95); }
     select.btn-secondary option { background-color: #0f172a; color: var(--text); }
 
-    /* --- SCREENSAVER VIEW & DYNAMIC PROMPT BADGE --- */
+    /* --- SCREENSAVER VIEW & SPOTIFY WIDGET --- */
     #screensaver-view { background: #0b0f19; z-index: 200; overflow: hidden; }
 
     #bg-blur-img {
@@ -210,6 +213,50 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.6);
     }
+
+    /* Spotify Pinned Mini-Widget */
+    .spotify-widget {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(29, 185, 84, 0.4);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 20px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 220;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .spotify-art {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #1e293b;
+    }
+
+    .spotify-meta { display: flex; flex-direction: column; max-width: 160px; }
+    .spotify-title { font-size: 0.85rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .spotify-artist { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .spotify-controls-row { display: flex; gap: 6px; align-items: center; }
+    .spotify-btn {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .spotify-btn:hover { color: var(--spotify-green); }
 
     .game-prompt-badge {
       position: absolute;
@@ -333,7 +380,7 @@
       z-index: 10;
     }
 
-    /* --- WEEKLY CONTEST DECK OF CARDS HISTORY --- */
+    /* --- WEEKLY CONTEST 2-COLUMN LAYOUT --- */
     #caption-contest-view {
       padding-top: 84px;
       padding-bottom: 20px;
@@ -346,22 +393,34 @@
       background: var(--bg);
     }
 
+    .contest-layout-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      width: 92vw;
+      max-width: 1300px;
+      align-items: start;
+    }
+
+    .contest-main-col {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
     .contest-card {
       background: var(--panel-bg);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 20px;
-      width: 90vw;
-      max-width: 900px;
       padding: 24px;
       display: flex;
       gap: 24px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-      margin-bottom: 20px;
     }
 
     .contest-img {
-      width: 340px;
-      max-height: 400px;
+      width: 300px;
+      max-height: 360px;
       object-fit: contain;
       border-radius: 14px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
@@ -393,37 +452,47 @@
     .vote-item:hover { background: rgba(56, 189, 248, 0.15); border-color: var(--accent-blue); }
     .vote-item.disabled { opacity: 0.5; pointer-events: none; }
 
+    /* Right Column Leaderboard Panel */
+    .contest-leaderboard-col {
+      background: var(--panel-bg);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      position: sticky;
+      top: 0;
+    }
+
     /* Deck of Cards History Container */
     .deck-history-section {
-      width: 90vw;
-      max-width: 900px;
-      margin-top: 10px;
-      padding-bottom: 40px;
+      width: 100%;
     }
 
     .deck-container {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-top: 12px;
+      gap: 14px;
     }
 
     .history-pill-card {
       background: var(--panel-bg);
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 30px;
-      padding: 16px 24px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
       position: relative;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
       backdrop-filter: blur(10px);
     }
 
     .history-pill-img {
-      width: 80px;
-      height: 80px;
+      width: 65px;
+      height: 65px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid var(--accent-gold);
@@ -431,18 +500,18 @@
     }
 
     .history-pill-content { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-    .history-pill-title { font-size: 0.85rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .history-pill-caption { font-size: 1.05rem; font-style: italic; color: #fff; }
+    .history-pill-title { font-size: 0.8rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .history-pill-caption { font-size: 0.95rem; font-style: italic; color: #fff; }
 
     .history-winner-badge {
       position: absolute;
       top: -10px;
-      right: 24px;
+      right: 20px;
       background: linear-gradient(135deg, #fbbf24, #d97706);
       color: #0f172a;
-      padding: 4px 14px;
-      border-radius: 14px;
-      font-size: 0.8rem;
+      padding: 3px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
       font-weight: 800;
       box-shadow: 0 4px 10px rgba(251, 191, 36, 0.4);
       display: flex;
@@ -640,6 +709,20 @@
       <button class="saver-icon-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
     </div>
     
+    <!-- Option 2 Spotify Mini-Player Widget -->
+    <div class="spotify-widget">
+      <img id="spotify-album-art" class="spotify-art" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=100&h=100&fit=crop" alt="Album Art">
+      <div class="spotify-meta">
+        <span id="spotify-track-title" class="spotify-title">Kitchen Beats</span>
+        <span id="spotify-artist-name" class="spotify-artist">Spotify Connected</span>
+      </div>
+      <div class="spotify-controls-row">
+        <button class="spotify-btn" onclick="spotifyPrev()" title="Previous">⏮️</button>
+        <button class="spotify-btn" id="spotify-play-pause-btn" onclick="spotifyTogglePlay()" title="Play/Pause">▶️</button>
+        <button class="spotify-btn" onclick="spotifyNext()" title="Next">⏭️</button>
+      </div>
+    </div>
+
     <div id="game-prompt-badge" class="game-prompt-badge" onclick="openCaptionContestView()">
       <span id="prompt-icon">🏆</span>
       <span id="game-prompt-text">Caption Leaderboard</span>
@@ -666,14 +749,26 @@
     <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 
-  <!-- Weekly Caption Contest View -->
+  <!-- Weekly Caption Contest 2-Column View -->
   <div id="caption-contest-view" class="screen hidden">
     <h2 style="color:var(--accent-gold); margin-bottom:16px;">🏆 Weekly Caption Contest</h2>
-    <div id="contest-container" class="contest-card"></div>
 
-    <div class="deck-history-section">
-      <h3 style="color:var(--accent-gold); margin-bottom:12px;">📜 Previous Weeks History</h3>
-      <div id="deck-history-container" class="deck-container"></div>
+    <div class="contest-layout-grid">
+      <!-- Left / Main Column: Active Card & History Deck -->
+      <div class="contest-main-col">
+        <div id="contest-container" class="contest-card" style="width:100%;"></div>
+
+        <div class="deck-history-section">
+          <h3 style="color:var(--accent-gold); margin-bottom:12px;">📜 Previous Weeks History</h3>
+          <div id="deck-history-container" class="deck-container"></div>
+        </div>
+      </div>
+
+      <!-- Right Column: Permanent Leaderboard -->
+      <div class="contest-leaderboard-col">
+        <h3 style="color:var(--accent-purple); font-size:1.1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">👑 Leaderboard Standings</h3>
+        <div id="contest-right-scoreboard" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
     </div>
   </div>
 
@@ -789,7 +884,17 @@
     let selectedPhotoIds = new Set();
     let isSelectionMode = false;
     let manualNightOverride = null;
-    let testDayOverride = null; // 'Submission', 'Saturday', 'Sunday', or null
+    let testDayOverride = null; 
+
+    // Spotify Widget State Simulation
+    let isSpotifyPlaying = false;
+    function spotifyTogglePlay() {
+      isSpotifyPlaying = !isSpotifyPlaying;
+      document.getElementById('spotify-play-pause-btn').innerText = isSpotifyPlaying ? '⏸️' : '▶️';
+      showToast(isSpotifyPlaying ? "Playing Spotify Audio" : "Paused Spotify Audio");
+    }
+    function spotifyNext() { showToast("Skipped to next track"); }
+    function spotifyPrev() { showToast("Returned to previous track"); }
 
     const PLAYERS = ['Bee', 'Les', 'Chrissy', 'Casey'];
     const EMOJI_PALETTE = ['❤️', '😂', '😍', '🔥', '🎉', '👑', '🥳', '🍕', '☕️', '🐶', '🐱', '🌟', '👍', '👏', '🥳', '🍦', '🏆', '🌈', '💡', '🍔', '🍿', '🎈', '🎁', '🚀'];
@@ -939,7 +1044,7 @@
     }
     setInterval(checkNightMode, 60000);
 
-    // --- UNIQUE WEEKLY CAPTION CONTEST LOGIC ---
+    // --- WEEKLY CONTEST LOGIC ---
     function getWeekKey() {
       const now = new Date();
       const onejan = new Date(now.getFullYear(), 0, 1);
@@ -971,7 +1076,6 @@
         return photosList.find(p => p.id === state.photoId) || photosList[0];
       }
 
-      // Gather all photo IDs that have already been used in past weeks
       const usedPhotoIds = new Set();
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
@@ -983,16 +1087,13 @@
         }
       }
 
-      // Filter available unused photos
       let available = photosList.filter(p => !usedPhotoIds.has(p.id));
 
       if (available.length === 0) {
-        // Ran out of images! Show popup
         document.getElementById('add-photos-modal').classList.remove('hidden');
         return photosList[0];
       }
 
-      // Pick a random unused photo
       const chosen = available[Math.floor(Math.random() * available.length)];
       state.photoId = chosen.id;
       saveContestState(state);
@@ -1012,11 +1113,11 @@
 
       if (day >= 1 && day <= 5 && !state.finalized) {
         promptIcon.innerText = '🎮';
-        promptText.innerText = testDayOverride ? "[TEST] Enter Caption of the Week!" : "Enter Caption of the Week!";
+        promptText.innerText = testDayOverride ? "[TEST] Enter Caption!" : "Enter Caption of the Week!";
         badge.classList.add('wobbling');
       } else if (day === 6 && !state.finalized) {
         promptIcon.innerText = '🗳️';
-        promptText.innerText = testDayOverride ? "[TEST] Saturday Caption Voting!" : "Saturday Caption Voting!";
+        promptText.innerText = testDayOverride ? "[TEST] Voting Open!" : "Saturday Caption Voting!";
         badge.classList.add('wobbling');
       } else {
         promptIcon.innerText = '🏆';
@@ -1050,8 +1151,8 @@
         <img class="contest-img" src="${photo.dataUrl}">
         <div class="contest-body">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>Week ${getWeekKey()} Contest ${testDayOverride ? `(Test: ${testDayOverride})` : ''}</h3>
-            <span style="color:var(--accent-gold); font-weight:bold;">${phaseLabel}</span>
+            <h3 style="color:var(--accent-gold);">Contest Board ${testDayOverride ? `(Test: ${testDayOverride})` : ''}</h3>
+            <span style="color:var(--accent-blue); font-size:0.9rem; font-weight:bold;">${phaseLabel}</span>
           </div>
           
           <div class="setting-group">
@@ -1067,6 +1168,7 @@
 
       renderContestInteractiveArea(photo, state);
       renderDeckHistory();
+      renderRightLeaderboard();
     }
 
     function setContestPlayer(p) {
@@ -1079,14 +1181,10 @@
       const day = getSimulatedDay();
 
       if (state.finalized || day === 0) {
-        const scores = JSON.parse(localStorage.getItem('coyla_caption_scores') || '{}');
         area.innerHTML = `
-          <div style="background:rgba(168,85,247,0.15); border:1px solid var(--accent-purple); padding:16px; border-radius:12px;">
-            <h4 style="color:var(--accent-purple); font-size:1.1rem; margin-bottom:8px;">👑 Caption Contest Leaderboard</h4>
-            ${state.winner ? `<p style="color:var(--accent-green); margin-bottom:10px;"><strong>This Week's Winner:</strong> ${state.winner} ("${state.captions[state.winner] || 'Default win'}")</p>` : ''}
-            <div style="display:flex; flex-direction:column; gap:6px;">
-              ${PLAYERS.map(p => `<div style="display:flex; justify-content:space-between; font-size:0.9rem; border-bottom:1px dashed rgba(255,255,255,0.1); padding:4px 0;"><span>${p}</span><span style="color:var(--accent-gold); font-weight:bold;">${scores[p] || 0} pts</span></div>`).join('')}
-            </div>
+          <div style="background:rgba(34,197,94,0.15); border:1px solid var(--accent-green); padding:16px; border-radius:12px; text-align:center;">
+            <h4 style="color:var(--accent-green); font-size:1.1rem;">👑 Winner Crowned!</h4>
+            ${state.winner ? `<p style="margin-top:6px; font-style:italic;">"${state.captions[state.winner] || 'Default win'}" — <strong>${state.winner}</strong></p>` : ''}
           </div>
         `;
         return;
@@ -1102,7 +1200,6 @@
         return;
       }
 
-      // Monday – Friday: Submission Phase
       if (day >= 1 && day <= 5) {
         const hasSubmitted = !!state.captions[modalPlayer];
         area.innerHTML = `
@@ -1112,9 +1209,7 @@
           <textarea id="caption-input-text" class="caption-input-box" placeholder="Type something funny...">${state.captions[modalPlayer] || ''}</textarea>
           <button class="btn btn-green" style="margin-top:10px; width:100%;" onclick="submitCaption()">Save Caption 💬</button>
         `;
-      } 
-      // Saturday: Voting Phase
-      else if (day === 6) {
+      } else if (day === 6) {
         const hasVoted = !!state.votes[modalPlayer];
         area.innerHTML = `
           <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:8px;">
@@ -1135,19 +1230,32 @@
       }
     }
 
-    // --- DECK OF CARDS HISTORY RENDERER ---
+    function renderRightLeaderboard() {
+      const boardContainer = document.getElementById('contest-right-scoreboard');
+      if (!boardContainer) return;
+      boardContainer.innerHTML = '';
+      const scores = JSON.parse(localStorage.getItem('coyla_caption_scores') || '{}');
+
+      PLAYERS.forEach(player => {
+        const pts = scores[player] || 0;
+        const row = document.createElement('div');
+        row.className = 'score-row';
+        row.innerHTML = `<span>${player}</span><span style="color:var(--accent-purple); font-weight:bold;">${pts} pts</span>`;
+        boardContainer.appendChild(row);
+      });
+    }
+
     function renderDeckHistory() {
       const container = document.getElementById('deck-history-container');
       if (!container) return;
       container.innerHTML = '';
 
-      // Collect all past weekly contest keys from localStorage
       let contestKeys = [];
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
         if (k && k.startsWith('contest_')) contestKeys.push(k);
       }
-      contestKeys.sort().reverse(); // Newest first
+      contestKeys.sort().reverse();
 
       if (contestKeys.length === 0) {
         container.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem;">No previous weeks recorded yet.</p>`;
@@ -1161,8 +1269,7 @@
 
           const photoObj = photosList.find(p => p.id === data.photoId);
           const imgUrl = photoObj ? photoObj.dataUrl : '';
-          const weekName = k.replace('contest_', '').replace('_', ' ');
-          const winningCaption = (data.winner && data.captions && data.captions[data.winner]) ? data.captions[data.winner] : 'Contest in progress / No winner';
+          const winningCaption = (data.winner && data.captions && data.captions[data.winner]) ? data.captions[data.winner] : 'Contest in progress';
           const winnerName = data.winner ? data.winner : 'Pending';
 
           const pill = document.createElement('div');
@@ -1171,7 +1278,7 @@
             <div class="history-winner-badge">⭐ ${winnerName}</div>
             <img class="history-pill-img" src="${imgUrl}" alt="Week Photo">
             <div class="history-pill-content">
-              <span class="history-pill-title">${weekName} Winner</span>
+              <span class="history-pill-title">Previous Winner</span>
               <span class="history-pill-caption">"${winningCaption}"</span>
             </div>
           `;
@@ -1401,7 +1508,6 @@
         contentWrap.innerHTML = '';
 
         if (photo.portrait) {
-          // Find 2 other UNIQUE portrait photos so all 3 side-by-side are distinct
           let portraitPool = activeScreensaverPool.filter(p => p.portrait && p.id !== photo.id);
           portraitPool.sort(() => Math.random() - 0.5);
           
