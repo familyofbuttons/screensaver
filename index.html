@@ -111,7 +111,6 @@
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.15); }
     .btn-red { background: var(--accent-red); color: #fff; }
 
-    /* Dark Dropdown Styling */
     select.btn-secondary option {
       background-color: #0f172a;
       color: #f8fafc;
@@ -621,10 +620,13 @@
     function openRoastSetupModal() {
       if (photosList.length < 3) { alert("Please upload at least 3 photos first using '+ Select Photos'!"); return; }
       
-      // Ensure game view is active/visible beneath modal
+      // Ensure game view is active and reset container if coming from winner screen
       document.getElementById('screensaver-view').classList.add('hidden');
       document.getElementById('main-view').classList.add('hidden');
       document.getElementById('roast-game-view').classList.remove('hidden');
+      
+      // Reset split board container in case it was showing the winner screen overlay
+      document.getElementById('split-board-container').innerHTML = '';
       
       document.getElementById('roast-setup-modal').classList.remove('hidden');
     }
