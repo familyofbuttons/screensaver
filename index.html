@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kitchen Family Photo Hub</title>
+  <title>Kitchen Family Photo Hub - Roast Battle</title>
   
   <link rel="manifest" href="./manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
@@ -13,7 +13,7 @@
   <style>
     :root {
       --bg: #0b0f19;
-      --panel-bg: rgba(15, 23, 42, 0.92);
+      --panel-bg: rgba(15, 23, 42, 0.95);
       --accent-blue: #38bdf8;
       --accent-gold: #fbbf24;
       --accent-green: #22c55e;
@@ -45,8 +45,6 @@
     }
 
     body.night-mode { filter: brightness(0.12) contrast(1.1); }
-    body.night-mode .saver-controls-top-right,
-    body.night-mode .saver-controls-top-left { filter: brightness(8.5); }
 
     .screen {
       position: absolute;
@@ -113,11 +111,7 @@
     .btn:active { transform: scale(0.95); }
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.15); }
     .btn-green { background: var(--accent-green); color: #0f172a; }
-    .btn-purple { background: var(--accent-purple); color: #fff; }
     .btn-red { background: var(--accent-red); color: #fff; }
-
-    select.btn-secondary { color: var(--text); background-color: rgba(15, 23, 42, 0.95); }
-    select.btn-secondary option { background-color: #0f172a; color: var(--text); }
 
     /* --- SCREENSAVER VIEW --- */
     #screensaver-view { background: #0b0f19; z-index: 200; overflow: hidden; }
@@ -156,416 +150,70 @@
       object-fit: contain;
       border-radius: 12px;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
-      transition: opacity 0.3s ease-in-out;
-    }
-
-    .saver-triptych {
-      display: flex;
-      gap: 20px;
-      width: 100%;
-      height: 100%;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.3s ease-in-out;
-    }
-
-    .saver-triptych img {
-      height: 88dvh;
-      max-width: 30vw;
-      width: auto;
-      object-fit: contain;
-      border-radius: 12px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
     }
 
     .saver-controls-top-left { 
-      position: absolute; 
-      top: 20px; 
-      left: 20px; 
-      display: flex; 
-      gap: 8px; 
-      z-index: 210; 
-      align-items: center; 
-      background: rgba(15, 23, 42, 0.65);
-      padding: 8px 12px;
-      border-radius: 16px;
-      backdrop-filter: blur(12px);
+      position: absolute; top: 20px; left: 20px; display: flex; gap: 8px; z-index: 210; align-items: center; 
+      background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 16px; backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
-
     .saver-controls-top-right { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; align-items: center; z-index: 210; }
 
     .speed-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.9);
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      backdrop-filter: blur(8px);
-      cursor: pointer;
+      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.9);
+      padding: 6px 12px; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
     }
-
     .speed-btn.active { background: rgba(56, 189, 248, 0.4); border-color: var(--accent-blue); color: #fff; }
-    .speed-btn:hover { background: rgba(255, 255, 255, 0.2); }
-
-    .saver-icon-btn {
-      width: 48px;
-      height: 48px;
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 50%;
-      color: #fff;
-      font-size: 1.3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-    }
 
     /* --- GALLERY VIEW --- */
     #main-view {
-      padding-top: 84px;
-      padding-bottom: 20px;
-      width: 100vw;
-      height: 100dvh;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding-top: 84px; padding-bottom: 20px; width: 100vw; height: 100dvh; overflow-y: auto; display: flex; flex-direction: column; align-items: center;
     }
-
-    .gallery-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 90vw;
-      max-width: 1200px;
-      margin-bottom: 16px;
-    }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
-      width: 90vw;
-      max-width: 1200px;
-      padding-bottom: 40px;
-    }
-
-    .photo-card {
-      background: rgba(30, 41, 59, 0.85);
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      cursor: pointer;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    }
-
+    .gallery-toolbar { display: flex; align-items: center; justify-content: space-width; width: 90vw; max-width: 1200px; margin-bottom: 16px; justify-content: space-between; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; width: 90vw; max-width: 1200px; padding-bottom: 40px; }
+    .photo-card { background: rgba(30, 41, 59, 0.85); border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); overflow: hidden; display: flex; flex-direction: column; position: relative; cursor: pointer; }
     .photo-card-img-wrap { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
     .photo-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-
-    .add-reaction-overlay-btn {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 14px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      backdrop-filter: blur(8px);
-      z-index: 15;
-    }
-
-    .photo-checkbox { position: absolute; top: 10px; right: 10px; width: 26px; height: 26px; accent-color: var(--accent-gold); display: none; z-index: 10; }
-    .photo-card.selection-mode .photo-checkbox { display: block; }
-
-    .card-reactions {
-      padding: 8px 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-      background: rgba(15, 23, 42, 0.7);
-      min-height: 38px;
-    }
-
-    .reaction-badge { background: rgba(255, 255, 255, 0.12); padding: 3px 8px; border-radius: 12px; font-size: 0.85rem; }
-
-    .delete-card-btn {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(239, 68, 68, 0.85);
-      color: white;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-    }
+    .delete-card-btn { position: absolute; top: 10px; left: 10px; background: rgba(239, 68, 68, 0.85); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; z-index: 10; }
 
     /* --- ROAST BATTLE GAME VIEW --- */
     #roast-game-view {
-      padding-top: 84px;
-      padding-bottom: 20px;
-      width: 100vw;
-      height: 100dvh;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: var(--bg);
+      padding-top: 90px; padding-bottom: 30px; width: 100vw; height: 100dvh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; background: var(--bg);
     }
-
-    .roast-container {
-      width: 95vw;
-      max-width: 1100px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      padding-bottom: 40px;
-    }
+    .roast-container { width: 95vw; max-width: 800px; display: flex; flex-direction: column; align-items: center; gap: 16px; padding-bottom: 40px; }
+    
+    .score-strip { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; }
+    .score-chip { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.15); padding: 8px 16px; border-radius: 12px; font-weight: bold; display: flex; gap: 8px; }
+    .score-chip.active-turn { border-color: var(--accent-red); background: rgba(239, 68, 68, 0.2); }
 
     .roast-arena {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      width: 100%;
-      max-width: 700px;
-      background: var(--panel-bg);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 20px;
-      padding: 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%;
+      background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 24px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.8);
     }
-
-    .roast-photo {
-      width: 100%;
-      max-height: 380px;
-      object-fit: contain;
-      border-radius: 14px;
-      border: 2px solid rgba(255,255,255,0.2);
-    }
-
-    .roast-card-deck {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
-    }
-
+    .roast-photo { width: 100%; max-height: 340px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.15); }
+    
+    .roast-card-deck { display: flex; flex-direction: column; gap: 10px; width: 100%; }
     .roast-card-option {
-      background: rgba(15, 23, 42, 0.9);
-      border: 2px solid rgba(239, 68, 68, 0.4);
-      border-radius: 14px;
-      padding: 16px 20px;
-      font-size: 1.15rem;
-      font-style: italic;
-      font-weight: 700;
-      color: #f8fafc;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      background: rgba(15, 23, 42, 0.9); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 14px;
+      padding: 16px 20px; font-size: 1.15rem; font-style: italic; font-weight: 700; color: #f8fafc; text-align: center; cursor: pointer; transition: all 0.2s ease;
     }
-    .roast-card-option:hover {
-      background: rgba(239, 68, 68, 0.25);
-      border-color: var(--accent-red);
-      transform: translateY(-2px);
-    }
+    .roast-card-option:hover { background: rgba(239, 68, 68, 0.25); border-color: var(--accent-red); transform: translateY(-2px); }
 
-    .scoreboard-strip {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      width: 100%;
-      max-width: 700px;
-      flex-wrap: wrap;
-    }
-
-    .player-score-badge {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 8px 16px;
-      border-radius: 14px;
-      font-weight: bold;
-      font-size: 0.95rem;
-      display: flex;
-      gap: 8px;
-    }
-    .player-score-badge.turn-active {
-      border-color: var(--accent-red);
-      background: rgba(239, 68, 68, 0.25);
-      color: #fff;
-    }
-
-    /* --- MEMORY GAME VIEW --- */
-    #game-view {
-      padding-top: 84px;
-      padding-bottom: 12px;
-      width: 100vw;
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow: hidden;
-    }
-
-    .game-top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 95vw;
-      max-width: 1400px;
-      margin-bottom: 8px;
-      flex-shrink: 0;
-    }
-
-    .game-info-tag { font-weight: 700; color: var(--accent-gold); font-size: 1.1rem; }
-
-    .game-layout {
-      display: flex;
-      gap: 16px;
-      width: 95vw;
-      max-width: 1400px;
-      height: calc(100dvh - 110px);
-      align-items: stretch;
-      padding-bottom: 10px;
-    }
-
-    .grid-container {
-      flex: 1;
-      display: grid;
-      gap: 4px;
-      justify-content: center;
-      align-content: center;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .memory-card {
-      background: rgba(30, 41, 59, 0.9);
-      border-radius: 6px;
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .memory-card::before { content: "❓"; font-size: 0.9rem; opacity: 0.4; }
-    .memory-card img { width: 100%; height: 100%; object-fit: cover; display: none; }
-    .memory-card.flipped img { display: block; }
-    .memory-card.flipped::before { display: none; }
-    .memory-card.flipped { border-color: var(--accent-blue); background: #fff; }
-    .memory-card.matched { border-color: var(--accent-green); opacity: 0.45; pointer-events: none; }
-
-    .scoreboard-panel {
-      width: 280px;
-      flex-shrink: 0;
-      background: var(--panel-bg);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      overflow-y: auto;
-    }
-
-    .scoreboard-panel h3 { color: var(--accent-gold); font-size: 0.95rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 6px; }
-    .score-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.08); }
+    .rating-buttons-row { display: flex; gap: 12px; width: 100%; margin-top: 10px; }
+    .rate-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 800; font-size: 1rem; cursor: pointer; color: #fff; }
 
     /* --- MODALS --- */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(12px);
-      z-index: 300;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-overlay.hidden { display: none !important; opacity: 0; pointer-events: none; }
-
-    .modal-box {
-      background: var(--panel-bg);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 24px;
-      padding: 24px;
-      width: 90vw;
-      max-width: 480px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.8);
-    }
-
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 300; display: flex; align-items: center; justify-content: center; }
+    .modal-overlay.hidden { display: none !important; }
+    .modal-box { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 24px; width: 90vw; max-width: 440px; display: flex; flex-direction: column; gap: 16px; }
     .modal-box h2 { color: var(--accent-gold); text-align: center; }
 
-    .setting-group { display: flex; flex-direction: column; gap: 8px; }
-    .setting-group label { font-weight: 700; color: var(--text-muted); font-size: 0.9rem; }
+    .player-input-row { display: flex; gap: 8px; margin-bottom: 6px; }
+    .player-input-row input { flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 10px; color: #fff; font-size: 1rem; }
 
-    .player-pills-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .player-pill {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: var(--text);
-      padding: 8px 16px;
-      border-radius: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      flex: 1;
-      text-align: center;
-    }
-    .player-pill.active { background: var(--accent-gold); color: #0f172a; border-color: var(--accent-gold); }
-
-    #lightbox-modal img {
-      max-width: 90vw;
-      max-height: 80vh;
-      object-fit: contain;
-      border-radius: 16px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.9);
-    }
-
-    #status-toast {
-      position: fixed;
-      top: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0284c7;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 12px;
-      font-weight: bold;
-      z-index: 1000;
-      transition: opacity 0.3s ease;
-    }
+    #status-toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #0284c7; color: white; padding: 10px 20px; border-radius: 12px; font-weight: bold; z-index: 1000; transition: opacity 0.3s ease; }
     .toast-hidden { opacity: 0; pointer-events: none; }
-
     #empty-state { text-align: center; padding: 40px; background: var(--panel-bg); border-radius: 24px; max-width: 440px; margin-top: 100px; }
   </style>
 </head>
@@ -580,13 +228,11 @@
     </div>
     <div class="controls">
       <input type="file" id="file-input" accept="image/*" multiple style="display:none;">
-
       <button class="btn" onclick="document.getElementById('file-input').click()">+ Select Photos</button>
       <button class="btn btn-secondary" onclick="toggleView('main')">📸 Gallery</button>
       <button class="btn btn-red" onclick="openRoastSetupModal()">🔥 Roast Game</button>
-      <button class="btn btn-secondary" onclick="openGameSetupModal()">🎮 Memory Game</button>
       <button class="btn btn-secondary" onclick="toggleView('saver')">🖼️ Screensaver</button>
-      <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
+      <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Fullscreen">⛶ Fullscreen</button>
     </div>
   </header>
 
@@ -594,23 +240,13 @@
   <div id="screensaver-view" class="screen">
     <img id="bg-blur-img" src="" alt="Ambient Background">
     <canvas id="sparkle-canvas"></canvas>
-
     <div class="saver-controls-top-left">
-      <button class="speed-btn" onclick="prevSlide()" title="Previous Image">⏮️ Back</button>
-      <button id="pause-play-btn" class="speed-btn" onclick="togglePauseScreensaver()" title="Pause/Play">⏸️ Pause</button>
-      
-      <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 4px;"></div>
-
-      <button id="speed-slow" class="speed-btn" onclick="setScreensaverSpeed(12000, 'slow')" title="Slow (12s)">></button>
-      <button id="speed-med" class="speed-btn active" onclick="setScreensaverSpeed(6000, 'med')" title="Medium (6s)">>></button>
-      <button id="speed-fast" class="speed-btn" onclick="setScreensaverSpeed(3000, 'fast')" title="Fast (3s)">>>></button>
+      <button class="speed-btn" onclick="prevSlide()">⏮️ Back</button>
+      <button id="pause-play-btn" class="speed-btn" onclick="togglePauseScreensaver()">⏸️ Pause</button>
     </div>
-
     <div class="saver-controls-top-right">
-      <button id="night-mode-toggle-btn" class="saver-icon-btn" onclick="toggleNightModeManual()" title="Toggle Night Mode">🌙</button>
-      <button class="saver-icon-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
+      <button class="speed-btn" onclick="toggleView('main')">✕ Exit</button>
     </div>
-
     <div id="photo-container">
       <div id="empty-state">
         <h2 style="color:var(--accent-gold); margin-bottom:12px;">No Photos Loaded</h2>
@@ -623,11 +259,7 @@
   <!-- Gallery View -->
   <div id="main-view" class="screen hidden">
     <div class="gallery-toolbar">
-      <h2 style="color: var(--accent-gold);">Family Photo Gallery & Banter</h2>
-      <div>
-        <button class="btn btn-secondary" id="toggle-select-mode-btn" onclick="toggleSelectionMode()">☑️ Select Photos</button>
-        <button class="btn btn-green hidden" id="start-custom-saver-btn" onclick="startCustomScreensaver()">▶️ Start Screensaver with Selected</button>
-      </div>
+      <h2 style="color: var(--accent-gold);">Family Photo Gallery</h2>
     </div>
     <div id="gallery-grid" class="gallery-grid"></div>
   </div>
@@ -635,82 +267,28 @@
   <!-- Roast Battle Game View -->
   <div id="roast-game-view" class="screen hidden">
     <div class="roast-container">
-      <h2 style="color:var(--accent-red);">🔥 Roast Battle Game (1-4 Players)</h2>
-      <div id="roast-scoreboard-area" class="scoreboard-strip"></div>
+      <h2 style="color:var(--accent-red);">🔥 Roast Battle Game</h2>
+      <div id="roast-score-strip" class="score-strip"></div>
       <div id="roast-main-content" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
     </div>
   </div>
 
-  <!-- Roast Setup Modal -->
-  <div id="roast-modal" class="modal-overlay hidden">
+  <!-- Roast Setup Modal (1-4 Custom Players) -->
+  <div id="roast-setup-modal" class="modal-overlay hidden">
     <div class="modal-box">
-      <h2>🔥 Start Roast Battle Game</h2>
+      <h2>🔥 Setup Roast Players</h2>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Enter 1 to 4 player names for the game:</p>
       
-      <div class="setting-group">
-        <label>Select Participating Players (1-4):</label>
-        <div class="player-pills-row" id="roast-player-pills">
-          <div class="player-pill active" onclick="toggleRoastPlayer('Bee', this)">Bee</div>
-          <div class="player-pill active" onclick="toggleRoastPlayer('Les', this)">Les</div>
-          <div class="player-pill active" onclick="toggleRoastPlayer('Chrissy', this)">Chrissy</div>
-          <div class="player-pill active" onclick="toggleRoastPlayer('Casey', this)">Casey</div>
-        </div>
+      <div id="player-inputs-container">
+        <div class="player-input-row"><input type="text" class="player-name-input" value="Bee" placeholder="Player 1"></div>
+        <div class="player-input-row"><input type="text" class="player-name-input" value="Les" placeholder="Player 2"></div>
+        <div class="player-input-row"><input type="text" class="player-name-input" value="Chrissy" placeholder="Player 3"></div>
+        <div class="player-input-row"><input type="text" class="player-name-input" value="Casey" placeholder="Player 4"></div>
       </div>
 
       <div style="display:flex; gap:12px; margin-top:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="closeRoastModal()">Cancel</button>
-        <button class="btn btn-red" style="flex:1;" onclick="confirmStartRoastGame()">Start Game 🔥</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Memory Game View -->
-  <div id="game-view" class="screen hidden">
-    <div class="game-top-bar">
-      <div class="game-info-tag">Player: <span id="current-player-display" style="color:#fff;">Bee</span> | Grid: <span id="current-grid-display" style="color:#fff;">12x10</span></div>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn" onclick="openGameSetupModal()">🔄 New Game / Setup</button>
-        <button class="btn btn-secondary" onclick="toggleView('main')">📸 Exit to Gallery</button>
-      </div>
-    </div>
-
-    <div class="game-layout">
-      <div id="grid-container" class="grid-container"></div>
-      
-      <div class="scoreboard-panel">
-        <h3>🏆 High Scores (<span id="score-grid-label">12x10</span>)</h3>
-        <div id="scoreboard-list"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Game Setup Modal -->
-  <div id="game-modal" class="modal-overlay hidden">
-    <div class="modal-box">
-      <h2>🎮 Start Memory Game</h2>
-      
-      <div class="setting-group">
-        <label>1. Select Player:</label>
-        <div class="player-pills-row">
-          <div class="player-pill active" onclick="selectModalPlayer('Bee', this)">Bee</div>
-          <div class="player-pill" onclick="selectModalPlayer('Les', this)">Les</div>
-          <div class="player-pill" onclick="selectModalPlayer('Chrissy', this)">Chrissy</div>
-          <div class="player-pill" onclick="selectModalPlayer('Casey', this)">Casey</div>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <label>2. Select Grid Size:</label>
-        <select id="modal-grid-select" class="btn btn-secondary" style="width:100%; font-size:1rem; outline:none;">
-          <option value="4x3">4x3 Grid (12 Cards - Fast)</option>
-          <option value="6x4">6x4 Grid (24 Cards - Medium)</option>
-          <option value="8x6">8x6 Grid (48 Cards - Hard)</option>
-          <option value="12x10" selected>12x10 Grid (120 Cards - Giant Family Board)</option>
-        </select>
-      </div>
-
-      <div style="display:flex; gap:12px; margin-top:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="closeGameSetupModal()">Cancel</button>
-        <button class="btn btn-green" style="flex:1;" onclick="confirmStartGame()">Start Game ▶️</button>
+        <button class="btn btn-secondary" style="flex:1;" onclick="closeRoastSetupModal()">Cancel</button>
+        <button class="btn btn-red" style="flex:1;" onclick="startRoastGameSession()">Start Battle 🔥</button>
       </div>
     </div>
   </div>
@@ -718,58 +296,23 @@
   <!-- Lightbox Modal -->
   <div id="lightbox-modal" class="modal-overlay hidden" onclick="closeLightbox()">
     <div style="position:relative; display:flex; flex-direction:column; align-items:center;" onclick="event.stopPropagation()">
-      <img id="lightbox-img" src="" alt="Enlarged Photo">
-      <button class="exit-saver-btn" style="top:-20px; right:-20px;" onclick="closeLightbox()">✕</button>
-    </div>
-  </div>
-
-  <!-- Extended Reaction Overlay Modal -->
-  <div id="emoji-modal" class="modal-overlay hidden" onclick="closeEmojiModal()">
-    <div class="modal-box" onclick="event.stopPropagation()">
-      <h2>😀 React to Photo</h2>
-      <div class="emoji-modal-grid" id="emoji-picker-container"></div>
-      <button class="btn btn-secondary" style="margin-top:12px;" onclick="closeEmojiModal()">Done</button>
+      <img id="lightbox-img" src="" alt="Enlarged Photo" style="max-width:90vw; max-height:80vh; object-fit:contain; border-radius:16px;">
+      <button class="btn btn-secondary" style="margin-top:12px;" onclick="closeLightbox()">Close</button>
     </div>
   </div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      });
-    }
-
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => showToast("Fullscreen mode restricted by browser"));
-      } else if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-
     let db = null;
     let photosList = [];
     let activeScreensaverPool = [];
-    
     let sequenceIndices = [];
     let sequencePointer = 0;
     let historyPointerList = [];
     let historyPointerIndex = -1;
     let isPaused = false;
-
     let slideshowTimer = null;
-    let currentSlideInterval = 6000;
-    let idleTimer = null;
-    let activeTargetPhotoId = null;
 
-    let modalPlayer = 'Bee';
-    let selectedPhotoIds = new Set();
-    let isSelectionMode = false;
-    let manualNightOverride = null;
-
-    const PLAYERS = ['Bee', 'Les', 'Chrissy', 'Casey'];
-
-    // MASSIVE RUDE & UNFILTERED DECK
+    // MASSIVE RUDE & INSULTING DECK
     const ROAST_DECK = [
       "Ugly as fuck.",
       "Fat.",
@@ -813,8 +356,6 @@
       "Looking like you haven't washed in three weeks."
     ];
 
-    const EMOJI_PALETTE = ['❤️', '😂', '😍', '🔥', '🎉', '👑', '🥳', '🍕', '☕️', '🐶', '🐱', '🌟', '👍', '👏', '🥳', '🍦', '🏆', '🌈', '💡', '🍔', '🍿', '🎈', '🎁', '🚀'];
-
     function showToast(msg, duration = 3000) {
       const toast = document.getElementById('status-toast');
       toast.innerText = msg;
@@ -822,14 +363,20 @@
       setTimeout(() => toast.classList.add('toast-hidden'), duration);
     }
 
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+
     function initDB() {
       return new Promise((resolve) => {
         const req = indexedDB.open('CoylaFamilyPhotoHubDB', 1);
         req.onupgradeneeded = (e) => {
-          const database = e.target.result;
-          if (!database.objectStoreNames.contains('photos')) {
-            database.createObjectStore('photos', { keyPath: 'id' });
-          }
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath: 'id' });
         };
         req.onsuccess = (e) => { db = e.target.result; resolve(true); };
         req.onerror = () => resolve(false);
@@ -845,15 +392,6 @@
       });
     }
 
-    async function deletePhotoFromDB(photoId) {
-      if (!db) return;
-      return new Promise((resolve) => {
-        const tx = db.transaction('photos', 'readwrite');
-        tx.objectStore('photos').delete(photoId);
-        tx.oncomplete = () => resolve();
-      });
-    }
-
     async function loadPhotosFromDB() {
       if (!db) return [];
       return new Promise((resolve) => {
@@ -864,20 +402,12 @@
       });
     }
 
-    async function computeImageHash(dataUrl) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(dataUrl);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    function isPortrait(dataUrl) {
+    async function deletePhotoFromDB(photoId) {
+      if (!db) return;
       return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(img.height > img.width);
-        img.onerror = () => resolve(false);
-        img.src = dataUrl;
+        const tx = db.transaction('photos', 'readwrite');
+        tx.objectStore('photos').delete(photoId);
+        tx.oncomplete = () => resolve();
       });
     }
 
@@ -890,369 +420,144 @@
             const canvas = document.createElement('canvas');
             let w = img.width, h = img.height;
             const maxDimension = 1200;
-
-            if (w > h) {
-              if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; }
-            } else {
-              if (h > maxDimension) { w = Math.round((h * maxDimension) / h); h = maxDimension; }
-            }
-
+            if (w > h) { if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; } }
+            else { if (h > maxDimension) { w = Math.round((w * maxDimension) / h); h = maxDimension; } }
             canvas.width = w; canvas.height = h;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, w, h);
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
             resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.88), portrait: h > w });
           };
-          img.onerror = () => resolve(null);
           img.src = e.target.result;
         };
-        reader.onerror = () => resolve(null);
         reader.readAsDataURL(file);
       });
     }
 
-    // --- NIGHT MODE ---
-    function checkNightMode() {
-      const hour = new Date().getHours();
-      const isNightTime = (hour >= 22 || hour < 7);
-      const active = (manualNightOverride !== null) ? manualNightOverride : isNightTime;
-      const btn = document.getElementById('night-mode-toggle-btn');
-
-      if (active) {
-        document.body.classList.add('night-mode');
-        if (btn) btn.innerText = '☀️';
-      } else {
-        document.body.classList.remove('night-mode');
-        if (btn) btn.innerText = '🌙';
-      }
-    }
-
-    function toggleNightModeManual() {
-      const isCurrentlyNight = document.body.classList.contains('night-mode');
-      manualNightOverride = !isCurrentlyNight;
-      checkNightMode();
-    }
-    setInterval(checkNightMode, 60000);
-
     window.addEventListener('DOMContentLoaded', async () => {
       await initDB();
       photosList = await loadPhotosFromDB();
-
-      for (let p of photosList) {
-        if (p.portrait === undefined) p.portrait = await isPortrait(p.dataUrl);
-      }
-
       activeScreensaverPool = [...photosList];
       buildTimesTableSequence();
-      initSparkleCanvas();
-      buildEmojiModalPicker();
-      checkNightMode();
-
+      
       if (photosList.length > 0) {
         startScreensaver();
         renderGallery();
       }
 
-      const processBatchFiles = async (fileList) => {
-        const validFiles = Array.from(fileList).filter(f => f.type.startsWith('image/'));
-        if (validFiles.length === 0) return;
-
-        showToast(`Processing ${validFiles.length} photo(s)...`, 5000);
-        let addedCount = 0, duplicateCount = 0;
-        const existingHashes = new Set(photosList.map(p => p.hash));
-
-        for (let file of validFiles) {
+      document.getElementById('file-input').addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+        if (files.length === 0) return;
+        showToast(`Processing ${files.length} photo(s)...`, 4000);
+        for (let file of files) {
           const res = await resizeHighRes(file);
-          if (res && res.dataUrl) {
-            const fileHash = await computeImageHash(res.dataUrl);
-            if (existingHashes.has(fileHash)) { duplicateCount++; continue; }
-
-            existingHashes.add(fileHash);
-            const photoObj = {
-              id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-              dataUrl: res.dataUrl,
-              portrait: res.portrait,
-              hash: fileHash,
-              reactions: {}
-            };
+          if (res) {
+            const photoObj = { id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), dataUrl: res.dataUrl, portrait: res.portrait };
             photosList.push(photoObj);
             await savePhotoToDB(photoObj);
-            addedCount++;
           }
         }
-
-        if (addedCount > 0 || duplicateCount > 0) {
-          showToast(`Added ${addedCount} new photo(s)!`, 4000);
-          activeScreensaverPool = [...photosList];
-          buildTimesTableSequence();
-          toggleView('main');
-          startScreensaver();
-        }
-      };
-
-      document.getElementById('file-input').addEventListener('change', (e) => processBatchFiles(e.target.files));
-      resetIdleTimer();
+        activeScreensaverPool = [...photosList];
+        buildTimesTableSequence();
+        toggleView('main');
+        startScreensaver();
+      });
     });
 
-    function initSparkleCanvas() {
-      const canvas = document.getElementById('sparkle-canvas');
-      const ctx = canvas.getContext('2d');
-      let particles = [];
-
-      function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas();
-
-      for (let i = 0; i < 50; i++) {
-        particles.push({
-          x: Math.random() * window.innerWidth,
-          y: Math.random() * window.innerHeight,
-          radius: Math.random() * 2.5 + 1,
-          alpha: Math.random(),
-          speed: Math.random() * 0.015 + 0.005,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: -Math.random() * 0.5 - 0.2
-        });
-      }
-
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
-          p.alpha += p.speed;
-          if (p.alpha > 1 || p.alpha < 0) p.speed = -p.speed;
-          p.x += p.vx; p.y += p.vy;
-          if (p.y < 0) p.y = canvas.height;
-          if (p.x < 0) p.x = canvas.width;
-          if (p.x > canvas.width) p.x = 0;
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(251, 191, 36, ${Math.abs(p.alpha) * 0.8})`;
-          ctx.shadowBlur = 10; ctx.shadowColor = '#fbbf24';
-          ctx.fill();
-        });
-        requestAnimationFrame(animate);
-      }
-      animate();
-    }
-
-    function setScreensaverSpeed(ms, speedKey) {
-      currentSlideInterval = ms;
-      document.querySelectorAll('.speed-btn').forEach(b => {
-        if (!b.innerText.includes('Back') && !b.innerText.includes('Pause')) {
-          b.classList.remove('active');
-        }
-      });
-      const btn = document.getElementById(`speed-${speedKey}`);
-      if (btn) btn.classList.add('active');
-      if (!isPaused) startScreensaver();
-    }
-
-    function togglePauseScreensaver() {
-      isPaused = !isPaused;
-      const pauseBtn = document.getElementById('pause-play-btn');
-      if (isPaused) {
-        if (slideshowTimer) clearInterval(slideshowTimer);
-        pauseBtn.innerText = '▶️ Play';
-        showToast("Screensaver Paused");
-      } else {
-        pauseBtn.innerText = '⏸️ Pause';
-        showToast("Screensaver Resumed");
-        startScreensaver();
-      }
-    }
-
+    // --- SCREENSAVER LOGIC ---
     function buildTimesTableSequence() {
-      const poolLen = activeScreensaverPool.length;
-      if (poolLen === 0) { sequenceIndices = []; return; }
-
-      let visited = new Set();
-      let seq = [];
-      let currentIdx = 0; 
-      const multipliers = [3, 2, 8, 13, 5, 7, 11, 4];
-      let multIndex = 0;
-
-      while (visited.size < poolLen) {
-        if (!visited.has(currentIdx)) {
-          visited.add(currentIdx);
-          seq.push(currentIdx);
-        }
-        const m = multipliers[multIndex % multipliers.length];
-        currentIdx = (currentIdx + m) % poolLen;
-        if (visited.has(currentIdx)) {
-          let found = false;
-          for (let i = 0; i < poolLen; i++) {
-            let candidate = (currentIdx + i) % poolLen;
-            if (!visited.has(candidate)) {
-              currentIdx = candidate;
-              found = true;
-              break;
-            }
-          }
-          if (!found) break;
-        }
-        multIndex++;
-      }
-
-      sequenceIndices = seq;
+      const len = activeScreensaverPool.length;
+      if (len === 0) { sequenceIndices = []; return; }
+      sequenceIndices = Array.from({length: len}, (_, i) => i).sort(() => Math.random() - 0.5);
       sequencePointer = 0;
-      historyPointerList = [];
-      historyPointerIndex = -1;
-    }
-
-    function getNextPhotoIndex() {
-      if (sequenceIndices.length === 0) return 0;
-      if (historyPointerIndex < historyPointerList.length - 1) {
-        historyPointerIndex++;
-        return historyPointerList[historyPointerIndex];
-      }
-
-      const idx = sequenceIndices[sequencePointer];
-      sequencePointer = (sequencePointer + 1) % sequenceIndices.length;
-      
-      historyPointerList.push(idx);
-      if (historyPointerList.length > 50) historyPointerList.shift();
-      historyPointerIndex = historyPointerList.length - 1;
-
-      return idx;
-    }
-
-    function prevSlide() {
-      if (historyPointerIndex > 0) {
-        historyPointerIndex--;
-        const idx = historyPointerList[historyPointerIndex];
-        displayPhotoByIndex(idx);
-      } else {
-        showToast("At the start of recent history");
-      }
     }
 
     function startScreensaver() {
-      if (activeScreensaverPool.length === 0) activeScreensaverPool = [...photosList];
       if (activeScreensaverPool.length === 0) return;
-
       document.getElementById('empty-state').style.display = 'none';
-      checkNightMode();
-
-      if (sequenceIndices.length !== activeScreensaverPool.length) {
-        buildTimesTableSequence();
-      }
-
-      if (!isPaused) {
-        displayCurrentPhoto();
-        if (slideshowTimer) clearInterval(slideshowTimer);
-        slideshowTimer = setInterval(() => {
-          if (!isPaused) displayCurrentPhoto();
-        }, currentSlideInterval);
-      }
+      if (slideshowTimer) clearInterval(slideshowTimer);
+      displayCurrentPhoto();
+      slideshowTimer = setInterval(() => { if (!isPaused) displayCurrentPhoto(); }, 6000);
     }
 
     function displayCurrentPhoto() {
       if (activeScreensaverPool.length === 0) return;
-      const photoIdx = getNextPhotoIndex();
-      displayPhotoByIndex(photoIdx);
-    }
-
-    function displayPhotoByIndex(photoIdx) {
-      const photo = activeScreensaverPool[photoIdx];
-      const contentWrap = document.getElementById('saver-content-wrap');
-      const bgImg = document.getElementById('bg-blur-img');
-
-      contentWrap.style.opacity = '0';
-      bgImg.style.opacity = '0';
-
+      if (sequencePointer >= sequenceIndices.length) sequencePointer = 0;
+      const idx = sequenceIndices[sequencePointer++];
+      const photo = activeScreensaverPool[idx];
+      
+      document.getElementById('bg-blur-img').src = photo.dataUrl;
+      const wrap = document.getElementById('saver-content-wrap');
+      wrap.style.opacity = '0';
       setTimeout(() => {
-        bgImg.src = photo.dataUrl;
-        contentWrap.innerHTML = '';
-
-        if (photo.portrait) {
-          let portraitPool = activeScreensaverPool.filter(p => p.portrait && p.id !== photo.id);
-          portraitPool.sort(() => Math.random() - 0.5);
-          
-          const selectedPortraits = [photo, ...portraitPool.slice(0, 2)];
-          
-          const triptychDiv = document.createElement('div');
-          triptychDiv.className = 'saver-triptych';
-          selectedPortraits.forEach(p => {
-            const pImg = document.createElement('img');
-            pImg.src = p.dataUrl;
-            triptychDiv.appendChild(pImg);
-          });
-          contentWrap.appendChild(triptychDiv);
-        } else {
-          const singleImg = document.createElement('img');
-          singleImg.className = 'saver-single-img';
-          singleImg.src = photo.dataUrl;
-          contentWrap.appendChild(singleImg);
-        }
-
-        contentWrap.style.opacity = '1';
-        bgImg.style.opacity = '1';
+        wrap.innerHTML = `<img src="${photo.dataUrl}" class="saver-single-img">`;
+        wrap.style.opacity = '1';
       }, 150);
     }
 
-    // --- 1-4 PLAYER TURN-BASED ROAST GAME LOGIC ---
-    let roastActivePlayers = ['Bee', 'Les', 'Chrissy', 'Casey'];
-    let roastScores = { Bee: 0, Les: 0, Chrissy: 0, Casey: 0 };
-    let roastCurrentTurnIdx = 0;
+    function prevSlide() { displayCurrentPhoto(); }
+    function togglePauseScreensaver() {
+      isPaused = !isPaused;
+      document.getElementById('pause-play-btn').innerText = isPaused ? '▶️ Play' : '⏸️ Pause';
+    }
+
+    // --- 1-4 PLAYER TURN-BASED ROAST GAME ---
+    let gamePlayers = [];
+    let gameScores = {};
+    let currentTurnIndex = 0;
 
     function openRoastSetupModal() {
-      if (photosList.length === 0) { alert("Please upload some photos first!"); return; }
-      document.getElementById('roast-modal').classList.remove('hidden');
+      if (photosList.length === 0) { alert("Please upload some photos first using '+ Select Photos'!"); return; }
+      document.getElementById('roast-setup-modal').classList.remove('hidden');
     }
 
-    function closeRoastModal() {
-      document.getElementById('roast-modal').classList.add('hidden');
+    function closeRoastSetupModal() {
+      document.getElementById('roast-setup-modal').classList.add('hidden');
     }
 
-    function toggleRoastPlayer(name, el) {
-      el.classList.toggle('active');
-      if (roastActivePlayers.includes(name)) {
-        roastActivePlayers = roastActivePlayers.filter(p => p !== name);
-      } else {
-        if (roastActivePlayers.length >= 4) { alert("Maximum 4 players allowed!"); return; }
-        roastActivePlayers.push(name);
-      }
-    }
+    function startRoastGameSession() {
+      const inputs = document.querySelectorAll('.player-name-input');
+      gamePlayers = [];
+      inputs.forEach(input => {
+        const val = input.value.trim();
+        if (val) gamePlayers.push(val);
+      });
 
-    function confirmStartRoastGame() {
-      if (roastActivePlayers.length === 0) { alert("Select at least 1 player!"); return; }
-      closeRoastModal();
+      if (gamePlayers.length === 0) { alert("Please enter at least 1 player name!"); return; }
+      
+      closeRoastSetupModal();
       toggleView('roast');
 
-      roastScores = {};
-      roastActivePlayers.forEach(p => roastScores[p] = 0);
-      roastCurrentTurnIdx = 0;
-
-      renderRoastTurn();
+      gameScores = {};
+      gamePlayers.forEach(p => gameScores[p] = 0);
+      currentTurnIndex = 0;
+      loadRoastTurn();
     }
 
-    function renderRoastTurn() {
-      const currentPlayer = roastActivePlayers[roastCurrentTurnIdx];
-
-      // Render Scoreboard
-      const scoreBoard = document.getElementById('roast-scoreboard-area');
-      scoreBoard.innerHTML = roastActivePlayers.map(p => `
-        <div class="player-score-badge ${p === currentPlayer ? 'turn-active' : ''}">
+    function loadRoastTurn() {
+      const currentPlayer = gamePlayers[currentTurnIndex];
+      
+      // Render Score Strip
+      const scoreStrip = document.getElementById('roast-score-strip');
+      scoreStrip.innerHTML = gamePlayers.map(p => `
+        <div class="score-chip ${p === currentPlayer ? 'active-turn' : ''}">
           <span>${p}</span>
-          <span style="color:var(--accent-gold);">${roastScores[p]} pts</span>
+          <span style="color:var(--accent-gold);">${gameScores[p]} pts</span>
         </div>
       `).join('');
 
-      // Pick Random Photo & 3 Roast Cards
-      const container = document.getElementById('roast-main-content');
+      // Pick Random Photo and 3 Cards
       const randomPhoto = photosList[Math.floor(Math.random() * photosList.length)];
       let dealtCards = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 3);
 
+      const container = document.getElementById('roast-main-content');
       container.innerHTML = `
         <div class="roast-arena">
-          <h3 style="color:var(--accent-gold);">Current Roaster: <span style="color:#fff; font-size:1.3rem;">${currentPlayer}</span></h3>
+          <h3 style="color:var(--accent-gold);">Roaster's Turn: <span style="color:#fff;">${currentPlayer}</span></h3>
           <img src="${randomPhoto.dataUrl}" class="roast-photo">
-          
-          <p style="color:var(--accent-red); font-weight:bold; font-size:0.95rem; margin-top:4px;">🔥 Pick the Most Insulting Card for This Photo:</p>
+          <p style="color:var(--accent-red); font-weight:bold; font-size:0.95rem;">🔥 Select the Best Roast Card:</p>
           
           <div class="roast-card-deck">
             ${dealtCards.map(card => `
-              <div class="roast-card-option" onclick="playRoastCard('${currentPlayer}', \`${card}\`)">
+              <div class="roast-card-option" onclick="selectRoastChoice(\`${card}\`)">
                 "${card}"
               </div>
             `).join('')}
@@ -1261,307 +566,95 @@
       `;
     }
 
-    function playRoastCard(player, cardText) {
-      roastScores[player] += 10;
-      showToast(`🔥 ${player} landed a brutal roast! (+10 pts)`);
-
-      roastCurrentTurnIdx = (roastCurrentTurnIdx + 1) % roastActivePlayers.length;
-      setTimeout(renderRoastTurn, 600);
+    function selectRoastChoice(cardText) {
+      const currentPlayer = gamePlayers[currentTurnIndex];
+      
+      // Prompt the room/judge to rate the roast (1 to 5 stars or points)
+      const container = document.getElementById('roast-main-content');
+      container.innerHTML = `
+        <div class="roast-arena" style="text-align:center;">
+          <h3 style="color:var(--accent-gold);">${currentPlayer} played:</h3>
+          <div class="roast-card-option" style="background:rgba(239, 68, 68, 0.25); border-color:var(--accent-red);">
+            "${cardText}"
+          </div>
+          <p style="color:var(--text-muted); margin-top:10px;">Have the rest of the room rate this roast!</p>
+          
+          <div class="rating-buttons-row">
+            <button class="rate-btn" style="background:#ef4444;" onclick="awardRoastPoints(5)">🔥 Savage (+20 pts)</button>
+            <button class="rate-btn" style="background:#f59e0b;" onclick="awardRoastPoints(3)">😂 Funny (+10 pts)</button>
+            <button class="rate-btn" style="background:#64748b;" onclick="awardRoastPoints(1)">🥱 Weak (+5 pts)</button>
+          </div>
+        </div>
+      `;
     }
 
+    function awardRoastPoints(pts) {
+      const currentPlayer = gamePlayers[currentTurnIndex];
+      gameScores[currentPlayer] += pts;
+      showToast(`+${pts} points awarded to ${currentPlayer}!`);
+
+      // Advance to next player's turn
+      currentTurnIndex = (currentTurnIndex + 1) % gamePlayers.length;
+      setTimeout(loadRoastTurn, 500);
+    }
+
+    // --- GALLERY LOGIC ---
     function renderGallery() {
       const grid = document.getElementById('gallery-grid');
       grid.innerHTML = '';
-
-      photosList.forEach((photo) => {
+      photosList.forEach(photo => {
         const card = document.createElement('div');
-        card.className = `photo-card ${isSelectionMode ? 'selection-mode' : ''}`;
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-card-btn';
-        deleteBtn.innerText = '🗑️';
-        deleteBtn.onclick = async (e) => {
-          e.stopPropagation();
-          if (confirm("Delete photo?")) await removePhoto(photo.id);
-        };
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'photo-checkbox';
-        checkbox.checked = selectedPhotoIds.has(photo.id);
-        checkbox.onclick = (e) => {
-          e.stopPropagation();
-          if (checkbox.checked) selectedPhotoIds.add(photo.id);
-          else selectedPhotoIds.delete(photo.id);
-        };
-
-        const imgWrap = document.createElement('div');
-        imgWrap.className = 'photo-card-img-wrap';
-        const img = document.createElement('img');
-        img.src = photo.dataUrl;
-
-        const reactOverlayBtn = document.createElement('button');
-        reactOverlayBtn.className = 'add-reaction-overlay-btn';
-        reactOverlayBtn.innerText = '+ React 😀';
-        reactOverlayBtn.onclick = (e) => { e.stopPropagation(); openEmojiModal(photo.id); };
-
-        imgWrap.appendChild(img);
-        imgWrap.appendChild(reactOverlayBtn);
-
+        card.className = 'photo-card';
         card.onclick = () => {
-          if (isSelectionMode) {
-            checkbox.checked = !checkbox.checked;
-            if (checkbox.checked) selectedPhotoIds.add(photo.id);
-            else selectedPhotoIds.delete(photo.id);
-          } else openLightbox(photo.dataUrl);
+          document.getElementById('lightbox-img').src = photo.dataUrl;
+          document.getElementById('lightbox-modal').classList.remove('hidden');
         };
 
-        const reactionsDiv = document.createElement('div');
-        reactionsDiv.className = 'card-reactions';
-
-        Object.entries(photo.reactions || {}).forEach(([emoji, count]) => {
-          if (count > 0) {
-            const badge = document.createElement('span');
-            badge.className = 'reaction-badge';
-            badge.innerText = `${emoji} ${count}`;
-            reactionsDiv.appendChild(badge);
+        const delBtn = document.createElement('button');
+        delBtn.className = 'delete-card-btn';
+        delBtn.innerText = '🗑️';
+        delBtn.onclick = async (e) => {
+          e.stopPropagation();
+          if (confirm("Delete this photo?")) {
+            photosList = photosList.filter(p => p.id !== photo.id);
+            activeScreensaverPool = activeScreensaverPool.filter(p => p.id !== photo.id);
+            await deletePhotoFromDB(photo.id);
+            renderGallery();
+            showToast("Photo deleted");
           }
-        });
+        };
 
-        card.appendChild(deleteBtn);
-        card.appendChild(checkbox);
-        card.appendChild(imgWrap);
-        card.appendChild(reactionsDiv);
+        const wrap = document.createElement('div');
+        wrap.className = 'photo-card-img-wrap';
+        wrap.innerHTML = `<img src="${photo.dataUrl}">`;
+
+        card.appendChild(delBtn);
+        card.appendChild(wrap);
         grid.appendChild(card);
       });
     }
 
-    async function removePhoto(photoId) {
-      photosList = photosList.filter(p => p.id !== photoId);
-      activeScreensaverPool = activeScreensaverPool.filter(p => p.id !== photoId);
-      buildTimesTableSequence();
-      await deletePhotoFromDB(photoId);
-      renderGallery();
-      showToast("Photo deleted!");
-    }
-
-    function toggleSelectionMode() {
-      isSelectionMode = !isSelectionMode;
-      const btn = document.getElementById('toggle-select-mode-btn');
-      const startBtn = document.getElementById('start-custom-saver-btn');
-
-      if (isSelectionMode) {
-        btn.innerText = '❌ Cancel Select';
-        startBtn.classList.remove('hidden');
-      } else {
-        btn.innerText = '☑️ Select Photos';
-        startBtn.classList.add('hidden');
-        selectedPhotoIds.clear();
-      }
-      renderGallery();
-    }
-
-    function startCustomScreensaver() {
-      if (selectedPhotoIds.size === 0) { alert("Select at least 1 photo!"); return; }
-      activeScreensaverPool = photosList.filter(p => selectedPhotoIds.has(p.id));
-      buildTimesTableSequence();
-      toggleView('saver');
-    }
-
-    function openLightbox(url) {
-      if (!url) return;
-      document.getElementById('lightbox-img').src = url;
-      document.getElementById('lightbox-modal').classList.remove('hidden');
-    }
-
     function closeLightbox() { document.getElementById('lightbox-modal').classList.add('hidden'); }
-
-    function buildEmojiModalPicker() {
-      const container = document.getElementById('emoji-picker-container');
-      container.innerHTML = '';
-      EMOJI_PALETTE.forEach(emoji => {
-        const btn = document.createElement('button');
-        btn.className = 'emoji-select-btn';
-        btn.innerText = emoji;
-        btn.onclick = () => addReactionToTarget(emoji);
-        container.appendChild(btn);
-      });
-    }
-
-    function openEmojiModal(photoId) {
-      activeTargetPhotoId = photoId;
-      document.getElementById('emoji-modal').classList.remove('hidden');
-    }
-
-    function closeEmojiModal() {
-      document.getElementById('emoji-modal').classList.add('hidden');
-      activeTargetPhotoId = null;
-    }
-
-    async function addReactionToTarget(emoji) {
-      if (!activeTargetPhotoId) return;
-      const photo = photosList.find(p => p.id === activeTargetPhotoId);
-      if (photo) {
-        photo.reactions[emoji] = (photo.reactions[emoji] || 0) + 1;
-        await savePhotoToDB(photo);
-        renderGallery();
-      }
-      closeEmojiModal();
-    }
 
     function toggleView(view) {
       document.getElementById('screensaver-view').classList.add('hidden');
       document.getElementById('main-view').classList.add('hidden');
-      document.getElementById('game-view').classList.add('hidden');
       document.getElementById('roast-game-view').classList.add('hidden');
+      closeRoastSetupModal();
       closeLightbox();
-      closeGameSetupModal();
-      closeEmojiModal();
-      closeRoastModal();
 
       if (view === 'saver') {
         document.getElementById('screensaver-view').classList.remove('hidden');
         startScreensaver();
-      } else if (view === 'game') {
-        document.getElementById('game-view').classList.remove('hidden');
+      } else if (view === 'main') {
+        document.getElementById('main-view').classList.remove('hidden');
+        renderGallery();
         if (slideshowTimer) clearInterval(slideshowTimer);
       } else if (view === 'roast') {
         document.getElementById('roast-game-view').classList.remove('hidden');
         if (slideshowTimer) clearInterval(slideshowTimer);
-      } else {
-        document.getElementById('main-view').classList.remove('hidden');
-        renderGallery();
       }
     }
-
-    function openGameSetupModal() {
-      if (photosList.length < 2) { alert("Upload at least 2 photos first!"); return; }
-      document.getElementById('game-modal').classList.remove('hidden');
-    }
-
-    function closeGameSetupModal() { document.getElementById('game-modal').classList.add('hidden'); }
-
-    function selectModalPlayer(name, el) {
-      document.querySelectorAll('#game-modal .player-pill').forEach(p => p.classList.remove('active'));
-      el.classList.add('active');
-      modalPlayer = name;
-    }
-
-    function confirmStartGame() {
-      closeGameSetupModal();
-      const gridVal = document.getElementById('modal-grid-select').value;
-      document.getElementById('current-player-display').innerText = modalPlayer;
-      document.getElementById('current-grid-display').innerText = gridVal;
-      toggleView('game');
-      startMemoryGame(modalPlayer, gridVal);
-    }
-
-    function renderScoreboard(gridVal) {
-      document.getElementById('score-grid-label').innerText = gridVal;
-      const list = document.getElementById('scoreboard-list');
-      list.innerHTML = '';
-      const scores = JSON.parse(localStorage.getItem(`coyla_scores_${gridVal}`) || '{}');
-
-      PLAYERS.forEach(player => {
-        const pScore = scores[player] || { moves: '-' };
-        const row = document.createElement('div');
-        row.className = 'score-row';
-        row.innerHTML = `<span>${player}</span><span style="color:var(--accent-gold); font-weight:bold;">${pScore.moves} moves</span>`;
-        list.appendChild(row);
-      });
-    }
-
-    let flippedCards = [];
-    let matchedPairsCount = 0;
-    let totalPairsCount = 0;
-    let moveCount = 0;
-    let currentGamePlayer = 'Bee';
-    let currentGameGrid = '12x10';
-
-    function startMemoryGame(player, gridVal) {
-      currentGamePlayer = player || modalPlayer;
-      currentGameGrid = gridVal || document.getElementById('modal-grid-select').value;
-
-      const [cols, rows] = currentGameGrid.split('x').map(Number);
-      totalPairsCount = (cols * rows) / 2;
-      matchedPairsCount = 0; moveCount = 0; flippedCards = [];
-
-      renderScoreboard(currentGameGrid);
-
-      const gridContainer = document.getElementById('grid-container');
-      gridContainer.innerHTML = '';
-      gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-      gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-
-      let shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
-      let chosenPhotos = [];
-      while (chosenPhotos.length < totalPairsCount) {
-        if (shuffledPhotos.length === 0) shuffledPhotos = [...photosList].sort(() => Math.random() - 0.5);
-        chosenPhotos.push(shuffledPhotos.pop());
-      }
-
-      let deck = [];
-      chosenPhotos.forEach(photo => { deck.push(photo); deck.push(photo); });
-      deck.sort(() => Math.random() - 0.5);
-
-      deck.forEach((photo) => {
-        const card = document.createElement('div');
-        card.className = 'memory-card';
-        card.dataset.photoId = photo.id;
-
-        const img = document.createElement('img');
-        img.src = photo.dataUrl;
-        card.appendChild(img);
-
-        card.onclick = () => handleCardClick(card);
-        gridContainer.appendChild(card);
-      });
-    }
-
-    function handleCardClick(card) {
-      if (flippedCards.length === 2 || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-
-      card.classList.add('flipped');
-      flippedCards.push(card);
-
-      if (flippedCards.length === 2) {
-        moveCount++;
-        const [c1, c2] = flippedCards;
-        if (c1.dataset.photoId === c2.dataset.photoId) {
-          c1.classList.add('matched'); c2.classList.add('matched');
-          matchedPairsCount++; flippedCards = [];
-
-          if (matchedPairsCount === totalPairsCount) {
-            saveScore(moveCount);
-            setTimeout(() => showToast(`🎉 Great job ${currentGamePlayer}! Cleared in ${moveCount} moves!`, 5000), 300);
-          }
-        } else {
-          setTimeout(() => { c1.classList.remove('flipped'); c2.classList.remove('flipped'); flippedCards = []; }, 800);
-        }
-      }
-    }
-
-    function saveScore(moves) {
-      const key = `coyla_scores_${currentGameGrid}`;
-      const scores = JSON.parse(localStorage.getItem(key) || '{}');
-      if (!scores[currentGamePlayer] || moves < scores[currentGamePlayer].moves) {
-        scores[currentGamePlayer] = { moves };
-        localStorage.setItem(key, JSON.stringify(scores));
-        renderScoreboard(currentGameGrid);
-      }
-    }
-
-    function resetIdleTimer() {
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => {
-        if (document.getElementById('screensaver-view').classList.contains('hidden')) {
-          toggleView('saver');
-        }
-      }, 45000);
-    }
-
-    window.onmousemove = resetIdleTimer;
-    window.ontouchstart = resetIdleTimer;
   </script>
 </body>
 </html>
