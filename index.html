@@ -187,48 +187,52 @@
 
     /* --- SPLIT-SCREEN ROAST GAME VIEW --- */
     #roast-game-view {
-      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 84px; background: var(--bg); z-index: 50; display: flex; flex-direction: column;
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 72px; background: var(--bg); z-index: 50; display: flex; flex-direction: column;
     }
 
-    .split-board { flex: 1; width: 100%; height: 100%; display: grid; gap: 6px; background: #020617; padding: 8px; overflow: hidden; }
+    .split-board { flex: 1; width: 100%; height: 100%; display: grid; gap: 6px; background: #020617; padding: 6px; overflow: hidden; }
     .split-board.layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
     .split-board.layout-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
     .split-board.layout-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
     .split-board.layout-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 
     .player-quadrant {
-      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 12px; gap: 8px; overflow-y: auto; position: relative;
+      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 10px; gap: 8px; overflow-y: auto; position: relative;
     }
 
-    .quad-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; flex-shrink: 0; }
-    .quad-title { font-weight: 800; color: var(--accent-gold); font-size: 1.05rem; }
-    .quad-status { font-size: 0.8rem; color: var(--text-muted); }
+    .quad-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; flex-shrink: 0; }
+    .quad-title { font-weight: 800; color: var(--accent-gold); font-size: 1rem; }
+    .quad-status { font-size: 0.75rem; color: var(--text-muted); }
 
     /* CAH CARD STYLING */
     .cah-card {
-      background: #ffffff; color: #0f172a; border-radius: 12px; padding: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4); border: 2px solid #cbd5e1; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-      display: flex; flex-direction: column; justify-content: space-between; min-height: 95px;
+      background: #ffffff; color: #0f172a; border-radius: 12px; padding: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4); border: 2px solid #cbd5e1; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      display: flex; flex-direction: column; justify-content: space-between; min-height: 85px; flex-shrink: 0;
     }
-    .cah-card:hover { transform: translateY(-5px) scale(1.02); background: #f8fafc; border-color: var(--accent-red); box-shadow: 0 12px 25px rgba(239, 68, 68, 0.3); }
-    .cah-card-footer { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; }
+    .cah-card:hover { transform: translateY(-3px) scale(1.02); background: #f8fafc; border-color: var(--accent-red); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
+    .cah-card-footer { font-size: 0.6rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; }
 
-    .active-photo-preview { width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; background: #000; }
+    /* LARGE PHOTO PREVIEWS (Fixed small image bug) */
+    .active-photo-preview { width: 100%; max-height: 28vh; min-height: 180px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.3); flex-shrink: 0; background: #000; }
+    .choice-photo-thumb { width: 100%; max-height: 32vh; min-height: 200px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.3); cursor: pointer; background: #000; transition: transform 0.2s ease; }
+    .choice-photo-thumb:hover { transform: scale(1.02); border-color: var(--accent-gold); }
+    .photo-choices-grid { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
     .roast-choices-stack { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
 
     /* VOTING STAGE */
     #voting-stage {
-      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: var(--bg); overflow-y: auto;
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; background: var(--bg); overflow-y: auto; width: 100vw; height: 100vh; height: 100dvh;
     }
     .vote-arena {
-      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 24px;
-      width: 95vw; max-width: 900px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 20px;
+      width: 96vw; max-width: 900px; display: flex; flex-direction: column; align-items: center; gap: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
     }
-    .vote-photo-center { width: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.2); background: #000; }
-    .submissions-around-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; width: 100%; }
+    .vote-photo-center { width: 100%; max-height: 35vh; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.25); background: #000; }
+    .submissions-around-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; width: 100%; }
 
     /* MODALS */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 300; display: flex; align-items: center; justify-content: center; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(12px); z-index: 300; display: flex; align-items: center; justify-content: center; }
     .modal-overlay.hidden { display: none !important; }
     .modal-box { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 24px; width: 90vw; max-width: 440px; display: flex; flex-direction: column; gap: 16px; }
     .modal-box h2 { color: var(--accent-gold); text-align: center; }
@@ -761,8 +765,8 @@
           </div>
           <div class="quad-status">Photo ${stepNum} of 3</div>
           <p style="color:var(--accent-gold); font-size:0.85rem; font-weight:bold; margin-top:2px;">Select Image ${stepNum}:</p>
-          <div class="photo-choices-grid" style="grid-template-columns: 1fr;">
-            <img src="${targetPhoto.dataUrl}" class="choice-photo-thumb" style="aspect-ratio: 16/9; max-height:220px; object-fit:contain; background:#000; cursor:pointer;" onclick="playerPickPhoto('${player}', \`${targetPhoto.dataUrl}\`)">
+          <div class="photo-choices-grid">
+            <img src="${targetPhoto.dataUrl}" class="choice-photo-thumb" onclick="playerPickPhoto('${player}', \`${targetPhoto.dataUrl}\`)">
           </div>
         `;
       } else {
