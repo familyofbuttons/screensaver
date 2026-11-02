@@ -210,7 +210,9 @@
     .cah-card:hover { transform: translateY(-3px); background: #f8fafc; border-color: var(--accent-red); }
     .cah-card-footer { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; }
 
-    /* FULL-SIZE PHOTO PREVIEW IN QUADRANTS */
+    .photo-choices-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
+    .choice-photo-thumb { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s ease; }
+    .choice-photo-thumb:hover { transform: scale(1.04); border-color: var(--accent-gold); }
     .active-photo-preview { width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; background: #000; }
     .roast-choices-stack { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
 
@@ -351,6 +353,8 @@
     let isPaused = false;
     let slideshowTimer = null;
     let currentSlideInterval = 6000;
+    let slideHistory = [];
+    let historyPointer = -1;
 
     // MASSIVE UNLIMITED OFFENSIVE & RUDE DECK
     const ROAST_DECK = [
@@ -487,7 +491,7 @@
             let w = img.width, h = img.height;
             const maxDimension = 1200;
             if (w > h) { if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; } }
-            else { if (h > maxDimension) { w = Math.round((h * maxDimension) / h); h = maxDimension; } }
+            else { if (h > maxDimension) { w = Math.round((w * maxDimension) / h); h = maxDimension; } }
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
             resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.88), portrait: h > w });
@@ -534,6 +538,8 @@
       if (len === 0) { sequenceIndices = []; return; }
       sequenceIndices = Array.from({length: len}, (_, i) => i).sort(() => Math.random() - 0.5);
       sequencePointer = 0;
+      slideHistory = [];
+      historyPointer = -1;
     }
 
     function setScreensaverSpeed(ms, speedKey) {
@@ -547,16 +553,35 @@
       if (activeScreensaverPool.length === 0) return;
       document.getElementById('empty-state').style.display = 'none';
       if (slideshowTimer) clearInterval(slideshowTimer);
-      displayCurrentPhoto();
-      slideshowTimer = setInterval(() => { if (!isPaused) displayCurrentPhoto(); }, currentSlideInterval);
+      displayNextSlide();
+      slideshowTimer = setInterval(() => { if (!isPaused) displayNextSlide(); }, currentSlideInterval);
     }
 
-    function displayCurrentPhoto() {
+    function displayNextSlide() {
       if (activeScreensaverPool.length === 0) return;
-      if (sequencePointer >= sequenceIndices.length) sequencePointer = 0;
+      if (sequencePointer >= sequenceIndices.length) {
+        sequenceIndices = Array.from({length: activeScreensaverPool.length}, (_, i) => i).sort(() => Math.random() - 0.5);
+        sequencePointer = 0;
+      }
       const idx = sequenceIndices[sequencePointer++];
+      slideHistory.push(idx);
+      historyPointer = slideHistory.length - 1;
+      renderPhotoByIndex(idx);
+    }
+
+    function prevSlide() {
+      if (slideHistory.length > 1 && historyPointer > 0) {
+        historyPointer--;
+        const idx = slideHistory[historyPointer];
+        renderPhotoByIndex(idx);
+      } else {
+        showToast("Already at the start of recent history!");
+      }
+    }
+
+    function renderPhotoByIndex(idx) {
       const photo = activeScreensaverPool[idx];
-      
+      if (!photo) return;
       document.getElementById('bg-blur-img').src = photo.dataUrl;
       const wrap = document.getElementById('saver-content-wrap');
       wrap.style.opacity = '0';
@@ -566,7 +591,6 @@
       }, 150);
     }
 
-    function prevSlide() { displayCurrentPhoto(); }
     function togglePauseScreensaver() {
       isPaused = !isPaused;
       document.getElementById('pause-play-btn').innerText = isPaused ? '▶️ Play' : '⏸️ Pause';
@@ -599,7 +623,6 @@
         container.innerHTML += `<div class="player-input-row"><input type="text" class="player-name-input" value="${defaultNames[i] || 'Player ' + (i+1)}" placeholder="Player ${i+1}"></div>`;
       }
       
-      // Show CPU toggle if 2 players selected
       const cpuWrap = document.getElementById('cpu-toggle-wrap');
       if (count === 2) {
         cpuWrap.style.display = 'flex';
@@ -650,7 +673,6 @@
 
       renderSplitBoard();
 
-      // If CPU bot is playing, automatically make its choices instantly
       if (hasCpuBot) {
         runCpuBotTurns();
       }
@@ -661,7 +683,6 @@
       const state = playerStates[botName];
       if (!state) return;
 
-      // Simulate bot instantly locking in 3 photos and 3 random cards from its hand
       while (state.step < 6) {
         let isPhotoTurn = (state.step % 2 === 0);
         if (isPhotoTurn) {
