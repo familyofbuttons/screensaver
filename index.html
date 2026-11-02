@@ -177,7 +177,7 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
     }
 
-    .saver-controls-top-left { position: absolute; top: 20px; left: 20px; display: flex; gap: 6px; z-index: 210; }
+    .saver-controls-top-left { position: absolute; top: 20px; left: 20px; display: flex; gap: 6px; z-index: 210; align-items: center; flex-wrap: wrap; }
     .saver-controls-top-right { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; align-items: center; z-index: 210; }
 
     .speed-btn {
@@ -481,6 +481,12 @@
     <canvas id="sparkle-canvas"></canvas>
 
     <div class="saver-controls-top-left">
+      <!-- Pause and Back (Previous) Controls -->
+      <button class="speed-btn" onclick="prevSlide()" title="Previous Image">⏮️</button>
+      <button id="pause-play-btn" class="speed-btn" onclick="togglePauseScreensaver()" title="Pause/Play">⏸️</button>
+      
+      <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 2px;"></div>
+
       <button id="speed-slow" class="speed-btn" onclick="setScreensaverSpeed(12000, 'slow')" title="Slow (12s)">></button>
       <button id="speed-med" class="speed-btn active" onclick="setScreensaverSpeed(6000, 'med')" title="Medium (6s)">>></button>
       <button id="speed-fast" class="speed-btn" onclick="setScreensaverSpeed(3000, 'fast')" title="Fast (3s)">>>></button>
@@ -599,8 +605,13 @@
     let db = null;
     let photosList = [];
     let activeScreensaverPool = [];
-    let shuffledIndices = [];
-    let queueIndex = 0;
+    
+    // Times-Table Sequence Generator State
+    let sequenceIndices = [];
+    let sequencePointer = 0;
+    let historyPointerList = [];
+    let historyPointerIndex = -1;
+    let isPaused = false;
 
     let slideshowTimer = null;
     let currentSlideInterval = 6000;
@@ -742,7 +753,7 @@
       }
 
       activeScreensaverPool = [...photosList];
-      initScreensaverQueue();
+      buildTimesTableSequence();
       initSparkleCanvas();
       buildEmojiModalPicker();
       checkNightMode();
@@ -783,7 +794,7 @@
         if (addedCount > 0 || duplicateCount > 0) {
           showToast(`Added ${addedCount} new photo(s)!`, 4000);
           activeScreensaverPool = [...photosList];
-          initScreensaverQueue();
+          buildTimesTableSequence();
           toggleView('main');
           startScreensaver();
         }
@@ -838,18 +849,90 @@
     function setScreensaverSpeed(ms, speedKey) {
       currentSlideInterval = ms;
       document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(`speed-${speedKey}`).classList.add('active');
-      startScreensaver();
+      const btn = document.getElementById(`speed-${speedKey}`);
+      if (btn) btn.classList.add('active');
+      if (!isPaused) startScreensaver();
     }
 
-    function initScreensaverQueue() {
-      if (activeScreensaverPool.length === 0) return;
-      shuffledIndices = Array.from({ length: activeScreensaverPool.length }, (_, i) => i);
-      for (let i = shuffledIndices.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+    function togglePauseScreensaver() {
+      isPaused = !isPaused;
+      const pauseBtn = document.getElementById('pause-play-btn');
+      if (isPaused) {
+        if (slideshowTimer) clearInterval(slideshowTimer);
+        pauseBtn.innerText = '▶️';
+        showToast("Screensaver Paused");
+      } else {
+        pauseBtn.innerText = '⏸️';
+        showToast("Screensaver Resumed");
+        startScreensaver();
       }
-      queueIndex = 0;
+    }
+
+    // --- TIMES-TABLE SEQUENCE GENERATOR ---
+    function buildTimesTableSequence() {
+      const poolLen = activeScreensaverPool.length;
+      if (poolLen === 0) { sequenceIndices = []; return; }
+
+      let visited = new Set();
+      let seq = [];
+      let currentIdx = 0; // Starts at 1st image (index 0)
+      const multipliers = [3, 2, 8, 13, 5, 7, 11, 4];
+      let multIndex = 0;
+
+      while (visited.size < poolLen) {
+        if (!visited.has(currentIdx)) {
+          visited.add(currentIdx);
+          seq.push(currentIdx);
+        }
+        const m = multipliers[multIndex % multipliers.length];
+        currentIdx = (currentIdx + m) % poolLen;
+        if (visited.has(currentIdx)) {
+          // If we hit an already visited index, find the next unvisited index
+          let found = false;
+          for (let i = 0; i < poolLen; i++) {
+            let candidate = (currentIdx + i) % poolLen;
+            if (!visited.has(candidate)) {
+              currentIdx = candidate;
+              found = true;
+              break;
+            }
+          }
+          if (!found) break;
+        }
+        multIndex++;
+      }
+
+      sequenceIndices = seq;
+      sequencePointer = 0;
+      historyPointerList = [];
+      historyPointerIndex = -1;
+    }
+
+    function getNextPhotoIndex() {
+      if (sequenceIndices.length === 0) return 0;
+      if (historyPointerIndex < historyPointerList.length - 1) {
+        historyPointerIndex++;
+        return historyPointerList[historyPointerIndex];
+      }
+
+      const idx = sequenceIndices[sequencePointer];
+      sequencePointer = (sequencePointer + 1) % sequenceIndices.length;
+      
+      historyPointerList.push(idx);
+      if (historyPointerList.length > 50) historyPointerList.shift();
+      historyPointerIndex = historyPointerList.length - 1;
+
+      return idx;
+    }
+
+    function prevSlide() {
+      if (historyPointerIndex > 0) {
+        historyPointerIndex--;
+        const idx = historyPointerList[historyPointerIndex];
+        displayPhotoByIndex(idx);
+      } else {
+        showToast("At the start of recent history");
+      }
     }
 
     function startScreensaver() {
@@ -859,24 +942,26 @@
       document.getElementById('empty-state').style.display = 'none';
       checkNightMode();
 
-      if (shuffledIndices.length !== activeScreensaverPool.length) {
-        initScreensaverQueue();
+      if (sequenceIndices.length !== activeScreensaverPool.length) {
+        buildTimesTableSequence();
       }
 
-      displayCurrentPhoto();
-      if (slideshowTimer) clearInterval(slideshowTimer);
-      slideshowTimer = setInterval(nextPhoto, currentSlideInterval);
+      if (!isPaused) {
+        displayCurrentPhoto();
+        if (slideshowTimer) clearInterval(slideshowTimer);
+        slideshowTimer = setInterval(() => {
+          if (!isPaused) displayCurrentPhoto();
+        }, currentSlideInterval);
+      }
     }
 
     function displayCurrentPhoto() {
       if (activeScreensaverPool.length === 0) return;
-      if (queueIndex >= shuffledIndices.length || shuffledIndices.length !== activeScreensaverPool.length) {
-        initScreensaverQueue();
-      }
+      const photoIdx = getNextPhotoIndex();
+      displayPhotoByIndex(photoIdx);
+    }
 
-      const photoIdx = shuffledIndices[queueIndex];
-      queueIndex++;
-
+    function displayPhotoByIndex(photoIdx) {
       const photo = activeScreensaverPool[photoIdx];
       const contentWrap = document.getElementById('saver-content-wrap');
       const bgImg = document.getElementById('bg-blur-img');
@@ -889,6 +974,7 @@
         contentWrap.innerHTML = '';
 
         if (photo.portrait) {
+          // Guaranteed UNIQUE portrait triptych selection
           let portraitPool = activeScreensaverPool.filter(p => p.portrait && p.id !== photo.id);
           portraitPool.sort(() => Math.random() - 0.5);
           
@@ -912,11 +998,6 @@
         contentWrap.style.opacity = '1';
         bgImg.style.opacity = '1';
       }, 150);
-    }
-
-    function nextPhoto() {
-      if (activeScreensaverPool.length === 0) return;
-      displayCurrentPhoto();
     }
 
     function renderGallery() {
@@ -989,7 +1070,7 @@
     async function removePhoto(photoId) {
       photosList = photosList.filter(p => p.id !== photoId);
       activeScreensaverPool = activeScreensaverPool.filter(p => p.id !== photoId);
-      initScreensaverQueue();
+      buildTimesTableSequence();
       await deletePhotoFromDB(photoId);
       renderGallery();
       showToast("Photo deleted!");
@@ -1014,7 +1095,7 @@
     function startCustomScreensaver() {
       if (selectedPhotoIds.size === 0) { alert("Select at least 1 photo!"); return; }
       activeScreensaverPool = photosList.filter(p => selectedPhotoIds.has(p.id));
-      initScreensaverQueue();
+      buildTimesTableSequence();
       toggleView('saver');
     }
 
