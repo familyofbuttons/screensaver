@@ -1103,7 +1103,10 @@
         <div class="contest-body">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 style="color:var(--accent-gold);">Contest Board ${testDayOverride ? `(Test: ${testDayOverride})` : ''}</h3>
-            <span style="color:var(--accent-blue); font-size:0.9rem; font-weight:bold;">${phaseLabel}</span>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button class="btn btn-secondary" style="padding:4px 10px; font-size:0.8rem;" onclick="swapContestPhoto()">🎲 Swap Photo</button>
+              <span style="color:var(--accent-blue); font-size:0.9rem; font-weight:bold;">${phaseLabel}</span>
+            </div>
           </div>
           
           <div class="setting-group">
@@ -1120,6 +1123,14 @@
       renderContestInteractiveArea(photo, state);
       renderDeckHistory();
       renderRightLeaderboard();
+    }
+
+    function swapContestPhoto() {
+      const state = getContestState();
+      state.photoId = null;
+      saveContestState(state);
+      renderCaptionContest();
+      showToast("Picked a new photo for this week!");
     }
 
     function setContestPlayer(p) {
