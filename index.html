@@ -41,10 +41,7 @@
       background-color: var(--bg);
       color: var(--text);
       overflow: hidden;
-      transition: filter 0.5s ease;
     }
-
-    body.night-mode { filter: brightness(0.12) contrast(1.1); }
 
     .screen {
       position: absolute;
@@ -210,9 +207,6 @@
     .cah-card:hover { transform: translateY(-3px); background: #f8fafc; border-color: var(--accent-red); }
     .cah-card-footer { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; }
 
-    .photo-choices-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
-    .choice-photo-thumb { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s ease; }
-    .choice-photo-thumb:hover { transform: scale(1.04); border-color: var(--accent-gold); }
     .active-photo-preview { width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; background: #000; }
     .roast-choices-stack { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
 
