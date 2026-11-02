@@ -213,7 +213,7 @@
     .cah-card:hover { transform: translateY(-3px) scale(1.02); background: #f8fafc; border-color: var(--accent-red); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
     .cah-card-footer { font-size: 0.6rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; }
 
-    /* LARGE PHOTO PREVIEWS (Fixed small image bug) */
+    /* LARGE PHOTO PREVIEWS */
     .active-photo-preview { width: 100%; max-height: 28vh; min-height: 180px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.3); flex-shrink: 0; background: #000; }
     .choice-photo-thumb { width: 100%; max-height: 32vh; min-height: 200px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.3); cursor: pointer; background: #000; transition: transform 0.2s ease; }
     .choice-photo-thumb:hover { transform: scale(1.02); border-color: var(--accent-gold); }
@@ -620,6 +620,12 @@
 
     function openRoastSetupModal() {
       if (photosList.length < 3) { alert("Please upload at least 3 photos first using '+ Select Photos'!"); return; }
+      
+      // Ensure game view is active/visible beneath modal
+      document.getElementById('screensaver-view').classList.add('hidden');
+      document.getElementById('main-view').classList.add('hidden');
+      document.getElementById('roast-game-view').classList.remove('hidden');
+      
       document.getElementById('roast-setup-modal').classList.remove('hidden');
     }
 
