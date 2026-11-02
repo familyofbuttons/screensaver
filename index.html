@@ -308,7 +308,7 @@
     <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 
-  <!-- Split-Screen Roast Game View -->
+  <!-- Split-Screen Roast Battle Game View -->
   <div id="roast-game-view" class="screen hidden">
     <div id="split-board-container" class="split-board layout-4"></div>
   </div>
@@ -601,7 +601,7 @@
 
       playerStates = {};
       activeGamePlayers.forEach(player => {
-        let hand = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 5); // 5 card hand
+        let hand = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 3); // 3 card hand (one per photo)
         playerStates[player] = {
           step: 0, // 0: img1, 1: card1, 2: img2, 3: card2, 4: img3, 5: card3, 6: done
           selectedPhotos: [],
@@ -650,22 +650,21 @@
       }
 
       let isPhotoTurn = (state.step % 2 === 0);
-      let stepNum = Math.floor(state.step / 2) + 1;
+      let stepNum = Math.floor(state.step / 2) + 1; // 1, 2, or 3
 
       if (isPhotoTurn) {
-        // Filter out photos already picked by this player
-        let availablePhotos = sharedRoundPhotos.filter(p => !state.selectedPhotos.includes(p.dataUrl));
+        // The player must select the specific SHARED photo for this step (index step/2)
+        const targetPhoto = sharedRoundPhotos[(state.step / 2)];
         
         quadElement.innerHTML = `
           <div class="quad-header">
             <span class="quad-title">👤 ${player}</span>
             <span class="quad-score">${score} pts</span>
           </div>
-          <div class="quad-status">Photo ${stepNum} of 3 — Pick a photo</div>
-          <div class="photo-choices-grid">
-            ${availablePhotos.map(p => `
-              <img src="${p.dataUrl}" class="choice-photo-thumb" onclick="playerPickPhoto('${player}', \`${p.dataUrl}\`)">
-            `).join('')}
+          <div class="quad-status">Round Step ${stepNum} of 3</div>
+          <p style="color:var(--accent-gold); font-size:0.85rem; font-weight:bold; margin-top:2px;">Select Image ${stepNum}:</p>
+          <div class="photo-choices-grid" style="grid-template-columns: 1fr;">
+            <img src="${targetPhoto.dataUrl}" class="choice-photo-thumb" style="aspect-ratio: 16/9; max-height:160px; object-fit:contain;" onclick="playerPickPhoto('${player}', \`${targetPhoto.dataUrl}\`)">
           </div>
         `;
       } else {
@@ -676,8 +675,8 @@
             <span class="quad-score">${score} pts</span>
           </div>
           <img src="${currentPhoto}" class="active-photo-preview">
-          <div class="quad-status">Pick Roast Card ${stepNum} of 3</div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
+          <div class="quad-status">Choose Roast Card for Image ${stepNum}</div>
+          <div class="roast-choices-stack">
             ${state.hand.map((cardText, cIdx) => `
               <div class="cah-card" onclick="playerPickCard('${player}', ${cIdx})">
                 <span>"${cardText}"</span>
@@ -714,7 +713,7 @@
     // --- VOTING PHASE ---
     function startVotingPhase() {
       votingQueue = [];
-      // Build 3 image voting items
+      // Build 3 image voting items based on shared round photos
       for (let i = 0; i < 3; i++) {
         let submissions = activeGamePlayers.map(player => ({
           player: player,
@@ -722,7 +721,7 @@
         }));
         votingQueue.push({
           photo: sharedRoundPhotos[i].dataUrl,
-          submissions: submissions.sort(() => Math.random() - 0.5) // shuffle submissions
+          submissions: submissions.sort(() => Math.random() - 0.5)
         });
       }
 
@@ -748,7 +747,7 @@
             <img src="${item.photo}" class="vote-photo">
 
             <div class="submissions-grid">
-              ${item.submissions.map((sub, sIdx) => `
+              ${item.submissions.map((sub) => `
                 <div class="cah-card" onclick="voteForSubmission('${sub.player}')" style="background:#fff; cursor:pointer;">
                   <div>
                     <div style="font-size:0.75rem; color:#94a3b8; font-weight:bold; margin-bottom:4px;">Submitted by ${sub.player}</div>
