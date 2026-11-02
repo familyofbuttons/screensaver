@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kitchen Family Photo Hub - Split-Screen Roast</title>
+  <title>Kitchen Family Photo Hub - Split-Screen Roast Battle</title>
   
   <link rel="manifest" href="./manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
@@ -41,10 +41,7 @@
       background-color: var(--bg);
       color: var(--text);
       overflow: hidden;
-      transition: filter 0.5s ease;
     }
-
-    body.night-mode { filter: brightness(0.12) contrast(1.1); }
 
     .screen {
       position: absolute;
@@ -56,12 +53,11 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      transition: opacity 0.3s ease;
       z-index: 10;
       overflow: hidden;
     }
 
-    .screen.hidden { opacity: 0; pointer-events: none; }
+    .screen.hidden { display: none !important; }
 
     header {
       position: fixed;
@@ -113,7 +109,7 @@
     .btn-red { background: var(--accent-red); color: #fff; }
 
     /* --- SCREENSAVER VIEW --- */
-    #screensaver-view { background: #0b0f19; z-index: 200; overflow: hidden; }
+    #screensaver-view { background: #0b0f19; z-index: 20; }
 
     #bg-blur-img {
       position: absolute;
@@ -123,11 +119,10 @@
       object-fit: cover;
       filter: blur(35px) brightness(0.45) saturate(1.3);
       transform: scale(1.08);
-      transition: opacity 0.3s ease-in-out;
-      z-index: 201;
+      z-index: 21;
     }
 
-    #sparkle-canvas { position: absolute; inset: 0; width: 100vw; height: 100dvh; z-index: 202; pointer-events: none; }
+    #sparkle-canvas { position: absolute; inset: 0; width: 100vw; height: 100dvh; z-index: 22; pointer-events: none; }
 
     #photo-container {
       width: 100vw;
@@ -137,7 +132,7 @@
       justify-content: center;
       overflow: hidden;
       position: relative;
-      z-index: 203;
+      z-index: 23;
       padding: 30px;
     }
 
@@ -152,11 +147,11 @@
     }
 
     .saver-controls-top-left { 
-      position: absolute; top: 20px; left: 20px; display: flex; gap: 8px; z-index: 210; align-items: center; 
+      position: absolute; top: 20px; left: 20px; display: flex; gap: 8px; z-index: 25; align-items: center; 
       background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 16px; backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
-    .saver-controls-top-right { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; align-items: center; z-index: 210; }
+    .saver-controls-top-right { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; align-items: center; z-index: 25; }
 
     .speed-btn {
       background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.9);
@@ -165,7 +160,7 @@
 
     /* --- GALLERY VIEW --- */
     #main-view {
-      padding-top: 84px; padding-bottom: 20px; width: 100vw; height: 100dvh; overflow-y: auto; display: flex; flex-direction: column; align-items: center;
+      padding-top: 84px; padding-bottom: 20px; width: 100vw; height: 100dvh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; z-index: 20;
     }
     .gallery-toolbar { display: flex; align-items: center; justify-content: space-between; width: 90vw; max-width: 1200px; margin-bottom: 16px; }
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; width: 90vw; max-width: 1200px; padding-bottom: 40px; }
@@ -177,11 +172,8 @@
     /* --- SPLIT-SCREEN ROAST GAME VIEW --- */
     #roast-game-view {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh; height: 100dvh;
       padding-top: 84px;
       background: var(--bg);
       z-index: 50;
@@ -190,16 +182,10 @@
     }
 
     .split-board {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      display: grid;
-      gap: 4px;
-      background: #020617;
-      padding: 8px;
-      overflow: hidden;
+      flex: 1; width: 100%; height: 100%;
+      display: grid; gap: 6px;
+      background: #020617; padding: 8px; overflow: hidden;
     }
-
     .split-board.layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
     .split-board.layout-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
     .split-board.layout-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
@@ -207,78 +193,61 @@
 
     .player-quadrant {
       background: var(--panel-bg);
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.15);
       border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      padding: 12px;
-      gap: 8px;
-      overflow-y: auto;
-      position: relative;
+      display: flex; flex-direction: column;
+      padding: 12px; gap: 8px;
+      overflow-y: auto; position: relative;
     }
 
     .quad-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding-bottom: 6px;
-      flex-shrink: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; flex-shrink: 0;
     }
+    .quad-title { font-weight: 800; color: var(--accent-gold); font-size: 1.05rem; }
+    .quad-status { font-size: 0.8rem; color: var(--text-muted); }
 
-    .quad-title { font-weight: 800; color: var(--accent-gold); font-size: 1rem; }
-    .quad-score { background: rgba(239,68,68,0.2); border: 1px solid var(--accent-red); padding: 2px 10px; border-radius: 10px; font-weight: bold; font-size: 0.85rem; }
-
-    .photo-choices-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .choice-photo-thumb {
-      width: 100%;
-      aspect-ratio: 1/1;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid rgba(255,255,255,0.2);
+    /* CARD STYLING */
+    .cah-card {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 12px;
+      padding: 14px;
+      font-weight: 700;
+      font-size: 0.95rem;
       cursor: pointer;
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      border: 1px solid #cbd5e1;
+      transition: transform 0.2s ease, background 0.2s ease;
+      display: flex; flex-direction: column; justify-content: space-between;
+      min-height: 85px;
     }
-    .choice-photo-thumb:hover { transform: scale(1.03); border-color: var(--accent-gold); }
+    .cah-card:hover { transform: translateY(-3px); background: #f8fafc; border-color: var(--accent-red); }
+    .cah-card-footer { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; }
+
+    .photo-choices-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
+    .choice-photo-thumb {
+      width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s ease;
+    }
+    .choice-photo-thumb:hover { transform: scale(1.04); border-color: var(--accent-gold); }
 
     .active-photo-preview {
-      width: 100%;
-      max-height: 160px;
-      object-fit: contain;
-      border-radius: 8px;
-      border: 2px solid rgba(255,255,255,0.2);
-      flex-shrink: 0;
+      width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
     }
 
-    .roast-choices-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      flex-shrink: 0;
+    /* VOTING STAGE */
+    #voting-stage {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: var(--bg); overflow-y: auto;
     }
-
-    .choice-roast-btn {
-      background: rgba(15, 23, 42, 0.9);
-      border: 2px solid rgba(239, 68, 68, 0.4);
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 0.95rem;
-      font-style: italic;
-      font-weight: 700;
-      color: #f8fafc;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .vote-arena {
+      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 24px;
+      width: 90vw; max-width: 650px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
     }
-    .choice-roast-btn:hover { background: rgba(239, 68, 68, 0.25); border-color: var(--accent-red); }
+    .vote-photo { width: 100%; max-height: 320px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.2); }
+    .submissions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; width: 100%; }
 
-    /* --- MODALS --- */
+    /* MODALS */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 300; display: flex; align-items: center; justify-content: center; }
     .modal-overlay.hidden { display: none !important; }
     .modal-box { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 24px; width: 90vw; max-width: 440px; display: flex; flex-direction: column; gap: 16px; }
@@ -305,7 +274,7 @@
       <input type="file" id="file-input" accept="image/*" multiple style="display:none;">
       <button class="btn" onclick="document.getElementById('file-input').click()">+ Select Photos</button>
       <button class="btn btn-secondary" onclick="toggleView('main')">📸 Gallery</button>
-      <button class="btn btn-red" onclick="openRoastSetupModal()">🔥 Roast Game (1-4P)</button>
+      <button class="btn btn-red" onclick="openRoastSetupModal()">🔥 Roast Game</button>
       <button class="btn btn-secondary" onclick="toggleView('saver')">🖼️ Screensaver</button>
       <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Fullscreen">⛶ Fullscreen</button>
     </div>
@@ -316,8 +285,8 @@
     <img id="bg-blur-img" src="" alt="Ambient Background">
     <canvas id="sparkle-canvas"></canvas>
     <div class="saver-controls-top-left">
-      <button class="speed-btn" onclick="prevSlide()">⏮️ Back</button>
-      <button id="pause-play-btn" class="speed-btn" onclick="togglePauseScreensaver()">⏸️ Pause</button>
+      <button class="speed-btn" onclick="prevSlide()" title="Previous Image">⏮️ Back</button>
+      <button id="pause-play-btn" class="speed-btn" onclick="togglePauseScreensaver()" title="Pause/Play">⏸️ Pause</button>
     </div>
     <div class="saver-controls-top-right">
       <button class="speed-btn" onclick="toggleView('main')">✕ Exit</button>
@@ -339,7 +308,7 @@
     <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 
-  <!-- Split-Screen Roast Battle Game View -->
+  <!-- Split-Screen Roast Game View -->
   <div id="roast-game-view" class="screen hidden">
     <div id="split-board-container" class="split-board layout-4"></div>
   </div>
@@ -347,19 +316,31 @@
   <!-- Roast Setup Modal (1-4 Players) -->
   <div id="roast-setup-modal" class="modal-overlay hidden">
     <div class="modal-box">
-      <h2>🔥 Split-Screen Roast Setup</h2>
-      <p style="color:var(--text-muted); font-size:0.9rem;">Enter names for active players (leave blank to omit):</p>
+      <h2>🔥 Roast Battle Setup</h2>
       
-      <div id="player-inputs-container">
-        <div class="player-input-row"><input type="text" class="player-name-input" value="Bee" placeholder="Player 1"></div>
-        <div class="player-input-row"><input type="text" class="player-name-input" value="Les" placeholder="Player 2"></div>
-        <div class="player-input-row"><input type="text" class="player-name-input" value="Chrissy" placeholder="Player 3"></div>
-        <div class="player-input-row"><input type="text" class="player-name-input" value="Casey" placeholder="Player 4"></div>
+      <div class="setting-group" style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Number of Players (1-4):</label>
+        <select id="player-count-select" class="btn btn-secondary" style="width:100%; font-size:1rem; outline:none;" onchange="updatePlayerInputRows()">
+          <option value="1">1 Player</option>
+          <option value="2">2 Players</option>
+          <option value="3">3 Players</option>
+          <option value="4" selected>4 Players</option>
+        </select>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Player Names:</label>
+        <div id="player-inputs-container">
+          <div class="player-input-row"><input type="text" class="player-name-input" value="Bee" placeholder="Player 1"></div>
+          <div class="player-input-row"><input type="text" class="player-name-input" value="Les" placeholder="Player 2"></div>
+          <div class="player-input-row"><input type="text" class="player-name-input" value="Chrissy" placeholder="Player 3"></div>
+          <div class="player-input-row"><input type="text" class="player-name-input" value="Casey" placeholder="Player 4"></div>
+        </div>
       </div>
 
       <div style="display:flex; gap:12px; margin-top:10px;">
         <button class="btn btn-secondary" style="flex:1;" onclick="closeRoastSetupModal()">Cancel</button>
-        <button class="btn btn-red" style="flex:1;" onclick="startSplitRoastGame()">Start Split-Screen 🔥</button>
+        <button class="btn btn-red" style="flex:1;" onclick="startSplitRoastGame()">Start Battle 🔥</button>
       </div>
     </div>
   </div>
@@ -381,7 +362,6 @@
     let isPaused = false;
     let slideshowTimer = null;
 
-    // MASSIVE RUDE & INSULTING DECK
     const ROAST_DECK = [
       "Ugly as fuck.",
       "Fat.",
@@ -490,7 +470,7 @@
             let w = img.width, h = img.height;
             const maxDimension = 1200;
             if (w > h) { if (w > maxDimension) { h = Math.round((h * maxDimension) / w); w = maxDimension; } }
-            else { if (h > maxDimension) { w = Math.round((w * maxDimension) / h); h = maxDimension; } }
+            else { if (h > maxDimension) { w = Math.round((h * maxDimension) / h); h = maxDimension; } }
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
             resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.88), portrait: h > w });
@@ -568,10 +548,13 @@
       document.getElementById('pause-play-btn').innerText = isPaused ? '▶️ Play' : '⏸️ Pause';
     }
 
-    // --- SPLIT-SCREEN ROAST GAME LOGIC ---
+    // --- GAME ENGINE LOGIC ---
     let activeGamePlayers = [];
     let playerScores = {};
     let playerStates = {};
+    let sharedRoundPhotos = [];
+    let votingQueue = [];
+    let currentVotingIndex = 0;
 
     function openRoastSetupModal() {
       if (photosList.length < 3) { alert("Please upload at least 3 photos first using '+ Select Photos'!"); return; }
@@ -580,6 +563,16 @@
 
     function closeRoastSetupModal() {
       document.getElementById('roast-setup-modal').classList.add('hidden');
+    }
+
+    function updatePlayerInputRows() {
+      const count = parseInt(document.getElementById('player-count-select').value);
+      const container = document.getElementById('player-inputs-container');
+      const defaultNames = ['Bee', 'Les', 'Chrissy', 'Casey'];
+      container.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        container.innerHTML += `<div class="player-input-row"><input type="text" class="player-name-input" value="${defaultNames[i] || 'Player ' + (i+1)}" placeholder="Player ${i+1}"></div>`;
+      }
     }
 
     function startSplitRoastGame() {
@@ -596,10 +589,25 @@
       toggleView('roast');
 
       playerScores = {};
+      activeGamePlayers.forEach(p => playerScores[p] = 0);
+
+      initNewRound();
+    }
+
+    function initNewRound() {
+      // Pick 3 SHARED photos for ALL players this round
+      let pool = [...photosList].sort(() => Math.random() - 0.5);
+      sharedRoundPhotos = pool.slice(0, 3);
+
       playerStates = {};
-      activeGamePlayers.forEach(p => {
-        playerScores[p] = 0;
-        playerStates[p] = { selectedPhoto: null, dealtRoasts: [] };
+      activeGamePlayers.forEach(player => {
+        let hand = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 5); // 5 card hand
+        playerStates[player] = {
+          step: 0, // 0: img1, 1: card1, 2: img2, 3: card2, 4: img3, 5: card3, 6: done
+          selectedPhotos: [],
+          selectedCards: [],
+          hand: hand
+        };
       });
 
       renderSplitBoard();
@@ -626,64 +634,165 @@
       const state = playerStates[player];
       const score = playerScores[player];
 
-      if (!state.selectedPhoto) {
-        let threePhotos = [...photosList].sort(() => Math.random() - 0.5).slice(0, 3);
+      if (state.step >= 6) {
+        quadElement.innerHTML = `
+          <div class="quad-header">
+            <span class="quad-title">👤 ${player}</span>
+            <span class="quad-score">${score} pts</span>
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px;">
+            <h3 style="color:var(--accent-green);">✅ Roasts Locked In!</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Waiting for other players to finish...</p>
+          </div>
+        `;
+        checkAllPlayersFinished();
+        return;
+      }
+
+      let isPhotoTurn = (state.step % 2 === 0);
+      let stepNum = Math.floor(state.step / 2) + 1;
+
+      if (isPhotoTurn) {
+        // Filter out photos already picked by this player
+        let availablePhotos = sharedRoundPhotos.filter(p => !state.selectedPhotos.includes(p.dataUrl));
         
         quadElement.innerHTML = `
           <div class="quad-header">
             <span class="quad-title">👤 ${player}</span>
             <span class="quad-score">${score} pts</span>
           </div>
-          <p style="color:var(--accent-gold); font-size:0.85rem; font-weight:bold; margin-top:2px;">1. Choose 1 of 3 Photos:</p>
+          <div class="quad-status">Photo ${stepNum} of 3 — Pick a photo</div>
           <div class="photo-choices-grid">
-            ${threePhotos.map(p => `
-              <img src="${p.dataUrl}" class="choice-photo-thumb" onclick="playerChoosePhoto('${player}', \`${p.dataUrl}\`)">
+            ${availablePhotos.map(p => `
+              <img src="${p.dataUrl}" class="choice-photo-thumb" onclick="playerPickPhoto('${player}', \`${p.dataUrl}\`)">
             `).join('')}
           </div>
         `;
       } else {
-        if (state.dealtRoasts.length === 0) {
-          state.dealtRoasts = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 3);
-        }
-
+        let currentPhoto = state.selectedPhotos[state.selectedPhotos.length - 1];
         quadElement.innerHTML = `
           <div class="quad-header">
             <span class="quad-title">👤 ${player}</span>
             <span class="quad-score">${score} pts</span>
           </div>
-          <img src="${state.selectedPhoto}" class="active-photo-preview">
-          <p style="color:var(--accent-red); font-size:0.85rem; font-weight:bold;">2. Choose Your Roast:</p>
-          <div class="roast-choices-stack">
-            ${state.dealtRoasts.map(roast => `
-              <div class="choice-roast-btn" onclick="playerCommitRoast('${player}')">
-                "${roast}"
+          <img src="${currentPhoto}" class="active-photo-preview">
+          <div class="quad-status">Pick Roast Card ${stepNum} of 3</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            ${state.hand.map((cardText, cIdx) => `
+              <div class="cah-card" onclick="playerPickCard('${player}', ${cIdx})">
+                <span>"${cardText}"</span>
+                <div class="cah-card-footer">Kitchen Family Hub</div>
               </div>
             `).join('')}
           </div>
-          <button class="btn btn-secondary" style="margin-top:auto; font-size:0.75rem; padding:4px;" onclick="playerResetPhoto('${player}')">🔄 Pick Different Photo</button>
         `;
       }
     }
 
-    function playerChoosePhoto(player, dataUrl) {
-      playerStates[player].selectedPhoto = dataUrl;
-      playerStates[player].dealtRoasts = [];
+    function playerPickPhoto(player, dataUrl) {
+      const state = playerStates[player];
+      state.selectedPhotos.push(dataUrl);
+      state.step++;
       refreshQuadrant(player, document.getElementById(`quad-${player}`));
     }
 
-    function playerResetPhoto(player) {
-      playerStates[player].selectedPhoto = null;
-      playerStates[player].dealtRoasts = [];
+    function playerPickCard(player, cardIndex) {
+      const state = playerStates[player];
+      const chosenCard = state.hand.splice(cardIndex, 1)[0];
+      state.selectedCards.push(chosenCard);
+      state.step++;
       refreshQuadrant(player, document.getElementById(`quad-${player}`));
     }
 
-    function playerCommitRoast(player) {
-      playerScores[player] += 10;
-      showToast(`🔥 ${player} roasted them! (+10 pts)`);
+    function checkAllPlayersFinished() {
+      let allDone = activeGamePlayers.every(p => playerStates[p].step >= 6);
+      if (allDone) {
+        startVotingPhase();
+      }
+    }
+
+    // --- VOTING PHASE ---
+    function startVotingPhase() {
+      votingQueue = [];
+      // Build 3 image voting items
+      for (let i = 0; i < 3; i++) {
+        let submissions = activeGamePlayers.map(player => ({
+          player: player,
+          card: playerStates[player].selectedCards[i]
+        }));
+        votingQueue.push({
+          photo: sharedRoundPhotos[i].dataUrl,
+          submissions: submissions.sort(() => Math.random() - 0.5) // shuffle submissions
+        });
+      }
+
+      currentVotingIndex = 0;
+      renderVotingScreen();
+    }
+
+    function renderVotingScreen() {
+      if (currentVotingIndex >= votingQueue.length) {
+        showWinnerScreen();
+        return;
+      }
+
+      const item = votingQueue[currentVotingIndex];
+      const container = document.getElementById('roast-game-view');
       
-      playerStates[player].selectedPhoto = null;
-      playerStates[player].dealtRoasts = [];
-      refreshQuadrant(player, document.getElementById(`quad-${player}`));
+      container.innerHTML = `
+        <div id="voting-stage">
+          <div class="vote-arena">
+            <h2 style="color:var(--accent-gold);">🗳️ Voting Time (Image ${currentVotingIndex + 1} of 3)</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Read the cards out loud, then click the funniest one to award points!</p>
+            
+            <img src="${item.photo}" class="vote-photo">
+
+            <div class="submissions-grid">
+              ${item.submissions.map((sub, sIdx) => `
+                <div class="cah-card" onclick="voteForSubmission('${sub.player}')" style="background:#fff; cursor:pointer;">
+                  <div>
+                    <div style="font-size:0.75rem; color:#94a3b8; font-weight:bold; margin-bottom:4px;">Submitted by ${sub.player}</div>
+                    <span style="font-size:1.05rem; font-style:italic;">"${sub.card}"</span>
+                  </div>
+                  <div class="cah-card-footer" style="color:var(--accent-red); font-weight:bold; text-align:right;">👉 Click to Vote (+15 pts)</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function voteForSubmission(winningPlayer) {
+      playerScores[winningPlayer] += 15;
+      showToast(`🏆 +15 pts awarded to ${winningPlayer}!`);
+      currentVotingIndex++;
+      setTimeout(renderVotingScreen, 600);
+    }
+
+    function showWinnerScreen() {
+      let sorted = [...activeGamePlayers].sort((a, b) => playerScores[b] - playerScores[a]);
+      let winner = sorted[0];
+
+      const container = document.getElementById('roast-game-view');
+      container.innerHTML = `
+        <div id="voting-stage">
+          <div class="vote-arena" style="text-align:center;">
+            <h1 style="color:var(--accent-gold); font-size:2.5rem;">👑 Roast Battle Winner!</h1>
+            <h2 style="color:#fff; font-size:1.8rem; margin:10px 0;">${winner} with ${playerScores[winner]} points!</h2>
+            
+            <div style="width:100%; margin:15px 0; border-top:1px solid rgba(255,255,255,0.15); padding-top:15px;">
+              <h3 style="color:var(--text-muted); margin-bottom:8px;">Final Scoreboard</h3>
+              ${sorted.map(p => `<div style="display:flex; justify-content:space-between; font-weight:bold; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.08);"><span>${p}</span><span style="color:var(--accent-gold);">${playerScores[p]} pts</span></div>`).join('')}
+            </div>
+
+            <div style="display:flex; gap:12px; width:100%; margin-top:10px;">
+              <button class="btn btn-secondary" style="flex:1;" onclick="toggleView('main')">📸 Exit to Gallery</button>
+              <button class="btn btn-red" style="flex:1;" onclick="openRoastSetupModal()">🔄 Play Again</button>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     // --- GALLERY LOGIC ---
