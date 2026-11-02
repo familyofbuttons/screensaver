@@ -41,7 +41,10 @@
       background-color: var(--bg);
       color: var(--text);
       overflow: hidden;
+      transition: filter 0.5s ease;
     }
+
+    body.night-mode { filter: brightness(0.12) contrast(1.1); }
 
     .screen {
       position: absolute;
@@ -76,7 +79,10 @@
       padding: 0 16px;
       z-index: 100;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      transition: opacity 0.3s ease;
     }
+
+    header.saver-hidden { opacity: 0; pointer-events: none; }
 
     .brand {
       display: flex;
@@ -109,7 +115,7 @@
     .btn-red { background: var(--accent-red); color: #fff; }
 
     /* --- SCREENSAVER VIEW --- */
-    #screensaver-view { background: #0b0f19; z-index: 20; }
+    #screensaver-view { background: #0b0f19; z-index: 200; }
 
     #bg-blur-img {
       position: absolute;
@@ -119,10 +125,10 @@
       object-fit: cover;
       filter: blur(35px) brightness(0.45) saturate(1.3);
       transform: scale(1.08);
-      z-index: 21;
+      z-index: 201;
     }
 
-    #sparkle-canvas { position: absolute; inset: 0; width: 100vw; height: 100dvh; z-index: 22; pointer-events: none; }
+    #sparkle-canvas { position: absolute; inset: 0; width: 100vw; height: 100dvh; z-index: 202; pointer-events: none; }
 
     #photo-container {
       width: 100vw;
@@ -132,7 +138,7 @@
       justify-content: center;
       overflow: hidden;
       position: relative;
-      z-index: 23;
+      z-index: 203;
       padding: 30px;
     }
 
@@ -147,15 +153,22 @@
     }
 
     .saver-controls-top-left { 
-      position: absolute; top: 20px; left: 20px; display: flex; gap: 8px; z-index: 25; align-items: center; 
+      position: absolute; top: 20px; left: 20px; display: flex; gap: 8px; z-index: 210; align-items: center; 
       background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 16px; backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
-    .saver-controls-top-right { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; align-items: center; z-index: 25; }
+    .saver-controls-top-right { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; align-items: center; z-index: 210; }
 
     .speed-btn {
       background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.9);
       padding: 6px 12px; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+    }
+    .speed-btn.active { background: rgba(56, 189, 248, 0.4); border-color: var(--accent-blue); color: #fff; }
+
+    .saver-icon-btn {
+      width: 48px; height: 48px; background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 50%; color: #fff; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; cursor: pointer;
+      backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0,0,0,0.6);
     }
 
     /* --- GALLERY VIEW --- */
@@ -171,81 +184,48 @@
 
     /* --- SPLIT-SCREEN ROAST GAME VIEW --- */
     #roast-game-view {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh; height: 100dvh;
-      padding-top: 84px;
-      background: var(--bg);
-      z-index: 50;
-      display: flex;
-      flex-direction: column;
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 84px; background: var(--bg); z-index: 50; display: flex; flex-direction: column;
     }
 
-    .split-board {
-      flex: 1; width: 100%; height: 100%;
-      display: grid; gap: 6px;
-      background: #020617; padding: 8px; overflow: hidden;
-    }
+    .split-board { flex: 1; width: 100%; height: 100%; display: grid; gap: 6px; background: #020617; padding: 8px; overflow: hidden; }
     .split-board.layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
     .split-board.layout-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
     .split-board.layout-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
     .split-board.layout-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 
     .player-quadrant {
-      background: var(--panel-bg);
-      border: 2px solid rgba(255,255,255,0.15);
-      border-radius: 12px;
-      display: flex; flex-direction: column;
-      padding: 12px; gap: 8px;
-      overflow-y: auto; position: relative;
+      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 12px; gap: 8px; overflow-y: auto; position: relative;
     }
 
-    .quad-header {
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; flex-shrink: 0;
-    }
+    .quad-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; flex-shrink: 0; }
     .quad-title { font-weight: 800; color: var(--accent-gold); font-size: 1.05rem; }
     .quad-status { font-size: 0.8rem; color: var(--text-muted); }
 
     /* CARD STYLING */
     .cah-card {
-      background: #ffffff;
-      color: #0f172a;
-      border-radius: 12px;
-      padding: 14px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      border: 1px solid #cbd5e1;
-      transition: transform 0.2s ease, background 0.2s ease;
-      display: flex; flex-direction: column; justify-content: space-between;
-      min-height: 85px;
+      background: #ffffff; color: #0f172a; border-radius: 12px; padding: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #cbd5e1; transition: transform 0.2s ease, background 0.2s ease;
+      display: flex; flex-direction: column; justify-content: space-between; min-height: 85px;
     }
     .cah-card:hover { transform: translateY(-3px); background: #f8fafc; border-color: var(--accent-red); }
     .cah-card-footer { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; }
 
     .photo-choices-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex-shrink: 0; }
-    .choice-photo-thumb {
-      width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px;
-      border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s ease;
-    }
+    .choice-photo-thumb { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: transform 0.2s ease; }
     .choice-photo-thumb:hover { transform: scale(1.04); border-color: var(--accent-gold); }
+    .active-photo-preview { width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0; }
+    .roast-choices-stack { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
 
-    .active-photo-preview {
-      width: 100%; max-height: 140px; object-fit: contain; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
-    }
-
-    /* VOTING STAGE */
+    /* VOTING STAGE (Image in Center, Captions Around) */
     #voting-stage {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: var(--bg); overflow-y: auto;
     }
     .vote-arena {
       background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 24px;
-      width: 90vw; max-width: 650px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      width: 95vw; max-width: 900px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
     }
-    .vote-photo { width: 100%; max-height: 320px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.2); }
-    .submissions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; width: 100%; }
+    .vote-photo-center { width: 100%; max-height: 280px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.2); }
+    .submissions-around-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; width: 100%; }
 
     /* MODALS */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); z-index: 300; display: flex; align-items: center; justify-content: center; }
@@ -265,7 +245,7 @@
 
   <div id="status-toast" class="toast-hidden">Processing photos...</div>
 
-  <header>
+  <header id="main-header">
     <div class="brand">
       <span>🖼️</span>
       <span>Kitchen Family Photo Hub</span>
@@ -284,13 +264,20 @@
   <div id="screensaver-view" class="screen">
     <img id="bg-blur-img" src="" alt="Ambient Background">
     <canvas id="sparkle-canvas"></canvas>
+    
     <div class="saver-controls-top-left">
       <button class="speed-btn" onclick="prevSlide()" title="Previous Image">⏮️ Back</button>
       <button id="pause-play-btn" class="speed-btn" onclick="togglePauseScreensaver()" title="Pause/Play">⏸️ Pause</button>
+      <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.2); margin: 0 2px;"></div>
+      <button id="speed-slow" class="speed-btn" onclick="setScreensaverSpeed(12000, 'slow')">></button>
+      <button id="speed-med" class="speed-btn active" onclick="setScreensaverSpeed(6000, 'med')">>></button>
+      <button id="speed-fast" class="speed-btn" onclick="setScreensaverSpeed(3000, 'fast')">>>></button>
     </div>
+
     <div class="saver-controls-top-right">
-      <button class="speed-btn" onclick="toggleView('main')">✕ Exit</button>
+      <button class="saver-icon-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
     </div>
+
     <div id="photo-container">
       <div id="empty-state">
         <h2 style="color:var(--accent-gold); margin-bottom:12px;">No Photos Loaded</h2>
@@ -361,7 +348,9 @@
     let sequencePointer = 0;
     let isPaused = false;
     let slideshowTimer = null;
+    let currentSlideInterval = 6000;
 
+    // MASSIVE RUDE, OFFENSIVE, & UNFILTERED DECK
     const ROAST_DECK = [
       "Ugly as fuck.",
       "Fat.",
@@ -402,7 +391,22 @@
       "Did you fight a badger for that outfit?",
       "Looking like a moldy potato.",
       "Pure trash energy.",
-      "Looking like you haven't washed in three weeks."
+      "Looking like you haven't washed in three weeks.",
+      "Looking like a racial slur came to life.",
+      "Straight off the slave ship aesthetic.",
+      "Looking like an illegal border crossing gone wrong.",
+      "Pure inbred colonial energy.",
+      "Looking like a 19th-century minstrel show extra.",
+      "White guilt personified.",
+      "Looking like you yell racial slurs at traffic cones.",
+      "Looking like you peaked at a KKK rally.",
+      "Absolute cotton-picking disaster.",
+      "Looking like your family tree is a straight telephone pole.",
+      "Looking like you belong on a deportation poster.",
+      "Pure unadulterated white trash genetics.",
+      "Looking like a hate crime waiting to happen.",
+      "The poster child for birth control.",
+      "Looking like you sniff glue behind a dumpster."
     ];
 
     function showToast(msg, duration = 3000) {
@@ -519,12 +523,19 @@
       sequencePointer = 0;
     }
 
+    function setScreensaverSpeed(ms, speedKey) {
+      currentSlideInterval = ms;
+      document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`speed-${speedKey}`).classList.add('active');
+      if (!isPaused) startScreensaver();
+    }
+
     function startScreensaver() {
       if (activeScreensaverPool.length === 0) return;
       document.getElementById('empty-state').style.display = 'none';
       if (slideshowTimer) clearInterval(slideshowTimer);
       displayCurrentPhoto();
-      slideshowTimer = setInterval(() => { if (!isPaused) displayCurrentPhoto(); }, 6000);
+      slideshowTimer = setInterval(() => { if (!isPaused) displayCurrentPhoto(); }, currentSlideInterval);
     }
 
     function displayCurrentPhoto() {
@@ -595,15 +606,14 @@
     }
 
     function initNewRound() {
-      // Pick 3 SHARED photos for ALL players this round
       let pool = [...photosList].sort(() => Math.random() - 0.5);
       sharedRoundPhotos = pool.slice(0, 3);
 
       playerStates = {};
       activeGamePlayers.forEach(player => {
-        let hand = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 3); // 3 card hand (one per photo)
+        let hand = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 3);
         playerStates[player] = {
-          step: 0, // 0: img1, 1: card1, 2: img2, 3: card2, 4: img3, 5: card3, 6: done
+          step: 0,
           selectedPhotos: [],
           selectedCards: [],
           hand: hand
@@ -650,12 +660,10 @@
       }
 
       let isPhotoTurn = (state.step % 2 === 0);
-      let stepNum = Math.floor(state.step / 2) + 1; // 1, 2, or 3
+      let stepNum = Math.floor(state.step / 2) + 1;
 
       if (isPhotoTurn) {
-        // The player must select the specific SHARED photo for this step (index step/2)
         const targetPhoto = sharedRoundPhotos[(state.step / 2)];
-        
         quadElement.innerHTML = `
           <div class="quad-header">
             <span class="quad-title">👤 ${player}</span>
@@ -664,7 +672,7 @@
           <div class="quad-status">Round Step ${stepNum} of 3</div>
           <p style="color:var(--accent-gold); font-size:0.85rem; font-weight:bold; margin-top:2px;">Select Image ${stepNum}:</p>
           <div class="photo-choices-grid" style="grid-template-columns: 1fr;">
-            <img src="${targetPhoto.dataUrl}" class="choice-photo-thumb" style="aspect-ratio: 16/9; max-height:160px; object-fit:contain;" onclick="playerPickPhoto('${player}', \`${targetPhoto.dataUrl}\`)">
+            <img src="${targetPhoto.dataUrl}" class="choice-photo-thumb" style="aspect-ratio: 16/9; max-height:150px; object-fit:contain;" onclick="playerPickPhoto('${player}', \`${targetPhoto.dataUrl}\`)">
           </div>
         `;
       } else {
@@ -710,10 +718,9 @@
       }
     }
 
-    // --- VOTING PHASE ---
+    // --- ANONYMOUS BLIND VOTING PHASE ---
     function startVotingPhase() {
       votingQueue = [];
-      // Build 3 image voting items based on shared round photos
       for (let i = 0; i < 3; i++) {
         let submissions = activeGamePlayers.map(player => ({
           player: player,
@@ -741,19 +748,19 @@
       container.innerHTML = `
         <div id="voting-stage">
           <div class="vote-arena">
-            <h2 style="color:var(--accent-gold);">🗳️ Voting Time (Image ${currentVotingIndex + 1} of 3)</h2>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Read the cards out loud, then click the funniest one to award points!</p>
+            <h2 style="color:var(--accent-gold);">🗳️ Blind Voting (Image ${currentVotingIndex + 1} of 3)</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Read cards aloud. Click the funniest one anonymously to award points!</p>
             
-            <img src="${item.photo}" class="vote-photo">
+            <img src="${item.photo}" class="vote-photo-center">
 
-            <div class="submissions-grid">
+            <div class="submissions-around-grid">
               ${item.submissions.map((sub) => `
                 <div class="cah-card" onclick="voteForSubmission('${sub.player}')" style="background:#fff; cursor:pointer;">
                   <div>
-                    <div style="font-size:0.75rem; color:#94a3b8; font-weight:bold; margin-bottom:4px;">Submitted by ${sub.player}</div>
+                    <div style="font-size:0.75rem; color:#94a3b8; font-weight:bold; margin-bottom:4px;">Anonymous Submission</div>
                     <span style="font-size:1.05rem; font-style:italic;">"${sub.card}"</span>
                   </div>
-                  <div class="cah-card-footer" style="color:var(--accent-red); font-weight:bold; text-align:right;">👉 Click to Vote (+15 pts)</div>
+                  <div class="cah-card-footer" style="color:var(--accent-red); font-weight:bold; text-align:right;">👉 Vote for this (+15 pts)</div>
                 </div>
               `).join('')}
             </div>
@@ -764,7 +771,7 @@
 
     function voteForSubmission(winningPlayer) {
       playerScores[winningPlayer] += 15;
-      showToast(`🏆 +15 pts awarded to ${winningPlayer}!`);
+      showToast(`🏆 +15 pts awarded anonymously to ${winningPlayer}!`);
       currentVotingIndex++;
       setTimeout(renderVotingScreen, 600);
     }
@@ -836,11 +843,13 @@
       document.getElementById('screensaver-view').classList.add('hidden');
       document.getElementById('main-view').classList.add('hidden');
       document.getElementById('roast-game-view').classList.add('hidden');
+      document.getElementById('main-header').classList.remove('saver-hidden');
       closeRoastSetupModal();
       closeLightbox();
 
       if (view === 'saver') {
         document.getElementById('screensaver-view').classList.remove('hidden');
+        document.getElementById('main-header').classList.add('saver-hidden');
         startScreensaver();
       } else if (view === 'main') {
         document.getElementById('main-view').classList.remove('hidden');
