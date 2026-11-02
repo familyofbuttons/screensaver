@@ -230,7 +230,7 @@
       cursor: pointer;
     }
 
-    /* Wobbling Animation for Saturday & Sunday */
+    /* Wobbling Animation for Active Submission / Voting Days */
     .game-prompt-badge.wobbling {
       animation: controllerWobble 2s infinite ease-in-out;
     }
@@ -561,7 +561,7 @@
 
       <button class="btn" onclick="document.getElementById('file-input').click()">+ Select Photos</button>
       <button class="btn btn-secondary" onclick="toggleView('main')">📸 Gallery</button>
-      <button class="btn btn-purple" onclick="openCaptionContestView()">🏆 Saturday Caption</button>
+      <button class="btn btn-purple" onclick="openCaptionContestView()">🏆 Weekly Caption</button>
       <button class="btn btn-secondary" onclick="openGameSetupModal()">🎮 Memory Game</button>
       <button class="btn btn-secondary" onclick="toggleView('saver')">🖼️ Screensaver</button>
       <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
@@ -611,9 +611,9 @@
     <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 
-  <!-- Saturday Caption Contest View -->
+  <!-- Weekly Caption Contest View -->
   <div id="caption-contest-view" class="screen hidden">
-    <h2 style="color:var(--accent-gold); margin-bottom:16px;">🏆 Saturday Caption Contest</h2>
+    <h2 style="color:var(--accent-gold); margin-bottom:16px;">🏆 Weekly Caption Contest</h2>
     <div id="contest-container" class="contest-card"></div>
   </div>
 
@@ -719,7 +719,7 @@
     let selectedPhotoIds = new Set();
     let isSelectionMode = false;
     let manualNightOverride = null;
-    let testDayOverride = null; // 'Saturday', 'Sunday', or null
+    let testDayOverride = null; // 'Submission', 'Saturday', 'Sunday', or null
 
     const PLAYERS = ['Bee', 'Les', 'Chrissy', 'Casey'];
     const EMOJI_PALETTE = ['❤️', '😂', '😍', '🔥', '🎉', '👑', '🥳', '🍕', '☕️', '🐶', '🐱', '🌟', '👍', '👏', '🥳', '🍦', '🏆', '🌈', '💡', '🍔', '🍿', '🎈', '🎁', '🚀'];
@@ -820,11 +820,12 @@
     }
 
     // --- TEST MODE HELPER ---
-    // Press Ctrl+Shift+T or call forceTestContest() in console to toggle Saturday/Sunday simulation!
+    // Press Ctrl+Shift+T or call forceTestContest() in console to toggle Submission/Saturday/Sunday simulation!
     function forceTestContest() {
-      if (testDayOverride === 'Saturday') testDayOverride = 'Sunday';
+      if (testDayOverride === 'Submission') testDayOverride = 'Saturday';
+      else if (testDayOverride === 'Saturday') testDayOverride = 'Sunday';
       else if (testDayOverride === 'Sunday') testDayOverride = null;
-      else testDayOverride = 'Saturday';
+      else testDayOverride = 'Submission';
 
       showToast(`Test Mode: Simulating ${testDayOverride || 'Normal Real-Time'}`, 4000);
       updateScreensaverPromptBadge();
@@ -840,7 +841,9 @@
     });
 
     function getSimulatedDay() {
-      if (testDayOverride) return testDayOverride === 'Saturday' ? 6 : 0;
+      if (testDayOverride === 'Submission') return 1; // Mon-Fri (e.g. 1 = Monday)
+      if (testDayOverride === 'Saturday') return 6;   // 6 = Saturday (Voting)
+      if (testDayOverride === 'Sunday') return 0;     // 0 = Sunday (Leaderboard)
       return new Date().getDay();
     }
 
@@ -867,7 +870,7 @@
     }
     setInterval(checkNightMode, 60000);
 
-    // --- SATURDAY CAPTION CONTEST LOGIC ---
+    // --- WEEKLY CAPTION CONTEST LOGIC ---
     function getWeekKey() {
       const now = new Date();
       const onejan = new Date(now.getFullYear(), 0, 1);
@@ -900,24 +903,24 @@
     }
 
     function updateScreensaverPromptBadge() {
-      const day = getSimulatedDay(); // 6 = Saturday, 0 = Sunday
+      const day = getSimulatedDay(); // 1-5 = Mon-Fri, 6 = Saturday, 0 = Sunday
       const badge = document.getElementById('game-prompt-badge');
       const promptIcon = document.getElementById('prompt-icon');
       const promptText = document.getElementById('game-prompt-text');
       const state = getContestState();
 
-      if (day === 6 && !state.finalized) {
-        // Saturday: Wobbling submission prompt
+      if (day >= 1 && day <= 5 && !state.finalized) {
+        // Monday to Friday: Wobbling submission prompt
         promptIcon.innerText = '🎮';
-        promptText.innerText = testDayOverride ? "[TEST] Saturday Caption Challenge!" : "Saturday Caption Challenge!";
+        promptText.innerText = testDayOverride ? "[TEST] Enter Caption of the Week!" : "Enter Caption of the Week!";
         badge.classList.add('wobbling');
-      } else if (day === 0 && !state.finalized) {
-        // Sunday: Wobbling voting prompt
+      } else if (day === 6 && !state.finalized) {
+        // Saturday: Wobbling voting prompt
         promptIcon.innerText = '🗳️';
-        promptText.innerText = testDayOverride ? "[TEST] Sunday Caption Voting!" : "Sunday Caption Voting!";
+        promptText.innerText = testDayOverride ? "[TEST] Saturday Caption Voting!" : "Saturday Caption Voting!";
         badge.classList.add('wobbling');
       } else {
-        // Monday through Friday (or completed contest): Stable leaderboard button
+        // Sunday or completed contest: Stable leaderboard button
         promptIcon.innerText = '🏆';
         promptText.innerText = "Caption Leaderboard";
         badge.classList.remove('wobbling');
@@ -934,7 +937,7 @@
       const photo = getWeeklyPhoto();
 
       if (!photo) {
-        container.innerHTML = `<p style="text-align:center; color:var$.text-muted);">Upload photos to unlock the Saturday contest!</p>`;
+        container.innerHTML = `<p style="text-align:center; color:var(--text-muted);">Upload photos to unlock the weekly contest!</p>`;
         return;
       }
 
@@ -944,12 +947,16 @@
 
       const day = getSimulatedDay();
 
+      let phaseLabel = "Monday–Friday: Submit Captions";
+      if (day === 6) phaseLabel = "Saturday: Vote!";
+      else if (day === 0) phaseLabel = "Sunday: Results & Leaderboard";
+
       container.innerHTML = `
         <img class="contest-img" src="${photo.dataUrl}">
         <div class="contest-body">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3>Week ${getWeekKey()} Contest ${testDayOverride ? `(Test: ${testDayOverride})` : ''}</h3>
-            <span style="color:var(--accent-gold); font-weight:bold;">${day === 6 ? "Saturday: Submit Captions" : day === 0 ? "Sunday: Vote!" : "Leaderboard Mode"}</span>
+            <span style="color:var(--accent-gold); font-weight:bold;">${phaseLabel}</span>
           </div>
           
           <div class="setting-group">
@@ -975,13 +982,13 @@
       const area = document.getElementById('contest-interactive-area');
       const day = getSimulatedDay();
 
-      if (state.finalized || (day !== 6 && day !== 0)) {
-        // Show Leaderboard / Final Results if game is over or it's mid-week (Mon-Fri)
+      // Finalized or Sunday: Show Leaderboard & Winner
+      if (state.finalized || day === 0) {
         const scores = JSON.parse(localStorage.getItem('coyla_caption_scores') || '{}');
         area.innerHTML = `
           <div style="background:rgba(168,85,247,0.15); border:1px solid var(--accent-purple); padding:16px; border-radius:12px;">
             <h4 style="color:var(--accent-purple); font-size:1.1rem; margin-bottom:8px;">👑 Caption Contest Leaderboard</h4>
-            ${state.winner ? `<p style="color:var(--accent-green); margin-bottom:10px;"><strong>Last Week Winner:</strong> ${state.winner} ("${state.captions[state.winner] || 'Default win'}")</p>` : ''}
+            ${state.winner ? `<p style="color:var(--accent-green); margin-bottom:10px;"><strong>This Week's Winner:</strong> ${state.winner} ("${state.captions[state.winner] || 'Default win'}")</p>` : ''}
             <div style="display:flex; flex-direction:column; gap:6px;">
               ${PLAYERS.map(p => `<div style="display:flex; justify-content:space-between; font-size:0.9rem; border-bottom:1px dashed rgba(255,255,255,0.1); padding:4px 0;"><span>${p}</span><span style="color:var(--accent-gold); font-weight:bold;">${scores[p] || 0} pts</span></div>`).join('')}
             </div>
@@ -990,8 +997,9 @@
         return;
       }
 
+      // Saturday Check for Auto-Win fallback (If only 1 player entered a caption by Saturday)
       const captionKeys = Object.keys(state.captions);
-      if (day === 0 && captionKeys.length === 1) {
+      if (day === 6 && captionKeys.length === 1) {
         state.winner = captionKeys[0];
         state.finalized = true;
         saveContestState(state);
@@ -1000,8 +1008,8 @@
         return;
       }
 
-      // Saturday Submission Phase
-      if (day === 6 || captionKeys.length < 2) {
+      // Monday – Friday: Submission Phase
+      if (day >= 1 && day <= 5) {
         const hasSubmitted = !!state.captions[modalPlayer];
         area.innerHTML = `
           <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:8px;">
@@ -1011,8 +1019,8 @@
           <button class="btn btn-green" style="margin-top:10px; width:100%;" onclick="submitCaption()">Save Caption 💬</button>
         `;
       } 
-      // Sunday Voting Phase
-      else {
+      // Saturday: Voting Phase
+      else if (day === 6) {
         const hasVoted = !!state.votes[modalPlayer];
         area.innerHTML = `
           <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:8px;">
