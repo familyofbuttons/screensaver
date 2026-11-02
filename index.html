@@ -111,6 +111,12 @@
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.15); }
     .btn-red { background: var(--accent-red); color: #fff; }
 
+    /* Dark Dropdown Fix */
+    select.btn-secondary option {
+      background-color: #0f172a;
+      color: #f8fafc;
+    }
+
     /* --- SCREENSAVER VIEW --- */
     #screensaver-view { background: #0b0f19; z-index: 200; }
 
@@ -198,13 +204,13 @@
     .quad-title { font-weight: 800; color: var(--accent-gold); font-size: 1.05rem; }
     .quad-status { font-size: 0.8rem; color: var(--text-muted); }
 
-    /* CARD STYLING */
+    /* CAH CARD STYLING (Looks like holding physical cards) */
     .cah-card {
       background: #ffffff; color: #0f172a; border-radius: 12px; padding: 14px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #cbd5e1; transition: transform 0.2s ease, background 0.2s ease;
-      display: flex; flex-direction: column; justify-content: space-between; min-height: 85px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4); border: 2px solid #cbd5e1; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      display: flex; flex-direction: column; justify-content: space-between; min-height: 95px;
     }
-    .cah-card:hover { transform: translateY(-3px); background: #f8fafc; border-color: var(--accent-red); }
+    .cah-card:hover { transform: translateY(-5px) scale(1.02); background: #f8fafc; border-color: var(--accent-red); box-shadow: 0 12px 25px rgba(239, 68, 68, 0.3); }
     .cah-card-footer { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px; }
 
     .active-photo-preview { width: 100%; max-height: 220px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.25); flex-shrink: 0; background: #000; }
@@ -218,7 +224,7 @@
       background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 24px;
       width: 95vw; max-width: 900px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
     }
-    .vote-photo-center { width: 100%; max-height: 320px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.2); background: #000; }
+    .vote-photo-center { width: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.2); background: #000; }
     .submissions-around-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; width: 100%; }
 
     /* MODALS */
@@ -350,7 +356,7 @@
     let slideHistory = [];
     let historyPointer = -1;
 
-    // MASSIVE UNLIMITED OFFENSIVE & RUDE DECK
+    // MASSIVE UNLIMITED OFFENSIVE & RACIAL CAH DECK
     const ROAST_DECK = [
       "Ugly as fuck.",
       "Fat.",
@@ -417,7 +423,15 @@
       "Looking like you sell bootleg DVDs outside a gas station.",
       "Absolute ghetto trash dumpster fire.",
       "Looking like you eat dirt and glue.",
-      "Fucking mongoloid genetic failure."
+      "Fucking mongoloid genetic failure.",
+      "A walking talking Sundown town violation.",
+      "Looking like a Jim Crow laws poster child.",
+      "Straight off the plantation and lost.",
+      "Looking like you pay your rent in welfare stamps and loose change.",
+      "Absolute spear-chucker appearance.",
+      "Looking like you got kicked out of the NAACP for being too annoying.",
+      "Pure watermelon wedge smile.",
+      "Looking like a crackhead mugshot gallery centerpiece."
     ];
 
     function showToast(msg, duration = 3000) {
@@ -597,6 +611,7 @@
     let sharedRoundPhotos = [];
     let votingQueue = [];
     let currentVotingIndex = 0;
+    let currentVotingVoterIdx = 0;
     let hasCpuBot = false;
 
     function openRoastSetupModal() {
@@ -656,13 +671,14 @@
 
       playerStates = {};
       activeGamePlayers.forEach(player => {
-        let hand = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 3);
         playerStates[player] = {
           step: 0,
           selectedPhotos: [],
           selectedCards: [],
-          hand: hand
+          currentHand: []
         };
+        // Deal initial hand of 3 cards from unlimited pool
+        dealNewHand(player);
       });
 
       renderSplitBoard();
@@ -670,6 +686,12 @@
       if (hasCpuBot) {
         runCpuBotTurns();
       }
+    }
+
+    function dealNewHand(player) {
+      // Draw 3 random cards from unlimited master ROAST_DECK
+      let hand = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 3);
+      playerStates[player].currentHand = hand;
     }
 
     function runCpuBotTurns() {
@@ -684,9 +706,10 @@
           state.selectedPhotos.push(targetPhoto.dataUrl);
           state.step++;
         } else {
-          let chosenCard = state.hand.pop() || "Absolute trash.";
+          let chosenCard = state.currentHand.pop() || "Absolute trash.";
           state.selectedCards.push(chosenCard);
           state.step++;
+          if (state.step < 6) dealNewHand(botName); // Draw next 3 for next photo
         }
       }
       renderSplitBoard();
@@ -738,10 +761,10 @@
             <span class="quad-title">👤 ${player}</span>
             <span class="quad-score">${score} pts</span>
           </div>
-          <div class="quad-status">Round Step ${stepNum} of 3</div>
+          <div class="quad-status">Photo ${stepNum} of 3</div>
           <p style="color:var(--accent-gold); font-size:0.85rem; font-weight:bold; margin-top:2px;">Select Image ${stepNum}:</p>
           <div class="photo-choices-grid" style="grid-template-columns: 1fr;">
-            <img src="${targetPhoto.dataUrl}" class="choice-photo-thumb" style="aspect-ratio: 16/9; max-height:220px; object-fit:contain; background:#000;" onclick="playerPickPhoto('${player}', \`${targetPhoto.dataUrl}\`)">
+            <img src="${targetPhoto.dataUrl}" class="choice-photo-thumb" style="aspect-ratio: 16/9; max-height:220px; object-fit:contain; background:#000; cursor:pointer;" onclick="playerPickPhoto('${player}', \`${targetPhoto.dataUrl}\`)">
           </div>
         `;
       } else {
@@ -752,12 +775,12 @@
             <span class="quad-score">${score} pts</span>
           </div>
           <img src="${currentPhoto}" class="active-photo-preview">
-          <div class="quad-status">Choose Roast Card for Image ${stepNum}</div>
+          <div class="quad-status">Choose Caption for Photo ${stepNum} (Hand of 3)</div>
           <div class="roast-choices-stack">
-            ${state.hand.map((cardText, cIdx) => `
+            ${state.currentHand.map((cardText, cIdx) => `
               <div class="cah-card" onclick="playerPickCard('${player}', ${cIdx})">
                 <span>"${cardText}"</span>
-                <div class="cah-card-footer">Kitchen Family Hub</div>
+                <div class="cah-card-footer">Kitchen Family Hub • CAH Hand</div>
               </div>
             `).join('')}
           </div>
@@ -774,9 +797,15 @@
 
     function playerPickCard(player, cardIndex) {
       const state = playerStates[player];
-      const chosenCard = state.hand.splice(cardIndex, 1)[0];
+      const chosenCard = state.currentHand.splice(cardIndex, 1)[0];
       state.selectedCards.push(chosenCard);
       state.step++;
+      
+      // If there are more photos to roast, deal a fresh hand of 3 unlimited cards
+      if (state.step < 6) {
+        dealNewHand(player);
+      }
+      
       refreshQuadrant(player, document.getElementById(`quad-${player}`));
     }
 
@@ -787,7 +816,7 @@
       }
     }
 
-    // --- ANONYMOUS BLIND VOTING PHASE ---
+    // --- INDIVIDUAL EACH-PLAYER VOTING PHASE ---
     function startVotingPhase() {
       votingQueue = [];
       for (let i = 0; i < 3; i++) {
@@ -796,12 +825,14 @@
           card: playerStates[player].selectedCards[i]
         }));
         votingQueue.push({
+          photoIndex: i,
           photo: sharedRoundPhotos[i].dataUrl,
           submissions: submissions.sort(() => Math.random() - 0.5)
         });
       }
 
       currentVotingIndex = 0;
+      currentVotingVoterIdx = 0;
       renderVotingScreen();
     }
 
@@ -811,25 +842,42 @@
         return;
       }
 
+      // Filter out CPU bot from human voters if present
+      let humanPlayers = activeGamePlayers.filter(p => p !== '🤖 RoastBot 3000');
+      if (humanPlayers.length === 0) humanPlayers = activeGamePlayers; // Fallback
+
+      if (currentVotingVoterIdx >= humanPlayers.length) {
+        // All humans voted for this photo, move to next photo
+        currentVotingIndex++;
+        currentVotingVoterIdx = 0;
+        renderVotingScreen();
+        return;
+      }
+
+      const voter = humanPlayers[currentVotingVoterIdx];
       const item = votingQueue[currentVotingIndex];
       const container = document.getElementById('roast-game-view');
       
       container.innerHTML = `
         <div id="voting-stage">
           <div class="vote-arena">
-            <h2 style="color:var(--accent-gold);">🗳️ Blind Voting (Image ${currentVotingIndex + 1} of 3)</h2>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Read cards aloud. Click the funniest anonymous caption to award points!</p>
+            <h2 style="color:var(--accent-gold);">🗳️ Voting: Photo ${currentVotingIndex + 1} of 3</h2>
+            <div style="background:rgba(56, 189, 248, 0.2); border:1px solid var(--accent-blue); padding:6px 16px; border-radius:20px; font-weight:bold; color:var(--accent-blue);">
+              Pass device to: <span style="color:#fff; text-decoration:underline;">${voter}</span>
+            </div>
             
             <img src="${item.photo}" class="vote-photo-center">
 
+            <p style="color:var(--text-muted); font-size:0.85rem;">Select the funniest anonymous caption:</p>
+
             <div class="submissions-around-grid">
               ${item.submissions.map((sub) => `
-                <div class="cah-card" onclick="voteForSubmission('${sub.player}')" style="background:#fff; cursor:pointer;">
+                <div class="cah-card" onclick="castVoterBallot('${voter}', '${sub.player}')" style="background:#fff; cursor:pointer;">
                   <div>
                     <div style="font-size:0.75rem; color:#94a3b8; font-weight:bold; margin-bottom:4px;">Anonymous Submission</div>
                     <span style="font-size:1.05rem; font-style:italic;">"${sub.card}"</span>
                   </div>
-                  <div class="cah-card-footer" style="color:var(--accent-red); font-weight:bold; text-align:right;">👉 Vote for this (+15 pts)</div>
+                  <div class="cah-card-footer" style="color:var(--accent-red); font-weight:bold; text-align:right;">👉 Vote for this (+10 pts)</div>
                 </div>
               `).join('')}
             </div>
@@ -838,11 +886,11 @@
       `;
     }
 
-    function voteForSubmission(winningPlayer) {
-      playerScores[winningPlayer] += 15;
-      showToast(`🏆 +15 pts awarded anonymously to ${winningPlayer}!`);
-      currentVotingIndex++;
-      setTimeout(renderVotingScreen, 600);
+    function castVoterBallot(voterName, winningPlayer) {
+      playerScores[winningPlayer] += 10;
+      showToast(`🗳️ ${voterName} cast their vote! (+10 pts to author)`);
+      currentVotingVoterIdx++;
+      setTimeout(renderVotingScreen, 400);
     }
 
     function showWinnerScreen() {
