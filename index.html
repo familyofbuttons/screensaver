@@ -620,14 +620,24 @@
     function openRoastSetupModal() {
       if (photosList.length < 3) { alert("Please upload at least 3 photos first using '+ Select Photos'!"); return; }
       
-      // Ensure game view is active and reset container if coming from winner screen
+      // Ensure the game view screen is active and visible
       document.getElementById('screensaver-view').classList.add('hidden');
       document.getElementById('main-view').classList.add('hidden');
       document.getElementById('roast-game-view').classList.remove('hidden');
       
-      // Reset split board container in case it was showing the winner screen overlay
-      document.getElementById('split-board-container').innerHTML = '';
-      
+      // Re-initialize the split-board container if it was replaced by the winner screen
+      const gameView = document.getElementById('roast-game-view');
+      let boardContainer = document.getElementById('split-board-container');
+      if (!boardContainer) {
+        boardContainer = document.createElement('div');
+        boardContainer.id = 'split-board-container';
+        boardContainer.className = 'split-board layout-4';
+        gameView.innerHTML = '';
+        gameView.appendChild(boardContainer);
+      } else {
+        boardContainer.innerHTML = '';
+      }
+
       document.getElementById('roast-setup-modal').classList.remove('hidden');
     }
 
@@ -726,9 +736,16 @@
     }
 
     function renderSplitBoard() {
-      const boardContainer = document.getElementById('split-board-container');
+      const gameView = document.getElementById('roast-game-view');
+      let boardContainer = document.getElementById('split-board-container');
+      if (!boardContainer) {
+        boardContainer = document.createElement('div');
+        boardContainer.id = 'split-board-container';
+        gameView.innerHTML = '';
+        gameView.appendChild(boardContainer);
+      }
+
       const numPlayers = activeGamePlayers.length;
-      
       boardContainer.className = `split-board layout-${numPlayers}`;
       boardContainer.innerHTML = '';
 
