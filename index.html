@@ -318,8 +318,8 @@
       z-index: 10;
     }
 
-    /* --- CAPTION PARTY GAME VIEW --- */
-    #caption-game-view {
+    /* --- CAPTION ROYALE PARTY GAME VIEW --- */
+    #caption-royale-view {
       padding-top: 84px;
       padding-bottom: 20px;
       width: 100vw;
@@ -331,7 +331,7 @@
       background: var(--bg);
     }
 
-    .caption-game-container {
+    .royale-container {
       width: 95vw;
       max-width: 1200px;
       display: flex;
@@ -341,83 +341,42 @@
       padding-bottom: 40px;
     }
 
-    .game-arena {
+    .royale-arena {
       display: grid;
-      grid-template-columns: 280px 1fr 280px;
-      gap: 20px;
+      grid-template-columns: 1fr 340px 1fr;
+      gap: 24px;
       width: 100%;
       align-items: center;
     }
 
-    .arena-center-photo {
+    .royale-photo {
       width: 100%;
-      max-height: 500px;
+      max-height: 440px;
       object-fit: contain;
       border-radius: 16px;
       box-shadow: 0 20px 40px rgba(0,0,0,0.8);
       border: 2px solid rgba(255,255,255,0.2);
     }
 
-    .arena-side-panel {
-      background: var(--panel-bg);
-      border: 1px solid rgba(255,255,255,0.15);
+    .royale-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid rgba(255, 255, 255, 0.2);
       border-radius: 16px;
       padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-height: 550px;
-      overflow-y: auto;
-    }
-
-    .caption-phrase-card {
-      background: rgba(255,255,255,0.08);
-      border: 2px dashed rgba(255,255,255,0.25);
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       font-style: italic;
       text-align: center;
-      min-height: 70px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 90px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      position: relative;
     }
-
-    .caption-phrase-card.dropped {
-      border-style: solid;
+    .royale-card:hover {
+      background: rgba(56, 189, 248, 0.2);
       border-color: var(--accent-blue);
-      background: rgba(56, 189, 248, 0.15);
-    }
-
-    .player-token {
-      background: var(--accent-gold);
-      color: #0f172a;
-      font-weight: 800;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: grab;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      font-size: 0.9rem;
-      user-select: none;
-    }
-    .player-token:active { cursor: grabbing; }
-
-    .token-bucket {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      background: rgba(0,0,0,0.3);
-      padding: 12px;
-      border-radius: 12px;
-      margin-top: 10px;
+      transform: translateY(-2px);
     }
 
     /* --- MEMORY GAME VIEW --- */
@@ -587,7 +546,7 @@
 
       <button class="btn" onclick="document.getElementById('file-input').click()">+ Select Photos</button>
       <button class="btn btn-secondary" onclick="toggleView('main')">📸 Gallery</button>
-      <button class="btn btn-purple" onclick="openCaptionGameSetup()">🏆 Caption Game</button>
+      <button class="btn btn-purple" onclick="openRoyaleSetup()">👑 Caption Royale</button>
       <button class="btn btn-secondary" onclick="openGameSetupModal()">🎮 Memory Game</button>
       <button class="btn btn-secondary" onclick="toggleView('saver')">🖼️ Screensaver</button>
       <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
@@ -636,32 +595,32 @@
     <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 
-  <!-- Caption Party Game View -->
-  <div id="caption-game-view" class="screen hidden">
-    <div class="caption-game-container">
-      <h2 style="color:var(--accent-gold);">🏆 Caption Party Game</h2>
-      <div id="caption-game-main-content" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+  <!-- Caption Royale Party Game View -->
+  <div id="caption-royale-view" class="screen hidden">
+    <div class="royale-container">
+      <h2 style="color:var(--accent-gold);">👑 Caption Royale</h2>
+      <div id="royale-main-content" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
     </div>
   </div>
 
-  <!-- Caption Game Setup Modal -->
-  <div id="caption-game-setup-modal" class="modal-overlay hidden">
+  <!-- Caption Royale Setup Modal -->
+  <div id="royale-setup-modal" class="modal-overlay hidden">
     <div class="modal-box">
-      <h2>🏆 Start Caption Party Game</h2>
-      <p style="color:var(--text-muted); font-size:0.9rem;">Select participating players for this round:</p>
+      <h2>👑 Start Caption Royale</h2>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Select participating players:</p>
       
       <div class="setting-group">
-        <div class="player-pills-row" id="caption-players-select-row">
-          <div class="player-pill active" onclick="toggleCaptionPlayer('Bee', this)">Bee</div>
-          <div class="player-pill active" onclick="toggleCaptionPlayer('Les', this)">Les</div>
-          <div class="player-pill active" onclick="toggleCaptionPlayer('Chrissy', this)">Chrissy</div>
-          <div class="player-pill active" onclick="toggleCaptionPlayer('Casey', this)">Casey</div>
+        <div class="player-pills-row" id="royale-players-select-row">
+          <div class="player-pill active" onclick="toggleRoyalePlayer('Bee', this)">Bee</div>
+          <div class="player-pill active" onclick="toggleRoyalePlayer('Les', this)">Les</div>
+          <div class="player-pill active" onclick="toggleRoyalePlayer('Chrissy', this)">Chrissy</div>
+          <div class="player-pill active" onclick="toggleRoyalePlayer('Casey', this)">Casey</div>
         </div>
       </div>
 
       <div style="display:flex; gap:12px; margin-top:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="closeCaptionGameSetup()">Cancel</button>
-        <button class="btn btn-purple" style="flex:1;" onclick="startCaptionGameRound()">Start Round ▶️</button>
+        <button class="btn btn-secondary" style="flex:1;" onclick="closeRoyaleSetup()">Cancel</button>
+        <button class="btn btn-purple" style="flex:1;" onclick="startRoyaleRound()">Start Game ▶️</button>
       </div>
     </div>
   </div>
@@ -754,7 +713,6 @@
     let photosList = [];
     let activeScreensaverPool = [];
     
-    // Times-Table Sequence Generator State
     let sequenceIndices = [];
     let sequencePointer = 0;
     let historyPointerList = [];
@@ -772,11 +730,23 @@
     let manualNightOverride = null;
 
     const PLAYERS = ['Bee', 'Les', 'Chrissy', 'Casey'];
-    let captionGameActivePlayers = ['Bee', 'Les', 'Chrissy', 'Casey'];
-    let captionGameCurrentPhoto = null;
-    let captionGameSubmissions = {}; // { player: captionText }
-    let captionGameSubmissionIndex = 0;
-    let captionGameShuffledPhrases = []; // array of { text, author }
+    let royaleActivePlayers = ['Bee', 'Les', 'Chrissy', 'Casey'];
+    let royalePhoto = null;
+    let royaleSubmissions = []; // array of { text, author }
+    let royaleSubmitIndex = 0;
+
+    const QUICK_QUIPS = [
+      "Zero thoughts, head completely empty",
+      "When the WiFi drops for 2 seconds",
+      "I regret nothing",
+      "Day 47: They still suspect nothing",
+      "Absolutely peak chaotic energy",
+      "Do I look like I know what's going on?",
+      "Nailed it.",
+      "Send help immediately",
+      "Just vibing in the chaos",
+      "Bro really thought he did something"
+    ];
 
     const EMOJI_PALETTE = ['❤️', '😂', '😍', '🔥', '🎉', '👑', '🥳', '🍕', '☕️', '🐶', '🐱', '🌟', '👍', '👏', '🥳', '🍦', '🏆', '🌈', '💡', '🍔', '🍿', '🎈', '🎁', '🚀'];
 
@@ -1026,7 +996,6 @@
       }
     }
 
-    // --- TIMES-TABLE SEQUENCE GENERATOR ---
     function buildTimesTableSequence() {
       const poolLen = activeScreensaverPool.length;
       if (poolLen === 0) { sequenceIndices = []; return; }
@@ -1156,230 +1125,130 @@
       }, 150);
     }
 
-    // --- CAPTION PARTY GAME LOGIC ---
-    function openCaptionGameSetup() {
+    // --- CAPTION ROYALE PARTY GAME LOGIC ---
+    function openRoyaleSetup() {
       if (photosList.length === 0) { alert("Please upload some photos first!"); return; }
-      document.getElementById('caption-game-setup-modal').classList.remove('hidden');
+      document.getElementById('royale-setup-modal').classList.remove('hidden');
     }
 
-    function closeCaptionGameSetup() {
-      document.getElementById('caption-game-setup-modal').classList.add('hidden');
+    function closeRoyaleSetup() {
+      document.getElementById('royale-setup-modal').classList.add('hidden');
     }
 
-    function toggleCaptionPlayer(name, el) {
+    function toggleRoyalePlayer(name, el) {
       el.classList.toggle('active');
-      if (captionGameActivePlayers.includes(name)) {
-        captionGameActivePlayers = captionGameActivePlayers.filter(p => p !== name);
+      if (royaleActivePlayers.includes(name)) {
+        royaleActivePlayers = royaleActivePlayers.filter(p => p !== name);
       } else {
-        captionGameActivePlayers.push(name);
+        royaleActivePlayers.push(name);
       }
     }
 
-    async function startCaptionGameRound() {
-      if (captionGameActivePlayers.length < 2) {
+    function startRoyaleRound() {
+      if (royaleActivePlayers.length < 2) {
         alert("Please select at least 2 players!");
         return;
       }
-      closeCaptionGameSetup();
-      toggleView('captionGame');
+      closeRoyaleSetup();
+      toggleView('royale');
 
-      // Pick random photo
-      captionGameCurrentPhoto = photosList[Math.floor(Math.random() * photosList.length)];
-      captionGameSubmissions = {};
-      captionGameSubmissionIndex = 0;
+      royalePhoto = photosList[Math.floor(Math.random() * photosList.length)];
+      royaleSubmissions = [];
+      royaleSubmitIndex = 0;
 
-      renderCaptionSubmissionPrompt();
+      renderRoyaleSubmissionStep();
     }
 
-    function renderCaptionSubmissionPrompt() {
-      const container = document.getElementById('caption-game-main-content');
-      if (captionGameSubmissionIndex < captionGameActivePlayers.length) {
-        const currentPlayer = captionGameActivePlayers[captionGameSubmissionIndex];
+    function renderRoyaleSubmissionStep() {
+      const container = document.getElementById('royale-main-content');
+      if (royaleSubmitIndex < royaleActivePlayers.length) {
+        const currentPlayer = royaleActivePlayers[royaleSubmitIndex];
+        
+        // Pick 4 random quick quips for inspiration / instant pick
+        let shuffledQuips = [...QUICK_QUIPS].sort(() => Math.random() - 0.5).slice(0, 4);
+
         container.innerHTML = `
           <div class="modal-box" style="max-width:520px; text-align:center;">
             <h3 style="color:var(--accent-gold);">Pass to: <span style="color:#fff; font-size:1.4rem;">${currentPlayer}</span></h3>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Turn around or close eyes while ${currentPlayer} types their secret caption!</p>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Close eyes or turn around while ${currentPlayer} picks or writes their caption!</p>
             
-            <img src="${captionGameCurrentPhoto.dataUrl}" style="width:100%; max-height:220px; object-fit:contain; border-radius:12px; margin:10px 0;">
+            <img src="${royalePhoto.dataUrl}" style="width:100%; max-height:200px; object-fit:contain; border-radius:12px; margin:10px 0;">
             
             <div class="setting-group" style="text-align:left;">
-              <label>Your Secret Caption:</label>
-              <textarea id="secret-caption-input" class="btn btn-secondary" style="width:100%; height:80px; resize:none; padding:10px; font-size:1rem; text-align:left;" placeholder="Write something funny..."></textarea>
+              <label>Type or pick a quick quip:</label>
+              <input type="text" id="royale-caption-input" class="btn btn-secondary" style="width:100%; text-align:left; padding:10px; font-size:1rem;" placeholder="Type something funny...">
             </div>
 
-            <button class="btn btn-green" style="width:100%; margin-top:10px;" onclick="submitSecretCaption('${currentPlayer}')">Submit & Pass 🔒</button>
+            <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
+              <p style="font-size:0.8rem; color:var(--accent-gold);">Or tap a quick meme quote:</p>
+              ${shuffledQuips.map(q => `<button class="btn btn-secondary" style="font-size:0.85rem; padding:6px 10px; justify-content:flex-start;" onclick="document.getElementById('royale-caption-input').value='${q}'">${q}</button>`).join('')}
+            </div>
+
+            <button class="btn btn-purple" style="width:100%; margin-top:14px;" onclick="submitRoyaleCaption('${currentPlayer}')">Lock In Caption 🔒</button>
           </div>
         `;
       } else {
-        fetchInternetComputerCaptions();
+        renderRoyaleVotingArena();
       }
     }
 
-    function submitSecretCaption(player) {
-      const txt = document.getElementById('secret-caption-input').value.trim();
-      if (!txt) { alert("Please type a caption!"); return; }
-      captionGameSubmissions[player] = txt;
-      captionGameSubmissionIndex++;
-      renderCaptionSubmissionPrompt();
+    function submitRoyaleCaption(player) {
+      const txt = document.getElementById('royale-caption-input').value.trim();
+      if (!txt) { alert("Please enter or select a caption!"); return; }
+      royaleSubmissions.push({ text: txt, author: player });
+      royaleSubmitIndex++;
+      renderRoyaleSubmissionStep();
     }
 
-    async function fetchInternetComputerCaptions() {
-      const container = document.getElementById('caption-game-main-content');
-      container.innerHTML = `<p style="color:var(--text-muted);">Fetching internet computer captions...</p>`;
+    function renderRoyaleVotingArena() {
+      const container = document.getElementById('royale-main-content');
+      
+      // Shuffle submissions anonymously
+      let shuffled = [...royaleSubmissions].sort(() => Math.random() - 0.5);
 
-      let compCaptions = [];
-      const fallbacks = [
-        "When you realize tomorrow is Monday",
-        "Zero thoughts, head completely empty",
-        "Nobody move, nobody gets hurt",
-        "I have no idea what is going on here",
-        "Peak chaotic energy right here",
-        "This is fine."
-      ];
-
-      try {
-        // Fetch 2 random quotes/phrases from free public internet APIs
-        const res1 = await fetch('https://dummyjson.com/quotes/random');
-        const data1 = await res1.json();
-        if (data1 && data1.quote) compCaptions.push(data1.quote);
-
-        const res2 = await fetch('https://api.quotable.io/random');
-        const data2 = await res2.json();
-        if (data2 && data2.content) compCaptions.push(data2.content);
-      } catch(e) {}
-
-      while (compCaptions.length < 2) {
-        const rand = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-        if (!compCaptions.includes(rand)) compCaptions.push(rand);
-      }
-
-      // Build shuffled phrases array
-      captionGameShuffledPhrases = [];
-      Object.entries(captionGameSubmissions).forEach(([author, text]) => {
-        captionGameShuffledPhrases.push({ text, author });
-      });
-      compCaptions.forEach(text => {
-        captionGameShuffledPhrases.push({ text, author: 'Computer 🤖' });
-      });
-
-      // Shuffle array
-      captionGameShuffledPhrases.sort(() => Math.random() - 0.5);
-
-      renderCaptionGuessingArena();
-    }
-
-    function renderCaptionGuessingArena() {
-      const container = document.getElementById('caption-game-main-content');
-
-      let leftPhrasesHTML = '';
-      let rightPhrasesHTML = '';
-
-      captionGameShuffledPhrases.forEach((p, idx) => {
-        const cardHTML = `
-          <div class="caption-phrase-card" id="phrase-box-${idx}" data-phrase-idx="${idx}">
-            <span>"${p.text}"</span>
-            <div class="token-bucket" id="bucket-${idx}" ondragover="allowDrop(event)" ondrop="dropToken(event, ${idx})" ondragenter="event.preventDefault()">
-              <!-- Dropped tokens go here -->
-            </div>
+      let cardsHTML = '';
+      shuffled.forEach((sub, idx) => {
+        cardsHTML += `
+          <div class="royale-card" onclick="revealRoyaleWinner('${sub.author}', '${sub.text}')">
+            <span>"${sub.text}"</span>
           </div>
         `;
-        if (idx % 2 === 0) leftPhrasesHTML += cardHTML;
-        else rightPhrasesHTML += cardHTML;
       });
 
       container.innerHTML = `
-        <p style="color:var(--text-muted); margin-bottom:14px; text-align:center;">Drag each player token to the caption phrase you think they wrote!</p>
+        <p style="color:var(--text-muted); margin-bottom:14px; text-align:center;">Look at the photo in the center. Tap the caption you think is the funniest!</p>
         
-        <div class="game-arena">
+        <div class="royale-arena">
           <div style="display:flex; flex-direction:column; gap:14px;">
-            ${leftPhrasesHTML}
+            ${cardsHTML.slice(0, Math.ceil(cardsHTML.length / 2))}
           </div>
 
           <div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
-            <img src="${captionGameCurrentPhoto.dataUrl}" class="arena-center-photo">
-            
-            <!-- Player Tokens Pool -->
-            <div style="background:var(--panel-bg); padding:14px; border-radius:16px; border:1px solid rgba(255,255,255,0.15); width:100%; text-align:center;">
-              <p style="font-size:0.85rem; color:var(--accent-gold); margin-bottom:8px; font-weight:bold;">Drag Player Tokens:</p>
-              <div id="token-pool" class="token-bucket" ondragover="allowDrop(event)" ondrop="dropTokenToPool(event)" ondragenter="event.preventDefault()">
-                ${captionGameActivePlayers.map(p => `
-                  <div class="player-token" draggable="true" ondragstart="dragToken(event)" id="token-${p}" data-player="${p}">
-                    👤 ${p}
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-
-            <button class="btn btn-green" onclick="revealCaptionGameResults()">Reveal Results & Scores 👑</button>
+            <img src="${royalePhoto.dataUrl}" class="royale-photo">
+            <button class="btn btn-secondary" onclick="openRoyaleSetup()">🔄 New Round</button>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:14px;">
-            ${rightPhrasesHTML}
+            ${cardsHTML.slice(Math.ceil(cardsHTML.length / 2))}
           </div>
         </div>
       `;
     }
 
-    function allowDrop(ev) {
-      ev.preventDefault();
-    }
-
-    function dragToken(ev) {
-      ev.dataTransfer.setData("text/plain", ev.target.id);
-    }
-
-    function dropToken(ev, phraseIdx) {
-      ev.preventDefault();
-      const tokenId = ev.dataTransfer.getData("text/plain");
-      const tokenEl = document.getElementById(tokenId);
-      if (tokenEl) {
-        const bucket = document.getElementById(`bucket-${phraseIdx}`);
-        bucket.appendChild(tokenEl);
-        document.getElementById(`phrase-box-${phraseIdx}`).classList.add('dropped');
-      }
-    }
-
-    function dropTokenToPool(ev) {
-      ev.preventDefault();
-      const tokenId = ev.dataTransfer.getData("text/plain");
-      const tokenEl = document.getElementById(tokenId);
-      if (tokenEl) {
-        document.getElementById('token-pool').appendChild(tokenEl);
-      }
-    }
-
-    function revealCaptionGameResults() {
-      const container = document.getElementById('caption-game-main-content');
-      
-      let resultsHTML = `
-        <div class="modal-box" style="max-width:600px; text-align:center;">
-          <h3 style="color:var(--accent-gold);">👑 Round Results & Authors!</h3>
-          <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px; text-align:left;">
-      `;
-
-      captionGameShuffledPhrases.forEach((p, idx) => {
-        const bucket = document.getElementById(`bucket-${idx}`);
-        const guessedTokens = Array.from(bucket.querySelectorAll('.player-token')).map(el => el.getAttribute('data-player'));
-        
-        resultsHTML += `
-          <div style="background:rgba(255,255,255,0.06); padding:10px; border-radius:10px;">
-            <p style="font-style:italic;">"${p.text}"</p>
-            <p style="color:var(--accent-gold); font-weight:bold; margin-top:4px;">Written by: ${p.author}</p>
-            <p style="font-size:0.85rem; color:var(--text-muted);">Guessed tokens: ${guessedTokens.length > 0 ? guessedTokens.join(', ') : 'None'}</p>
-          </div>
-        `;
-      });
-
-      resultsHTML += `
-          </div>
+    function revealRoyaleWinner(author, text) {
+      const container = document.getElementById('royale-main-content');
+      container.innerHTML = `
+        <div class="modal-box" style="max-width:500px; text-align:center;">
+          <h2 style="color:var(--accent-gold);">🏆 Round Winner Crowned!</h2>
+          <p style="font-size:1.1rem; font-style:italic; margin:10px 0;">"${text}"</p>
+          <p style="color:var(--accent-purple); font-size:1.3rem; font-weight:bold;">Written by: ${author}</p>
+          
           <div style="display:flex; gap:10px; margin-top:16px;">
-            <button class="btn btn-green" style="flex:1;" onclick="openCaptionGameSetup()">Play Another Round 🔄</button>
+            <button class="btn btn-purple" style="flex:1;" onclick="openRoyaleSetup()">Play Again ▶️</button>
             <button class="btn btn-secondary" style="flex:1;" onclick="toggleView('main')">Exit to Gallery</button>
           </div>
         </div>
       `;
-
-      container.innerHTML = resultsHTML;
     }
 
     function renderGallery() {
@@ -1526,11 +1395,11 @@
       document.getElementById('screensaver-view').classList.add('hidden');
       document.getElementById('main-view').classList.add('hidden');
       document.getElementById('game-view').classList.add('hidden');
-      document.getElementById('caption-game-view').classList.add('hidden');
+      document.getElementById('caption-royale-view').classList.add('hidden');
       closeLightbox();
       closeGameSetupModal();
       closeEmojiModal();
-      closeCaptionGameSetup();
+      closeRoyaleSetup();
 
       if (view === 'saver') {
         document.getElementById('screensaver-view').classList.remove('hidden');
@@ -1538,8 +1407,8 @@
       } else if (view === 'game') {
         document.getElementById('game-view').classList.remove('hidden');
         if (slideshowTimer) clearInterval(slideshowTimer);
-      } else if (view === 'captionGame') {
-        document.getElementById('caption-game-view').classList.remove('hidden');
+      } else if (view === 'royale') {
+        document.getElementById('caption-royale-view').classList.remove('hidden');
         if (slideshowTimer) clearInterval(slideshowTimer);
       } else {
         document.getElementById('main-view').classList.remove('hidden');
