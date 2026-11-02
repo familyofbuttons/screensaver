@@ -117,7 +117,6 @@
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.15); }
     .btn-green { background: var(--accent-green); color: #0f172a; }
     .btn-purple { background: var(--accent-purple); color: #fff; }
-    .btn-spotify { background: var(--spotify-green); color: #0f172a; }
 
     select.btn-secondary { color: var(--text); background-color: rgba(15, 23, 42, 0.95); }
     select.btn-secondary option { background-color: #0f172a; color: var(--text); }
@@ -214,49 +213,19 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.6);
     }
 
-    /* Spotify Pinned Mini-Widget */
+    /* Spotify Widget Pinned Bottom Left */
     .spotify-widget {
       position: absolute;
       bottom: 30px;
       left: 30px;
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(0, 0, 0, 0.85);
       border: 1px solid rgba(29, 185, 84, 0.4);
       backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-radius: 20px;
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      border-radius: 16px;
+      padding: 6px;
       z-index: 220;
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
-
-    .spotify-art {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      object-fit: cover;
-      background: #1e293b;
-    }
-
-    .spotify-meta { display: flex; flex-direction: column; max-width: 160px; }
-    .spotify-title { font-size: 0.85rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .spotify-artist { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    .spotify-controls-row { display: flex; gap: 6px; align-items: center; }
-    .spotify-btn {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      padding: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .spotify-btn:hover { color: var(--spotify-green); }
 
     .game-prompt-badge {
       position: absolute;
@@ -709,18 +678,9 @@
       <button class="saver-icon-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
     </div>
     
-    <!-- Option 2 Spotify Mini-Player Widget -->
+    <!-- Official Embedded Spotify Mini-Player Widget -->
     <div class="spotify-widget">
-      <img id="spotify-album-art" class="spotify-art" src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=100&h=100&fit=crop" alt="Album Art">
-      <div class="spotify-meta">
-        <span id="spotify-track-title" class="spotify-title">Kitchen Beats</span>
-        <span id="spotify-artist-name" class="spotify-artist">Spotify Connected</span>
-      </div>
-      <div class="spotify-controls-row">
-        <button class="spotify-btn" onclick="spotifyPrev()" title="Previous">⏮️</button>
-        <button class="spotify-btn" id="spotify-play-pause-btn" onclick="spotifyTogglePlay()" title="Play/Pause">▶️</button>
-        <button class="spotify-btn" onclick="spotifyNext()" title="Next">⏭️</button>
-      </div>
+      <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" width="280" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 
     <div id="game-prompt-badge" class="game-prompt-badge" onclick="openCaptionContestView()">
@@ -886,16 +846,6 @@
     let manualNightOverride = null;
     let testDayOverride = null; 
 
-    // Spotify Widget State Simulation
-    let isSpotifyPlaying = false;
-    function spotifyTogglePlay() {
-      isSpotifyPlaying = !isSpotifyPlaying;
-      document.getElementById('spotify-play-pause-btn').innerText = isSpotifyPlaying ? '⏸️' : '▶️';
-      showToast(isSpotifyPlaying ? "Playing Spotify Audio" : "Paused Spotify Audio");
-    }
-    function spotifyNext() { showToast("Skipped to next track"); }
-    function spotifyPrev() { showToast("Returned to previous track"); }
-
     const PLAYERS = ['Bee', 'Les', 'Chrissy', 'Casey'];
     const EMOJI_PALETTE = ['❤️', '😂', '😍', '🔥', '🎉', '👑', '🥳', '🍕', '☕️', '🐶', '🐱', '🌟', '👍', '👏', '🥳', '🍦', '🏆', '🌈', '💡', '🍔', '🍿', '🎈', '🎁', '🚀'];
 
@@ -1044,7 +994,7 @@
     }
     setInterval(checkNightMode, 60000);
 
-    // --- WEEKLY CONTEST LOGIC ---
+    // --- UNIQUE WEEKLY CONTEST LOGIC ---
     function getWeekKey() {
       const now = new Date();
       const onejan = new Date(now.getFullYear(), 0, 1);
@@ -1076,6 +1026,7 @@
         return photosList.find(p => p.id === state.photoId) || photosList[0];
       }
 
+      // Collect all photo IDs used in past weeks
       const usedPhotoIds = new Set();
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
