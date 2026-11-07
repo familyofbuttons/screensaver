@@ -106,6 +106,7 @@
       align-items: center;
       gap: 6px;
       min-height: 40px;
+      touch-action: manipulation;
     }
 
     .btn:active { transform: scale(0.95); }
@@ -198,6 +199,7 @@
     .cah-card {
       background: #ffffff; color: #0f172a; border-radius: 10px; padding: 8px 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 2px solid #cbd5e1; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;
+      touch-action: manipulation;
     }
     .cah-card:active { transform: scale(0.97); background: #f1f5f9; border-color: var(--accent-red); }
     .cah-card-footer { font-size: 0.55rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
@@ -222,15 +224,51 @@
     .memory-grid.grid-48 { grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(6, 1fr); }
 
     .memory-card {
-      background: #1e293b; border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; aspect-ratio: 1/1; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.25s ease; overflow: hidden;
+      background: #1e293b; 
+      border: 2px solid rgba(255,255,255,0.2); 
+      border-radius: 8px; 
+      aspect-ratio: 1/1; 
+      cursor: pointer; 
+      position: relative; 
+      perspective: 1000px;
+      touch-action: manipulation;
     }
-    .memory-card.flipped { transform: rotateY(180deg); border-color: var(--accent-gold); }
-    .memory-card.matched { opacity: 0.35; transform: rotateY(180deg); pointer-events: none; border-color: var(--accent-green); }
+    .memory-card.matched { opacity: 0.35; pointer-events: none; border-color: var(--accent-green); }
 
-    .card-face { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
-    .card-back { background: linear-gradient(135deg, #38bdf8, #a855f7); color: #fff; font-size: 1.2rem; font-weight: bold; }
-    .card-front { background: #000; transform: rotateY(180deg); }
-    .card-front img { width: 100%; height: 100%; object-fit: cover; }
+    .card-face { 
+      position: absolute; 
+      inset: 0; 
+      width: 100%; 
+      height: 100%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      border-radius: 6px; 
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transition: transform 0.3s ease;
+    }
+    
+    .card-back { 
+      background: linear-gradient(135deg, #38bdf8, #a855f7); 
+      color: #fff; 
+      font-size: 1.2rem; 
+      font-weight: bold; 
+      transform: rotateY(0deg);
+      z-index: 2;
+    }
+    
+    .card-front { 
+      background: #000; 
+      transform: rotateY(180deg); 
+      z-index: 1;
+    }
+    .card-front img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 6px; }
+
+    /* FLIPPED STATE EXPLICIT ROTATION */
+    .memory-card.flipped .card-back { transform: rotateY(-180deg); }
+    .memory-card.flipped .card-front { transform: rotateY(0deg); z-index: 3; }
+    .memory-card.flipped { border-color: var(--accent-gold); }
 
     /* MODALS */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(12px); z-index: 300; display: flex; align-items: center; justify-content: center; }
@@ -249,6 +287,7 @@
     #status-toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #0284c7; color: white; padding: 10px 20px; border-radius: 12px; font-weight: bold; z-index: 1000; transition: opacity 0.3s ease; }
     .toast-hidden { opacity: 0; pointer-events: none; }
     #empty-state { text-align: center; padding: 40px; background: var(--panel-bg); border-radius: 24px; max-width: 440px; margin-top: 100px; }
+    .photo-warning { background: rgba(239,68,68,0.2); border: 1px solid var(--accent-red); padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #fca5a5; }
   </style>
 </head>
 <body>
@@ -311,6 +350,7 @@
   <div id="roast-setup-modal" class="modal-overlay hidden">
     <div class="modal-box">
       <h2>🔥 Roast Battle Setup</h2>
+      <div id="roast-photo-status"></div>
       <div style="display:flex; flex-direction:column; gap:6px;">
         <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Select Players (1 or 2):</label>
         <div class="player-select-chips" id="roast-player-chips">
@@ -334,6 +374,7 @@
   <div id="memory-setup-modal" class="modal-overlay hidden">
     <div class="modal-box">
       <h2>🧠 Memory Game Setup</h2>
+      <div id="memory-photo-status"></div>
       <div style="display:flex; flex-direction:column; gap:6px;">
         <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Game Mode:</label>
         <div class="grid-select-chips">
@@ -351,11 +392,11 @@
         </div>
       </div>
       <div style="display:flex; flex-direction:column; gap:6px;">
-        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Grid Size (No Duplicates):</label>
+        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Grid Size (Unique Images Required):</label>
         <div class="grid-select-chips">
-          <div class="grid-chip selected" id="grid-btn-12" onclick="setMemoryGridSize(12)">12 Grid</div>
-          <div class="grid-chip" id="grid-btn-36" onclick="setMemoryGridSize(36)">36 Grid</div>
-          <div class="grid-chip" id="grid-btn-48" onclick="setMemoryGridSize(48)">48 Grid</div>
+          <div class="grid-chip selected" id="grid-btn-12" onclick="setMemoryGridSize(12)">12 Grid (6 Photos)</div>
+          <div class="grid-chip" id="grid-btn-36" onclick="setMemoryGridSize(36)">36 Grid (18 Photos)</div>
+          <div class="grid-chip" id="grid-btn-48" onclick="setMemoryGridSize(48)">48 Grid (24 Photos)</div>
         </div>
       </div>
       <div style="display:flex; gap:12px; margin-top:10px;">
@@ -583,11 +624,12 @@
     let roastHasCpuBot = true;
 
     function openRoastSetupModal() {
-      if (photosList.length < 3) { alert("Please upload at least 3 photos first using '+ Select Photos'!"); return; }
-      document.getElementById('screensaver-view').classList.add('hidden');
-      document.getElementById('main-view').classList.add('hidden');
-      document.getElementById('memory-game-view').classList.add('hidden');
-      document.getElementById('roast-game-view').classList.remove('hidden');
+      const statusEl = document.getElementById('roast-photo-status');
+      if (photosList.length < 3) {
+        statusEl.innerHTML = `<div class="photo-warning">⚠️ Upload at least 3 photos to start a Roast Battle (Loaded: ${photosList.length}).</div>`;
+      } else {
+        statusEl.innerHTML = `<div style="color:var(--accent-green); font-size:0.85rem; font-weight:bold;">✅ Ready with ${photosList.length} photos!</div>`;
+      }
       document.getElementById('roast-setup-modal').classList.remove('hidden');
     }
 
@@ -619,6 +661,10 @@
     }
 
     function startSplitRoastGame() {
+      if (photosList.length < 3) {
+        alert("Please upload at least 3 photos first using '+ Select Photos'!");
+        return;
+      }
       let finalPlayers = [...activeRoastPlayers];
       roastHasCpuBot = document.getElementById('roast-cpu-checkbox').checked;
       if (roastHasCpuBot) finalPlayers.push('🤖 RoastBot 3000');
@@ -809,15 +855,13 @@
     let memoryState = {};
 
     function openMemorySetupModal() {
-      let requiredUnique = Math.floor(memoryGridSize / 2);
-      if (photosList.length < requiredUnique) {
-        alert(`Please upload at least ${requiredUnique} photos first! You currently have ${photosList.length} photos uploaded.`);
-        return;
+      const statusEl = document.getElementById('memory-photo-status');
+      let req12 = 6, req36 = 18, req48 = 24;
+      if (photosList.length < req12) {
+        statusEl.innerHTML = `<div class="photo-warning">⚠️ Upload at least 6 photos for 12-Grid. (Currently: ${photosList.length} loaded).</div>`;
+      } else {
+        statusEl.innerHTML = `<div style="color:var(--accent-green); font-size:0.85rem; font-weight:bold;">✅ Ready with ${photosList.length} photos!</div>`;
       }
-      document.getElementById('screensaver-view').classList.add('hidden');
-      document.getElementById('main-view').classList.add('hidden');
-      document.getElementById('roast-game-view').classList.add('hidden');
-      document.getElementById('memory-game-view').classList.remove('hidden');
       document.getElementById('memory-setup-modal').classList.remove('hidden');
       renderLeaderboard(12);
     }
@@ -866,7 +910,7 @@
     function startMemoryGame() {
       let requiredUnique = Math.floor(memoryGridSize / 2);
       if (photosList.length < requiredUnique) {
-        alert(`Not enough photos! You need at least ${requiredUnique} unique photos for a ${memoryGridSize} grid.`);
+        alert(`Not enough photos! You need at least ${requiredUnique} unique photos for a ${memoryGridSize} grid. Please tap "+ Select Photos" to add more!`);
         return;
       }
       closeMemorySetupModal();
@@ -904,7 +948,7 @@
     function startMemoryTimer(player) {
       if (memoryState[player].timerInterval) clearInterval(memoryState[player].timerInterval);
       memoryState[player].timerInterval = setInterval(() => {
-        if (!memoryState[player].completed) {
+        if (memoryState[player] && !memoryState[player].completed) {
           memoryState[player].secondsElapsed++;
           const timerEl = document.getElementById(`mem-timer-${player}`);
           if (timerEl) timerEl.innerText = formatTime(memoryState[player].secondsElapsed);
@@ -933,8 +977,7 @@
           <div class="memory-grid grid-${memoryGridSize}" id="mem-grid-${player}">
             ${memoryState[player].cards.map((card, cIdx) => `
               <div class="memory-card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}" 
-                   onclick="handleMemoryCardClick('${player}', ${cIdx})"
-                   ontouchstart="handleMemoryCardClick('${player}', ${cIdx})">
+                   onclick="handleMemoryCardClick('${player}', ${cIdx})">
                 <div class="card-face card-back">?</div>
                 <div class="card-face card-front">
                   <img src="${card.dataUrl}">
@@ -992,8 +1035,7 @@
       let state = memoryState[player];
       gridEl.innerHTML = state.cards.map((card, cIdx) => `
         <div class="memory-card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}" 
-             onclick="handleMemoryCardClick('${player}', ${cIdx})"
-             ontouchstart="handleMemoryCardClick('${player}', ${cIdx})">
+             onclick="handleMemoryCardClick('${player}', ${cIdx})">
           <div class="card-face card-back">?</div>
           <div class="card-face card-front">
             <img src="${card.dataUrl}">
