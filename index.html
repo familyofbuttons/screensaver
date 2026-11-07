@@ -31,6 +31,7 @@
       margin: 0;
       padding: 0;
       touch-action: manipulation;
+      -webkit-touch-callout: none;
     }
 
     body, html {
@@ -182,52 +183,66 @@
 
     /* --- ROAST GAME VIEW --- */
     #roast-game-view {
-      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 72px; background: var(--bg); z-index: 50; display: flex; flex-direction: column;
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 72px; background: var(--bg); z-index: 50; display: flex; flex-direction: column; overflow: hidden;
     }
-    .split-board { flex: 1; width: 100%; height: 100%; display: grid; gap: 6px; background: #020617; padding: 6px; overflow: hidden; }
+    .split-board { flex: 1; width: 100%; height: calc(100dvh - 72px); display: grid; gap: 6px; background: #020617; padding: 6px; overflow: hidden; }
     .split-board.layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
     .split-board.layout-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
 
     .player-quadrant {
-      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 10px; gap: 6px; overflow-y: auto; position: relative;
+      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 8px; gap: 6px; overflow-y: auto; position: relative; max-height: 100%;
     }
     .quad-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; flex-shrink: 0; }
-    .quad-title { font-weight: 800; color: var(--accent-gold); font-size: 1rem; }
-    .quad-score { font-weight: 700; color: var(--accent-blue); }
-    .quad-status { font-size: 0.75rem; color: var(--text-muted); }
+    .quad-title { font-weight: 800; color: var(--accent-gold); font-size: 0.95rem; }
+    .quad-score { font-weight: 700; color: var(--accent-blue); font-size: 0.9rem; }
+    .quad-status { font-size: 0.7rem; color: var(--text-muted); }
 
     .cah-card {
-      background: #ffffff; color: #0f172a; border-radius: 10px; padding: 8px 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 2px solid #cbd5e1; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;
+      background: #ffffff; color: #0f172a; border-radius: 8px; padding: 6px 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.4); border: 2px solid #cbd5e1; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;
       touch-action: manipulation;
     }
     .cah-card:active { transform: scale(0.97); background: #f1f5f9; border-color: var(--accent-red); }
-    .cah-card-footer { font-size: 0.55rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    .cah-card-footer { font-size: 0.5rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
-    .roast-active-photo { width: 100%; max-height: 22vh; object-fit: contain; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3); background: #000; flex-shrink: 0; }
-    .roast-hand-stack { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .roast-active-photo { width: 100%; max-height: 18vh; object-fit: contain; border-radius: 6px; border: 2px solid rgba(255,255,255,0.3); background: #000; flex-shrink: 0; }
+    .roast-hand-stack { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
 
     /* --- MEMORY GAME VIEW --- */
     #memory-game-view {
-      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 72px; background: var(--bg); z-index: 60; display: flex; flex-direction: column;
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 72px; background: var(--bg); z-index: 60; display: flex; flex-direction: column; overflow: hidden;
     }
-    .memory-boards-wrap { flex: 1; width: 100%; height: 100%; display: grid; gap: 4px; background: #020617; padding: 6px; overflow: hidden; }
+    .memory-boards-wrap { flex: 1; width: 100%; height: calc(100dvh - 72px); display: grid; gap: 4px; background: #020617; padding: 6px; overflow: hidden; }
     .memory-boards-wrap.layout-1 { grid-template-columns: 1fr; }
     .memory-boards-wrap.layout-2 { grid-template-columns: 1fr 1fr; }
 
     .memory-player-pane {
-      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 8px; gap: 6px; overflow-y: auto; position: relative;
+      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 6px; gap: 4px; overflow: hidden; position: relative; height: 100%; max-height: 100%;
     }
-    .memory-grid { display: grid; gap: 6px; flex: 1; width: 100%; align-content: center; justify-content: center; }
-    .memory-grid.grid-12 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
-    .memory-grid.grid-36 { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); }
-    .memory-grid.grid-48 { grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(6, 1fr); }
+    
+    .memory-grid { 
+      display: grid; 
+      gap: 4px; 
+      flex: 1; 
+      width: 100%; 
+      height: 100%;
+      align-content: center; 
+      justify-content: center; 
+      overflow: hidden;
+    }
+    
+    /* Auto-fitting non-scrollable grid layouts */
+    .memory-grid.grid-12 { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); max-height: calc(100dvh - 120px); }
+    .memory-grid.grid-36 { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); max-height: calc(100dvh - 120px); }
+    .memory-grid.grid-48 { grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); max-height: calc(100dvh - 120px); }
 
     .memory-card {
       background: #1e293b; 
       border: 2px solid rgba(255,255,255,0.2); 
-      border-radius: 8px; 
-      aspect-ratio: 1/1; 
+      border-radius: 6px; 
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
       cursor: pointer; 
       position: relative; 
       perspective: 1000px;
@@ -243,16 +258,16 @@
       display: flex; 
       align-items: center; 
       justify-content: center; 
-      border-radius: 6px; 
+      border-radius: 4px; 
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
-      transition: transform 0.3s ease;
+      transition: transform 0.25s ease;
     }
     
     .card-back { 
       background: linear-gradient(135deg, #38bdf8, #a855f7); 
       color: #fff; 
-      font-size: 1.2rem; 
+      font-size: 1rem; 
       font-weight: bold; 
       transform: rotateY(0deg);
       z-index: 2;
@@ -263,9 +278,8 @@
       transform: rotateY(180deg); 
       z-index: 1;
     }
-    .card-front img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 6px; }
+    .card-front img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 4px; }
 
-    /* FLIPPED STATE EXPLICIT ROTATION */
     .memory-card.flipped .card-back { transform: rotateY(-180deg); }
     .memory-card.flipped .card-front { transform: rotateY(0deg); z-index: 3; }
     .memory-card.flipped { border-color: var(--accent-gold); }
@@ -435,11 +449,8 @@
     let historyPointer = -1;
 
     const ROAST_DECK = [
-      // General & Absurd Jabs
-      "The human equivalent of a participation award.",
-      "If a shrug emoji became a real person.",
-      "The look of someone whose favorite spice is flour.",
-      "Like a gray sprinkle on a funfetti cake.",
+      "The human equivalent of a participation award.", "If a shrug emoji became a real person.",
+      "The look of someone whose favorite spice is flour.", "Like a gray sprinkle on a funfetti cake.",
       "Giving off strong \"uncredited background extra in a medication commercial\" energy.",
       "You look like the default avatar for a website that went bankrupt in 2004.",
       "This photo smells like hot dog water and bad decisions.",
@@ -456,8 +467,6 @@
       "If \"default text font\" had a face.",
       "You look like you're legally forbidden from being within 50 feet of an aux cord.",
       "The exact vibe of a generic brand energy drink that got recalled.",
-
-      // Outfits, Looks & Aesthetics
       "Whatever kind of look you were aiming for, you missed.",
       "You look like you bought your whole personality at a gas station checkout counter.",
       "This outfit looks like it was generated by a malfunctioning AI.",
@@ -478,8 +487,6 @@
       "You look like a low-budget superhero whose only power is making people uncomfortable.",
       "This photo looks like a before picture, but the after picture never happened.",
       "You look like you dress exclusively in things found under a car seat.",
-
-      // Bad Decisions & Life Choices
       "Two billion years of human evolution, and it led to this specific image.",
       "You look like the reason why shampoo bottles have step-by-step instructions.",
       "The exact face of a man who just accidentally texted his mom a screenshot of a text about his mom.",
@@ -500,8 +507,6 @@
       "The facial expression of a man who just realized he left the stove on in 2018.",
       "You look like you actively argue with teenagers in the YouTube comments section.",
       "The look of a person who thinks mayonnaise is a little too spicy.",
-
-      // Unfiltered Hostility
       "I've seen more life and charisma in a bowl of cold oatmeal.",
       "You have a face tailored perfectly for a career in radio.",
       "Looking at this photo, I am instantly jealous of everyone who has never met you.",
@@ -522,8 +527,6 @@
       "You look like you're trying to hide the fact that you just sneezed inside your mouth.",
       "The face of a person who has never won a single argument against a mirror.",
       "You look like a text message that says \"We need to talk,\" but in human form.",
-
-      // Surreal & Hyper-Specific Jabs
       "You look like a character from a movie that got cut during the first table read.",
       "The exact facial expression of a Sim whose creator just deleted the door to the bathroom.",
       "You look like a discount magician who accidentally sawed himself in half.",
@@ -858,8 +861,8 @@
           <div class="quad-header"><span class="quad-title">👤 ${player}</span><span class="quad-score">${score} pts</span></div>
           <div class="quad-status">Photo ${stepNum} of 3</div>
           <p style="color:var(--accent-gold); font-size:0.85rem; font-weight:bold;">Select Image ${stepNum} to roast:</p>
-          <div style="flex:1; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="roastPickPhoto('${player}', '${targetPhoto.dataUrl}')">
-            <img src="${targetPhoto.dataUrl}" style="max-height:35vh; max-width:100%; object-fit:contain; border-radius:10px; border:2px solid var(--accent-gold);">
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; cursor:pointer;" data-action="roast-photo" data-player="${player}" data-url="${targetPhoto.dataUrl}">
+            <img src="${targetPhoto.dataUrl}" style="max-height:30vh; max-width:100%; object-fit:contain; border-radius:10px; border:2px solid var(--accent-gold); pointer-events:none;">
           </div>`;
       } else {
         let currentPhoto = state.selectedPhotos[state.selectedPhotos.length - 1];
@@ -869,7 +872,7 @@
           <div class="quad-status">Pick Caption for Photo ${stepNum}</div>
           <div class="roast-hand-stack">
             ${state.currentHand.map((cardText, cIdx) => `
-              <div class="cah-card" onclick="roastPickCard('${player}', ${cIdx})">
+              <div class="cah-card" data-action="roast-card" data-player="${player}" data-index="${cIdx}">
                 <span>"${cardText}"</span>
                 <div class="cah-card-footer">Kitchen Family Hub • Roast Hand</div>
               </div>
@@ -877,6 +880,35 @@
           </div>`;
       }
     }
+
+    // Unified Multi-Touch Event Listener for Roast Game & Memory Game
+    window.addEventListener('pointerdown', (e) => {
+      const target = e.target.closest('[data-action]');
+      if (!target) return;
+      const action = target.getAttribute('data-action');
+      
+      if (action === 'roast-photo') {
+        e.preventDefault();
+        const player = target.getAttribute('data-player');
+        const url = target.getAttribute('data-url');
+        roastPickPhoto(player, url);
+      } else if (action === 'roast-card') {
+        e.preventDefault();
+        const player = target.getAttribute('data-player');
+        const idx = parseInt(target.getAttribute('data-index'));
+        roastPickCard(player, idx);
+      } else if (action === 'memory-card') {
+        e.preventDefault();
+        const player = target.getAttribute('data-player');
+        const idx = parseInt(target.getAttribute('data-index'));
+        handleMemoryCardClick(player, idx);
+      } else if (action === 'vote-card') {
+        e.preventDefault();
+        const voter = target.getAttribute('data-voter');
+        const winner = target.getAttribute('data-winner');
+        castRoastBallot(voter, winner);
+      }
+    }, { passive: false });
 
     function roastPickPhoto(player, dataUrl) {
       roastPlayerStates[player].selectedPhotos.push(dataUrl);
@@ -920,12 +952,12 @@
           <div class="vote-arena">
             <h2 style="color:var(--accent-gold);">🗳️ Voting: Photo ${currentRoastVotingIndex + 1} of 3</h2>
             <div style="background:rgba(56, 189, 248, 0.2); border:1px solid var(--accent-blue); padding:6px 16px; border-radius:20px; font-weight:bold; color:var(--accent-blue);">Pass device to: <span style="color:#fff; text-decoration:underline;">${voter}</span></div>
-            <img src="${item.photo}" class="vote-photo-center" style="max-height:28vh;">
+            <img src="${item.photo}" class="vote-photo-center" style="max-height:26vh;">
             <div class="submissions-around-grid">
               ${item.submissions.map(sub => `
-                <div class="cah-card" onclick="castRoastBallot('${voter}', '${sub.player}')" style="background:#fff; cursor:pointer;">
-                  <span style="font-size:1rem; font-style:italic;">"${sub.card}"</span>
-                  <div class="cah-card-footer" style="color:var(--accent-red); font-weight:bold;">👉 Vote (+10 pts)</div>
+                <div class="cah-card" data-action="vote-card" data-voter="${voter}" data-winner="${sub.player}" style="background:#fff; cursor:pointer;">
+                  <span style="font-size:0.95rem; font-style:italic; pointer-events:none;">"${sub.card}"</span>
+                  <div class="cah-card-footer" style="color:var(--accent-red); font-weight:bold; pointer-events:none;">👉 Vote (+10 pts)</div>
                 </div>`).join('')}
             </div>
           </div>
@@ -959,7 +991,6 @@
     }
 
     function restartRoastGame() {
-      // Re-create split board container before initiating new round
       const gameView = document.getElementById('roast-game-view');
       gameView.innerHTML = '<div id="split-board-container" class="split-board layout-2"></div>';
       roastPlayerScores = {};
@@ -1096,10 +1127,10 @@
           <div class="memory-grid grid-${memoryGridSize}" id="mem-grid-${player}">
             ${memoryState[player].cards.map((card, cIdx) => `
               <div class="memory-card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}" 
-                   onclick="handleMemoryCardClick('${player}', ${cIdx})">
-                <div class="card-face card-back">?</div>
-                <div class="card-face card-front">
-                  <img src="${card.dataUrl}">
+                   data-action="memory-card" data-player="${player}" data-index="${cIdx}">
+                <div class="card-face card-back" style="pointer-events:none;">?</div>
+                <div class="card-face card-front" style="pointer-events:none;">
+                  <img src="${card.dataUrl}" style="pointer-events:none;">
                 </div>
               </div>
             `).join('')}
@@ -1110,9 +1141,9 @@
 
     function handleMemoryCardClick(player, cardIndex) {
       let state = memoryState[player];
-      if (state.lockBoard || state.completed) return;
+      if (!state || state.lockBoard || state.completed) return;
       let card = state.cards[cardIndex];
-      if (card.flipped || card.matched) return;
+      if (!card || card.flipped || card.matched) return;
 
       card.flipped = true;
       refreshMemoryGridDOM(player);
@@ -1139,10 +1170,12 @@
         } else {
           state.lockBoard = true;
           setTimeout(() => {
-            first.card.flipped = false;
-            card.flipped = false;
-            state.lockBoard = false;
-            refreshMemoryGridDOM(player);
+            if (memoryState[player]) {
+              first.card.flipped = false;
+              card.flipped = false;
+              state.lockBoard = false;
+              refreshMemoryGridDOM(player);
+            }
           }, 650);
         }
       }
@@ -1152,12 +1185,13 @@
       let gridEl = document.getElementById(`mem-grid-${player}`);
       if (!gridEl) return;
       let state = memoryState[player];
+      if (!state) return;
       gridEl.innerHTML = state.cards.map((card, cIdx) => `
         <div class="memory-card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}" 
-             onclick="handleMemoryCardClick('${player}', ${cIdx})">
-          <div class="card-face card-back">?</div>
-          <div class="card-face card-front">
-            <img src="${card.dataUrl}">
+             data-action="memory-card" data-player="${player}" data-index="${cIdx}">
+          <div class="card-face card-back" style="pointer-events:none;">?</div>
+          <div class="card-face card-front" style="pointer-events:none;">
+            <img src="${card.dataUrl}" style="pointer-events:none;">
           </div>
         </div>`).join('');
     }
