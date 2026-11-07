@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kitchen Family Photo Hub & Games</title>
+  <title>Kitchen Family Photo Hub - Ultimate Edition</title>
   
   <link rel="manifest" href="./manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
@@ -30,6 +30,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 0;
+      touch-action: manipulation;
     }
 
     body, html {
@@ -96,8 +97,8 @@
       background: var(--accent-blue);
       color: #0f172a;
       border: none;
-      padding: 8px 14px;
-      font-size: 0.88rem;
+      padding: 8px 16px;
+      font-size: 0.9rem;
       font-weight: 700;
       border-radius: 10px;
       cursor: pointer;
@@ -105,19 +106,12 @@
       align-items: center;
       gap: 6px;
       min-height: 40px;
-      transition: transform 0.1s ease, background-color 0.2s ease;
     }
 
     .btn:active { transform: scale(0.95); }
     .btn-secondary { background: rgba(255, 255, 255, 0.12); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.15); }
     .btn-red { background: var(--accent-red); color: #fff; }
     .btn-purple { background: var(--accent-purple); color: #fff; }
-    .btn-green { background: var(--accent-green); color: #0f172a; }
-
-    select.btn-secondary option {
-      background-color: #0f172a;
-      color: #f8fafc;
-    }
 
     /* --- SCREENSAVER VIEW --- */
     #screensaver-view { background: #0b0f19; z-index: 200; }
@@ -132,8 +126,6 @@
       transform: scale(1.08);
       z-index: 201;
     }
-
-    #sparkle-canvas { position: absolute; inset: 0; width: 100vw; height: 100dvh; z-index: 202; pointer-events: none; }
 
     #photo-container {
       width: 100vw;
@@ -181,143 +173,78 @@
       padding-top: 84px; padding-bottom: 20px; width: 100vw; height: 100dvh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; z-index: 20;
     }
     .gallery-toolbar { display: flex; align-items: center; justify-content: space-between; width: 90vw; max-width: 1200px; margin-bottom: 16px; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; width: 90vw; max-width: 1200px; padding-bottom: 40px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; width: 90vw; max-width: 1200px; padding-bottom: 40px; }
     .photo-card { background: rgba(30, 41, 59, 0.85); border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.12); overflow: hidden; display: flex; flex-direction: column; position: relative; cursor: pointer; }
     .photo-card-img-wrap { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; }
     .photo-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
     .delete-card-btn { position: absolute; top: 10px; left: 10px; background: rgba(239, 68, 68, 0.85); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; z-index: 10; }
 
-    /* --- SPLIT-SCREEN ROAST GAME VIEW --- */
+    /* --- ROAST GAME VIEW --- */
     #roast-game-view {
       position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 72px; background: var(--bg); z-index: 50; display: flex; flex-direction: column;
     }
-
     .split-board { flex: 1; width: 100%; height: 100%; display: grid; gap: 6px; background: #020617; padding: 6px; overflow: hidden; }
     .split-board.layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
     .split-board.layout-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
-    .split-board.layout-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-    .split-board.layout-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 
     .player-quadrant {
-      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 10px; gap: 8px; overflow-y: auto; position: relative;
+      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 10px; gap: 6px; overflow-y: auto; position: relative;
     }
-
     .quad-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; flex-shrink: 0; }
     .quad-title { font-weight: 800; color: var(--accent-gold); font-size: 1rem; }
+    .quad-score { font-weight: 700; color: var(--accent-blue); }
     .quad-status { font-size: 0.75rem; color: var(--text-muted); }
 
-    /* CAH CARD STYLING */
     .cah-card {
-      background: #ffffff; color: #0f172a; border-radius: 12px; padding: 10px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.4); border: 2px solid #cbd5e1; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-      display: flex; flex-direction: column; justify-content: space-between; min-height: 65px; flex: 1;
+      background: #ffffff; color: #0f172a; border-radius: 10px; padding: 8px 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4); border: 2px solid #cbd5e1; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;
     }
-    .cah-card:hover { transform: translateY(-2px) scale(1.01); background: #f8fafc; border-color: var(--accent-red); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); }
-    .cah-card-footer { font-size: 0.6rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    .cah-card:active { transform: scale(0.97); background: #f1f5f9; border-color: var(--accent-red); }
+    .cah-card-footer { font-size: 0.55rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
 
-    .active-photo-preview { width: 100%; height: 35vh; min-height: 140px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.3); flex-shrink: 0; background: #000; }
-    .choice-photo-thumb { width: 100%; height: 60vh; min-height: 200px; object-fit: contain; border-radius: 10px; border: 2px solid rgba(255,255,255,0.3); cursor: pointer; background: #000; transition: transform 0.2s ease; }
-    .choice-photo-thumb:hover { transform: scale(1.02); border-color: var(--accent-gold); }
-    .photo-choices-grid { display: flex; flex-direction: column; gap: 8px; flex: 1; height: 100%; justify-content: center; }
-    .roast-choices-stack { display: flex; flex-direction: column; gap: 6px; flex: 1; height: 100%; justify-content: space-between; }
-
-    /* VOTING STAGE */
-    #voting-stage {
-      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; background: var(--bg); overflow-y: auto; width: 100vw; height: 100vh; height: 100dvh;
-    }
-    .vote-arena {
-      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 20px;
-      width: 96vw; max-width: 900px; display: flex; flex-direction: column; align-items: center; gap: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-    }
-    .vote-photo-center { width: 100%; max-height: 35vh; object-fit: contain; border-radius: 12px; border: 2px solid rgba(255,255,255,0.25); background: #000; }
-    .submissions-around-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; width: 100%; }
+    .roast-active-photo { width: 100%; max-height: 22vh; object-fit: contain; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3); background: #000; flex-shrink: 0; }
+    .roast-hand-stack { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
 
     /* --- MEMORY GAME VIEW --- */
     #memory-game-view {
-      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 76px; padding-bottom: 16px;
-      background: var(--bg); z-index: 60; display: flex; flex-direction: column; align-items: center; overflow-y: auto;
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; padding-top: 72px; background: var(--bg); z-index: 60; display: flex; flex-direction: column;
     }
-    
-    .memory-hud {
-      display: flex; align-items: center; justify-content: space-between; width: 92vw; max-width: 1100px;
-      background: var(--panel-bg); padding: 12px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); margin-bottom: 14px;
+    .memory-boards-wrap { flex: 1; width: 100%; height: 100%; display: grid; gap: 4px; background: #020617; padding: 6px; overflow: hidden; }
+    .memory-boards-wrap.layout-1 { grid-template-columns: 1fr; }
+    .memory-boards-wrap.layout-2 { grid-template-columns: 1fr 1fr; }
+
+    .memory-player-pane {
+      background: var(--panel-bg); border: 2px solid rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; padding: 8px; gap: 6px; overflow-y: auto; position: relative;
     }
+    .memory-grid { display: grid; gap: 6px; flex: 1; width: 100%; align-content: center; justify-content: center; }
+    .memory-grid.grid-12 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
+    .memory-grid.grid-36 { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); }
+    .memory-grid.grid-48 { grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(6, 1fr); }
 
-    .memory-board {
-      display: grid; gap: 10px; width: 92vw; max-width: 1100px; padding-bottom: 24px; margin: 0 auto;
-    }
-
-    .memory-board.grid-12 { grid-template-columns: repeat(4, 1fr); }
-    .memory-board.grid-36 { grid-template-columns: repeat(6, 1fr); }
-    .memory-board.grid-48 { grid-template-columns: repeat(8, 1fr); }
-
-    @media (max-width: 640px) {
-      .memory-board.grid-12 { grid-template-columns: repeat(3, 1fr); }
-      .memory-board.grid-36 { grid-template-columns: repeat(4, 1fr); }
-      .memory-board.grid-48 { grid-template-columns: repeat(6, 1fr); }
-    }
-
-    /* 3D FLIP CARD STYLING */
     .memory-card {
-      aspect-ratio: 1 / 1; perspective: 1000px; cursor: pointer; border-radius: 12px;
+      background: #1e293b; border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; aspect-ratio: 1/1; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.25s ease; overflow: hidden;
     }
-    
-    .memory-card-inner {
-      position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.4s ease; transform-style: preserve-3d; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
+    .memory-card.flipped { transform: rotateY(180deg); border-color: var(--accent-gold); }
+    .memory-card.matched { opacity: 0.35; transform: rotateY(180deg); pointer-events: none; border-color: var(--accent-green); }
 
-    .memory-card.flipped .memory-card-inner,
-    .memory-card.matched .memory-card-inner {
-      transform: rotateY(180deg);
-    }
-
-    .memory-card-front, .memory-card-back {
-      position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .memory-card-front {
-      background: linear-gradient(135deg, #1e293b, #0f172a); color: var(--accent-gold); font-size: 1.5rem; font-weight: bold;
-    }
-    
-    .memory-card-back {
-      background: #020617; transform: rotateY(180deg);
-    }
-
-    .memory-card-back img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-
-    .memory-card.matched {
-      cursor: default; opacity: 0.82;
-    }
-
-    .memory-card.matched .memory-card-back {
-      border-color: var(--accent-green); box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
-    }
-
-    /* --- LEADERBOARD TABS & TABLES --- */
-    .lb-tabs { display: flex; gap: 8px; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 10px; margin-bottom: 12px; }
-    .lb-tab { flex: 1; padding: 8px; text-align: center; border-radius: 8px; background: rgba(255,255,255,0.08); color: var(--text-muted); cursor: pointer; font-weight: 700; font-size: 0.85rem; }
-    .lb-tab.active { background: var(--accent-purple); color: #fff; }
-    
-    .lb-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-    .lb-table th, .lb-table td { padding: 8px 10px; text-align: left; font-size: 0.85rem; }
-    .lb-table th { color: var(--accent-gold); border-bottom: 1px solid rgba(255,255,255,0.2); }
-    .lb-table tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+    .card-face { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
+    .card-back { background: linear-gradient(135deg, #38bdf8, #a855f7); color: #fff; font-size: 1.2rem; font-weight: bold; }
+    .card-front { background: #000; transform: rotateY(180deg); }
+    .card-front img { width: 100%; height: 100%; object-fit: cover; }
 
     /* MODALS */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(12px); z-index: 300; display: flex; align-items: center; justify-content: center; }
     .modal-overlay.hidden { display: none !important; }
-    .modal-box { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 24px; width: 90vw; max-width: 460px; display: flex; flex-direction: column; gap: 16px; }
+    .modal-box { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 24px; width: 90vw; max-width: 460px; display: flex; flex-direction: column; gap: 16px; max-height: 90vh; overflow-y: auto; }
     .modal-box h2 { color: var(--accent-gold); text-align: center; }
 
-    .preset-btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
-    .preset-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 700; text-align: center; }
-    .preset-btn.selected { background: var(--accent-purple); border-color: var(--accent-purple); }
+    .player-select-chips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 4px; }
+    .player-chip { background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15); color: var(--text); padding: 10px; border-radius: 12px; font-weight: 700; text-align: center; cursor: pointer; }
+    .player-chip.selected { background: rgba(56, 189, 248, 0.25); border-color: var(--accent-blue); color: var(--accent-blue); }
 
-    .player-input-row { display: flex; gap: 8px; margin-bottom: 6px; }
-    .player-input-row input { flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 10px; color: #fff; font-size: 1rem; }
+    .grid-select-chips { display: flex; gap: 8px; }
+    .grid-chip { flex: 1; background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15); color: var(--text); padding: 10px; border-radius: 12px; font-weight: 700; text-align: center; cursor: pointer; }
+    .grid-chip.selected { background: rgba(251, 191, 36, 0.25); border-color: var(--accent-gold); color: var(--accent-gold); }
 
     #status-toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #0284c7; color: white; padding: 10px 20px; border-radius: 12px; font-weight: bold; z-index: 1000; transition: opacity 0.3s ease; }
     .toast-hidden { opacity: 0; pointer-events: none; }
@@ -337,19 +264,15 @@
       <input type="file" id="file-input" accept="image/*" multiple style="display:none;">
       <button class="btn" onclick="document.getElementById('file-input').click()">+ Select Photos</button>
       <button class="btn btn-secondary" onclick="toggleView('main')">📸 Gallery</button>
-      <button class="btn btn-purple" onclick="openMemorySetupModal()">🧠 Memory Game</button>
       <button class="btn btn-red" onclick="openRoastSetupModal()">🔥 Roast Game</button>
+      <button class="btn btn-purple" onclick="openMemorySetupModal()">🧠 Memory Game</button>
       <button class="btn btn-secondary" onclick="toggleView('saver')">🖼️ Screensaver</button>
-      <button class="btn btn-secondary" onclick="openLeaderboardModal()">🏆 Scores</button>
       <button class="btn btn-secondary" onclick="toggleFullscreen()" title="Fullscreen">⛶ Fullscreen</button>
     </div>
   </header>
 
-  <!-- Screensaver View -->
   <div id="screensaver-view" class="screen">
     <img id="bg-blur-img" src="" alt="Ambient Background">
-    <canvas id="sparkle-canvas"></canvas>
-    
     <div class="saver-controls-top-left"> 
       <button class="speed-btn" onclick="prevSlide()" title="Previous Image">⏮️ Back</button>
       <button id="pause-play-btn" class="speed-btn" onclick="togglePauseScreensaver()" title="Pause/Play">⏸️ Pause</button>
@@ -358,11 +281,9 @@
       <button id="speed-med" class="speed-btn active" onclick="setScreensaverSpeed(6000, 'med')">>></button>
       <button id="speed-fast" class="speed-btn" onclick="setScreensaverSpeed(3000, 'fast')">>>></button>
     </div>
-
     <div class="saver-controls-top-right">
       <button class="saver-icon-btn" onclick="toggleView('main')" title="Exit Screensaver">✕</button>
     </div>
-
     <div id="photo-container">
       <div id="empty-state">
         <h2 style="color:var(--accent-gold); margin-bottom:12px;">No Photos Loaded</h2>
@@ -372,7 +293,6 @@
     </div>
   </div>
 
-  <!-- Gallery View -->
   <div id="main-view" class="screen hidden">
     <div class="gallery-toolbar">
       <h2 style="color: var(--accent-gold);">Family Photo Gallery</h2>
@@ -380,95 +300,30 @@
     <div id="gallery-grid" class="gallery-grid"></div>
   </div>
 
-  <!-- Split-Screen Roast Battle Game View -->
   <div id="roast-game-view" class="screen hidden">
-    <div id="split-board-container" class="split-board layout-4"></div>
+    <div id="split-board-container" class="split-board layout-2"></div>
   </div>
 
-  <!-- Memory Game View -->
   <div id="memory-game-view" class="screen hidden">
-    <div class="memory-hud">
-      <div>
-        <span style="color:var(--text-muted); font-size:0.85rem;">Player:</span>
-        <strong id="mem-player-display" style="color:var(--accent-gold); font-size:1.1rem; margin-left:4px;">-</strong>
-      </div>
-      <div>
-        <span style="color:var(--text-muted); font-size:0.85rem;">Moves:</span>
-        <strong id="mem-moves-display" style="color:var(--accent-blue); font-size:1.1rem; margin-left:4px;">0</strong>
-      </div>
-      <div>
-        <span style="color:var(--text-muted); font-size:0.85rem;">Pairs Matched:</span>
-        <strong id="mem-pairs-display" style="color:var(--accent-green); font-size:1.1rem; margin-left:4px;">0 / 0</strong>
-      </div>
-      <div>
-        <span style="color:var(--text-muted); font-size:0.85rem;">Time:</span>
-        <strong id="mem-timer-display" style="color:#fff; font-size:1.1rem; margin-left:4px;">0s</strong>
-      </div>
-      <button class="btn btn-secondary" onclick="openMemorySetupModal()" style="min-height:34px; padding:4px 10px; font-size:0.8rem;">⚙️ Restart</button>
-    </div>
-    <div id="memory-board" class="memory-board grid-12"></div>
+    <div id="memory-boards-wrap" class="memory-boards-wrap layout-1"></div>
   </div>
 
-  <!-- Memory Setup Modal -->
-  <div id="memory-setup-modal" class="modal-overlay hidden">
-    <div class="modal-box">
-      <h2>🧠 Memory Pairs Setup</h2>
-      
-      <div style="display:flex; flex-direction:column; gap:6px;">
-        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Select Player:</label>
-        <div class="preset-btn-group">
-          <button class="preset-btn selected" onclick="selectMemPlayerPreset('Bee', this)">Bee</button>
-          <button class="preset-btn" onclick="selectMemPlayerPreset('Christine', this)">Christine</button>
-          <button class="preset-btn" onclick="selectMemPlayerPreset('Casey', this)">Casey</button>
-          <button class="preset-btn" onclick="selectMemPlayerPreset('Les', this)">Les</button>
-        </div>
-        <input type="text" id="mem-custom-name" placeholder="Or enter custom player name" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:10px; color:#fff; margin-top:4px;">
-      </div>
-
-      <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
-        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Grid Size (Unique Image Pairs):</label>
-        <select id="mem-grid-size-select" class="btn btn-secondary" style="width:100%; font-size:1rem; outline:none;">
-          <option value="12">12 Grid (6 Unique Photos required)</option>
-          <option value="36" selected>36 Grid (18 Unique Photos required)</option>
-          <option value="48">48 Grid (24 Unique Photos required)</option>
-        </select>
-        <p style="font-size:0.75rem; color:var(--accent-gold); margin-top:2px;">⚠️ Rule: Every pair uses a distinct unique photo from your uploaded library. No duplicate photos!</p>
-      </div>
-
-      <div style="display:flex; gap:12px; margin-top:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="closeMemorySetupModal()">Cancel</button>
-        <button class="btn btn-purple" style="flex:1;" onclick="startMemoryGame()">Start Memory Match 🧠</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Roast Setup Modal -->
   <div id="roast-setup-modal" class="modal-overlay hidden">
     <div class="modal-box">
       <h2>🔥 Roast Battle Setup</h2>
-      
-      <div class="setting-group" style="display:flex; flex-direction:column; gap:6px;">
-        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Number of Human Players (1-4):</label>
-        <select id="player-count-select" class="btn btn-secondary" style="width:100%; font-size:1rem; outline:none;" onchange="updatePlayerInputRows()">
-          <option value="1">1 Player</option>
-          <option value="2" selected>2 Players</option>
-          <option value="3">3 Players</option>
-          <option value="4">4 Players</option>
-        </select>
-      </div>
-
-      <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
-        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Player Names:</label>
-        <div id="player-inputs-container">
-          <!-- Dynamically populated preset player chips & inputs -->
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Select Players (1 or 2):</label>
+        <div class="player-select-chips" id="roast-player-chips">
+          <div class="player-chip selected" onclick="toggleRoastPlayer('Bee')">Bee</div>
+          <div class="player-chip selected" onclick="toggleRoastPlayer('Christine')">Christine</div>
+          <div class="player-chip" onclick="toggleRoastPlayer('Casey')">Casey</div>
+          <div class="player-chip" onclick="toggleRoastPlayer('Les')">Les</div>
         </div>
       </div>
-
-      <div id="cpu-toggle-wrap" style="display:flex; align-items:center; gap:8px; margin-top:6px;">
-        <input type="checkbox" id="cpu-checkbox" style="width:20px; height:20px; accent-color:var(--accent-red);" checked>
-        <label for="cpu-checkbox" style="font-weight:700; font-size:0.9rem; color:var(--accent-gold);">🤖 Add CPU Opponent (Bot runs silently in background)</label>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <input type="checkbox" id="roast-cpu-checkbox" style="width:20px; height:20px; accent-color:var(--accent-red);" checked>
+        <label for="roast-cpu-checkbox" style="font-weight:700; font-size:0.9rem; color:var(--accent-gold);">🤖 Add CPU Opponent (Bot)</label>
       </div>
-
       <div style="display:flex; gap:12px; margin-top:10px;">
         <button class="btn btn-secondary" style="flex:1;" onclick="closeRoastSetupModal()">Cancel</button>
         <button class="btn btn-red" style="flex:1;" onclick="startSplitRoastGame()">Start Battle 🔥</button>
@@ -476,24 +331,49 @@
     </div>
   </div>
 
-  <!-- Leaderboard Modal -->
-  <div id="leaderboard-modal" class="modal-overlay hidden">
-    <div class="modal-box" style="max-width:520px;">
-      <h2>🏆 Memory Game Leaderboards</h2>
-      
-      <div class="lb-tabs">
-        <div class="lb-tab active" onclick="switchLeaderboardTab(12, this)">12 Grid</div>
-        <div class="lb-tab" onclick="switchLeaderboardTab(36, this)">36 Grid</div>
-        <div class="lb-tab" onclick="switchLeaderboardTab(48, this)">48 Grid</div>
+  <div id="memory-setup-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h2>🧠 Memory Game Setup</h2>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Game Mode:</label>
+        <div class="grid-select-chips">
+          <div class="grid-chip selected" id="mem-mode-solo" onclick="setMemoryMode('solo')">Solo Play</div>
+          <div class="grid-chip" id="mem-mode-battle" onclick="setMemoryMode('battle')">Memory Battle (2P)</div>
+        </div>
       </div>
-
-      <div id="lb-content-wrap"></div>
-
-      <button class="btn btn-secondary" style="width:100%; margin-top:8px;" onclick="closeLeaderboardModal()">Close Leaderboard</button>
+      <div style="display:flex; flex-direction:column; gap:6px;" id="memory-player-section">
+        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Select Player(s):</label>
+        <div class="player-select-chips" id="memory-player-chips">
+          <div class="player-chip selected" onclick="toggleMemoryPlayer('Bee')">Bee</div>
+          <div class="player-chip" onclick="toggleMemoryPlayer('Christine')">Christine</div>
+          <div class="player-chip" onclick="toggleMemoryPlayer('Casey')">Casey</div>
+          <div class="player-chip" onclick="toggleMemoryPlayer('Les')">Les</div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <label style="font-weight:700; color:var(--text-muted); font-size:0.9rem;">Grid Size (No Duplicates):</label>
+        <div class="grid-select-chips">
+          <div class="grid-chip selected" id="grid-btn-12" onclick="setMemoryGridSize(12)">12 Grid</div>
+          <div class="grid-chip" id="grid-btn-36" onclick="setMemoryGridSize(36)">36 Grid</div>
+          <div class="grid-chip" id="grid-btn-48" onclick="setMemoryGridSize(48)">48 Grid</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; margin-top:10px;">
+        <button class="btn btn-secondary" style="flex:1;" onclick="closeMemorySetupModal()">Cancel</button>
+        <button class="btn btn-purple" style="flex:1;" onclick="startMemoryGame()">Start Memory 🧠</button>
+      </div>
+      <div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.15); padding-top:10px;">
+        <h3 style="color:var(--accent-gold); font-size:1rem; margin-bottom:6px;">🏆 High Score Leaderboards</h3>
+        <div style="display:flex; gap:6px; margin-bottom:8px;">
+          <button class="speed-btn active" id="lb-tab-12" onclick="renderLeaderboard(12)">12 Grid</button>
+          <button class="speed-btn" id="lb-tab-36" onclick="renderLeaderboard(36)">36 Grid</button>
+          <button class="speed-btn" id="lb-tab-48" onclick="renderLeaderboard(48)">48 Grid</button>
+        </div>
+        <div id="leaderboard-list" style="max-height:120px; overflow-y:auto; font-size:0.8rem; color:var(--text-muted);"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Lightbox Modal -->
   <div id="lightbox-modal" class="modal-overlay hidden" onclick="closeLightbox()">
     <div style="position:relative; display:flex; flex-direction:column; align-items:center;" onclick="event.stopPropagation()">
       <img id="lightbox-img" src="" alt="Enlarged Photo" style="max-width:90vw; max-height:80vh; object-fit:contain; border-radius:16px;">
@@ -513,7 +393,6 @@
     let slideHistory = [];
     let historyPointer = -1;
 
-    // CAH ROAST DECK
     const ROAST_DECK = [
       "Ugly as fuck.", "Fat.", "Who the hell dressed you?", "Who let you out looking like that?",
       "Looks like a sack of potatoes in clothes.", "10/10 would avoid in public.", "Looking like a thumb with a wig on.",
@@ -521,13 +400,7 @@
       "Looking like a human mistake.", "Jesus christ, what happened to you?", "Looking like you smell of boiled hotdog water.",
       "The human embodiment of a wet carpet.", "Bro looks like a budget horror movie villain.", "Looking like you get rejected by mirrors.",
       "An absolute disgrace to fashion.", "Did you steal those clothes from a homeless bin?", "Zero beauty, zero brains.",
-      "Looking like a boiled turnip.", "Who hurt you to make you look like this?", "Looking like your hair was cut with a lawnmower.",
-      "Absolute donkey-brained look.", "Looking like a foot.", "Who told you that outfit looked good? They lied.",
-      "Looking like you haven't slept since 2012.", "Face like a melted candle.", "Looking like you belong in a circus freakshow.",
-      "An absolute clown.", "Looking like a sack of bad decisions.", "Who let this creature into the house?",
-      "Looking like you smell of stale beer and regret.", "What a fucking disaster.", "Looking like a bargain bin mannequin.",
-      "The face only a blind mother could love.", "Looking like a crushed soda can.", "Did you fight a badger for that outfit?",
-      "Looking like a moldy potato.", "Pure trash energy.", "Looking like you haven't washed in three weeks."
+      "Looking like a boiled turnip.", "Who hurt you to make you look like this?", "Looking like your hair was cut with a lawnmower."
     ];
 
     function showToast(msg, duration = 3000) {
@@ -545,7 +418,6 @@
       }
     }
 
-    /* --- INDEXEDDB STORAGE --- */
     function initDB() {
       return new Promise((resolve) => {
         const req = indexedDB.open('CoylaFamilyPhotoHubDB', 1);
@@ -637,7 +509,6 @@
       });
     });
 
-    /* --- SCREENSAVER LOGIC --- */
     function buildTimesTableSequence() {
       const len = activeScreensaverPool.length;
       if (len === 0) { sequenceIndices = []; return; }
@@ -680,7 +551,7 @@
         const idx = slideHistory[historyPointer];
         renderPhotoByIndex(idx);
       } else {
-        showToast("Already at the start of recent history!");
+        showToast("Already at start of history!");
       }
     }
 
@@ -701,37 +572,22 @@
       document.getElementById('pause-play-btn').innerText = isPaused ? '▶️ Play' : '⏸️ Pause';
     }
 
-    /* --- ROAST BATTLE GAME LOGIC --- */
-    let activeGamePlayers = [];
-    let playerScores = {};
-    let playerStates = {};
+    // --- ROAST GAME ---
+    let activeRoastPlayers = ['Bee', 'Christine'];
+    let roastPlayerScores = {};
+    let roastPlayerStates = {};
     let sharedRoundPhotos = [];
-    let votingQueue = [];
-    let currentVotingIndex = 0;
-    let currentVotingVoterIdx = 0;
-    let hasCpuBot = false;
+    let roastVotingQueue = [];
+    let currentRoastVotingIndex = 0;
+    let currentRoastVoterIdx = 0;
+    let roastHasCpuBot = true;
 
     function openRoastSetupModal() {
       if (photosList.length < 3) { alert("Please upload at least 3 photos first using '+ Select Photos'!"); return; }
-      
       document.getElementById('screensaver-view').classList.add('hidden');
       document.getElementById('main-view').classList.add('hidden');
       document.getElementById('memory-game-view').classList.add('hidden');
       document.getElementById('roast-game-view').classList.remove('hidden');
-      
-      const gameView = document.getElementById('roast-game-view');
-      let boardContainer = document.getElementById('split-board-container');
-      if (!boardContainer) {
-        boardContainer = document.createElement('div');
-        boardContainer.id = 'split-board-container';
-        boardContainer.className = 'split-board layout-4';
-        gameView.innerHTML = '';
-        gameView.appendChild(boardContainer);
-      } else {
-        boardContainer.innerHTML = '';
-      }
-
-      updatePlayerInputRows();
       document.getElementById('roast-setup-modal').classList.remove('hidden');
     }
 
@@ -739,563 +595,451 @@
       document.getElementById('roast-setup-modal').classList.add('hidden');
     }
 
-    const PRESET_PLAYER_NAMES = ['Bee', 'Christine', 'Casey', 'Les'];
-
-    function selectRoastPlayerChip(playerIdx, name, btnEl) {
-      const row = btnEl.closest('.player-input-row-group');
-      row.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
-      btnEl.classList.add('selected');
-      const input = row.querySelector('.player-name-input');
-      input.value = name;
-    }
-
-    function updatePlayerInputRows() {
-      const count = parseInt(document.getElementById('player-count-select').value);
-      const container = document.getElementById('player-inputs-container');
-      container.innerHTML = '';
-
-      for (let i = 0; i < count; i++) {
-        const defaultVal = PRESET_PLAYER_NAMES[i] || `Player ${i+1}`;
-        const rowGroup = document.createElement('div');
-        rowGroup.className = 'player-input-row-group';
-        rowGroup.style.cssText = 'display:flex; flex-direction:column; gap:4px; margin-bottom:8px;';
-        
-        rowGroup.innerHTML = `
-          <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">Player ${i+1} Name:</div>
-          <div class="preset-btn-group" style="margin-bottom:2px;">
-            ${PRESET_PLAYER_NAMES.map(name => `
-              <button class="preset-btn ${defaultVal === name ? 'selected' : ''}" onclick="selectRoastPlayerChip(${i}, '${name}', this)">${name}</button>
-            `).join('')}
-          </div>
-          <div class="player-input-row">
-            <input type="text" class="player-name-input" value="${defaultVal}" placeholder="Player ${i+1} name">
-          </div>
-        `;
-        container.appendChild(rowGroup);
-      }
-      
-      const cpuWrap = document.getElementById('cpu-toggle-wrap');
-      if (count === 1 || count === 2) {
-        cpuWrap.style.display = 'flex';
-      } else {
-        cpuWrap.style.display = 'none';
-      }
+    function toggleRoastPlayer(name) {
+      const chips = document.querySelectorAll('#roast-player-chips .player-chip');
+      chips.forEach(chip => {
+        if (chip.innerText === name) {
+          if (activeRoastPlayers.includes(name)) {
+            if (activeRoastPlayers.length > 1) {
+              activeRoastPlayers = activeRoastPlayers.filter(p => p !== name);
+              chip.classList.remove('selected');
+            } else {
+              alert("Select at least 1 human player.");
+            }
+          } else {
+            if (activeRoastPlayers.length < 2) {
+              activeRoastPlayers.push(name);
+              chip.classList.add('selected');
+            } else {
+              alert("Maximum 2 human players.");
+            }
+          }
+        }
+      });
     }
 
     function startSplitRoastGame() {
-      const inputs = document.querySelectorAll('.player-name-input');
-      activeGamePlayers = [];
-      inputs.forEach(input => {
-        const val = input.value.trim();
-        if (val) activeGamePlayers.push(val);
-      });
-
-      const count = parseInt(document.getElementById('player-count-select').value);
-      hasCpuBot = ((count === 1 || count === 2) && document.getElementById('cpu-checkbox').checked);
-      if (hasCpuBot) {
-        activeGamePlayers.push('🤖 RoastBot 3000');
-      }
-
-      if (activeGamePlayers.length === 0) { alert("Please enter at least 1 player name!"); return; }
-      
+      let finalPlayers = [...activeRoastPlayers];
+      roastHasCpuBot = document.getElementById('roast-cpu-checkbox').checked;
+      if (roastHasCpuBot) finalPlayers.push('🤖 RoastBot 3000');
+      activeGamePlayers = finalPlayers;
       closeRoastSetupModal();
       toggleView('roast');
-
-      playerScores = {};
-      activeGamePlayers.forEach(p => playerScores[p] = 0);
-
-      initNewRound();
+      roastPlayerScores = {};
+      activeGamePlayers.forEach(p => roastPlayerScores[p] = 0);
+      initRoastRound();
     }
 
-    function initNewRound() {
+    let activeGamePlayers = [];
+
+    function initRoastRound() {
       let pool = [...photosList].sort(() => Math.random() - 0.5);
       sharedRoundPhotos = pool.slice(0, 3);
-
-      playerStates = {};
+      roastPlayerStates = {};
       activeGamePlayers.forEach(player => {
-        playerStates[player] = {
-          step: 0,
-          selectedPhotos: [],
-          selectedCards: [],
-          currentHand: []
-        };
-        dealNewHand(player);
+        roastPlayerStates[player] = { step: 0, selectedPhotos: [], selectedCards: [], currentHand: [] };
+        dealRoastHand(player);
       });
-
-      renderSplitBoard();
-
-      if (hasCpuBot) {
-        runCpuBotTurns();
-      }
+      renderRoastBoard();
+      if (roastHasCpuBot) runRoastCpuBotTurns();
     }
 
-    function dealNewHand(player) {
+    function dealRoastHand(player) {
       let hand = [...ROAST_DECK].sort(() => Math.random() - 0.5).slice(0, 3);
-      playerStates[player].currentHand = hand;
+      roastPlayerStates[player].currentHand = hand;
     }
 
-    function runCpuBotTurns() {
+    function runRoastCpuBotTurns() {
       const botName = '🤖 RoastBot 3000';
-      const state = playerStates[botName];
+      const state = roastPlayerStates[botName];
       if (!state) return;
-
       while (state.step < 6) {
         let isPhotoTurn = (state.step % 2 === 0);
         if (isPhotoTurn) {
-          const targetPhoto = sharedRoundPhotos[(state.step / 2)];
-          state.selectedPhotos.push(targetPhoto.dataUrl);
+          state.selectedPhotos.push(sharedRoundPhotos[state.step / 2].dataUrl);
           state.step++;
         } else {
           let chosenCard = state.currentHand.pop() || "Absolute trash.";
           state.selectedCards.push(chosenCard);
           state.step++;
-          if (state.step < 6) dealNewHand(botName);
+          if (state.step < 6) dealRoastHand(botName);
         }
       }
-      renderSplitBoard();
+      renderRoastBoard();
     }
 
-    function renderSplitBoard() {
-      const gameView = document.getElementById('roast-game-view');
-      let boardContainer = document.getElementById('split-board-container');
-      if (!boardContainer) {
-        boardContainer = document.createElement('div');
-        boardContainer.id = 'split-board-container';
-        gameView.innerHTML = '';
-        gameView.appendChild(boardContainer);
-      }
-
-      // Filter out CPU bot from visible screen layout to maximize human playing area
-      const visibleHumanPlayers = activeGamePlayers.filter(p => p !== '🤖 RoastBot 3000');
-      const numVisible = visibleHumanPlayers.length;
-
-      boardContainer.className = `split-board layout-${numVisible}`;
+    function renderRoastBoard() {
+      const boardContainer = document.getElementById('split-board-container');
+      const humanPlayers = activeGamePlayers.filter(p => p !== '🤖 RoastBot 3000');
+      boardContainer.className = `split-board layout-${humanPlayers.length}`;
       boardContainer.innerHTML = '';
-
-      visibleHumanPlayers.forEach(player => {
+      humanPlayers.forEach(player => {
         const quad = document.createElement('div');
         quad.className = 'player-quadrant';
         quad.id = `quad-${player}`;
-        
-        refreshQuadrant(player, quad);
+        refreshRoastQuadrant(player, quad);
         boardContainer.appendChild(quad);
       });
     }
 
-    function refreshQuadrant(player, quadElement) {
-      const state = playerStates[player];
-      const score = playerScores[player];
-
+    function refreshRoastQuadrant(player, quadElement) {
+      const state = roastPlayerStates[player];
+      const score = roastPlayerScores[player];
       if (state.step >= 6) {
         quadElement.innerHTML = `
-          <div class="quad-header">
-            <span class="quad-title">👤 ${player}</span>
-            <span class="quad-score">${score} pts</span>
-          </div>
+          <div class="quad-header"><span class="quad-title">👤 ${player}</span><span class="quad-score">${score} pts</span></div>
           <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px;">
             <h3 style="color:var(--accent-green);">✅ Roasts Locked In!</h3>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Waiting for other players to finish...</p>
-          </div>
-        `;
-        checkAllPlayersFinished();
+          </div>`;
+        checkAllRoastPlayersFinished();
         return;
       }
-
       let isPhotoTurn = (state.step % 2 === 0);
       let stepNum = Math.floor(state.step / 2) + 1;
-
       if (isPhotoTurn) {
-        const targetPhoto = sharedRoundPhotos[(state.step / 2)];
+        const targetPhoto = sharedRoundPhotos[state.step / 2];
         quadElement.innerHTML = `
-          <div class="quad-header">
-            <span class="quad-title">👤 ${player}</span>
-            <span class="quad-score">${score} pts</span>
-          </div>
+          <div class="quad-header"><span class="quad-title">👤 ${player}</span><span class="quad-score">${score} pts</span></div>
           <div class="quad-status">Photo ${stepNum} of 3</div>
-          <p style="color:var(--accent-gold); font-size:0.85rem; font-weight:bold; margin-top:2px;">Select Image ${stepNum}:</p>
-          <div class="photo-choices-grid">
-            <img src="${targetPhoto.dataUrl}" class="choice-photo-thumb" onclick="playerPickPhoto('${player}', \`${targetPhoto.dataUrl}\`)">
-          </div>
-        `;
+          <p style="color:var(--accent-gold); font-size:0.85rem; font-weight:bold;">Select Image ${stepNum} to roast:</p>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="roastPickPhoto('${player}', '${targetPhoto.dataUrl}')">
+            <img src="${targetPhoto.dataUrl}" style="max-height:35vh; max-width:100%; object-fit:contain; border-radius:10px; border:2px solid var(--accent-gold);">
+          </div>`;
       } else {
         let currentPhoto = state.selectedPhotos[state.selectedPhotos.length - 1];
         quadElement.innerHTML = `
-          <div class="quad-header">
-            <span class="quad-title">👤 ${player}</span>
-            <span class="quad-score">${score} pts</span>
-          </div>
-          <img src="${currentPhoto}" class="active-photo-preview">
-          <div class="quad-status">Choose Caption for Photo ${stepNum} (Hand of 3)</div>
-          <div class="roast-choices-stack">
+          <div class="quad-header"><span class="quad-title">👤 ${player}</span><span class="quad-score">${score} pts</span></div>
+          <img src="${currentPhoto}" class="roast-active-photo">
+          <div class="quad-status">Pick Caption for Photo ${stepNum}</div>
+          <div class="roast-hand-stack">
             ${state.currentHand.map((cardText, cIdx) => `
-              <div class="cah-card" onclick="playerPickCard('${player}', ${cIdx})">
+              <div class="cah-card" onclick="roastPickCard('${player}', ${cIdx})">
                 <span>"${cardText}"</span>
-                <div class="cah-card-footer">Kitchen Family Hub • CAH Hand</div>
+                <div class="cah-card-footer">Kitchen Family Hub • Roast Hand</div>
               </div>
             `).join('')}
-          </div>
-        `;
+          </div>`;
       }
     }
 
-    function playerPickPhoto(player, dataUrl) {
-      const state = playerStates[player];
-      state.selectedPhotos.push(dataUrl);
-      state.step++;
-      refreshQuadrant(player, document.getElementById(`quad-${player}`));
+    function roastPickPhoto(player, dataUrl) {
+      roastPlayerStates[player].selectedPhotos.push(dataUrl);
+      roastPlayerStates[player].step++;
+      refreshRoastQuadrant(player, document.getElementById(`quad-${player}`));
     }
 
-    function playerPickCard(player, cardIndex) {
-      const state = playerStates[player];
+    function roastPickCard(player, cardIndex) {
+      const state = roastPlayerStates[player];
       const chosenCard = state.currentHand.splice(cardIndex, 1)[0];
       state.selectedCards.push(chosenCard);
       state.step++;
-      
-      if (state.step < 6) {
-        dealNewHand(player);
-      }
-      
-      refreshQuadrant(player, document.getElementById(`quad-${player}`));
+      if (state.step < 6) dealRoastHand(player);
+      refreshRoastQuadrant(player, document.getElementById(`quad-${player}`));
     }
 
-    function checkAllPlayersFinished() {
-      let allDone = activeGamePlayers.every(p => playerStates[p].step >= 6);
-      if (allDone) {
-        startVotingPhase();
-      }
+    function checkAllRoastPlayersFinished() {
+      const humanPlayers = activeGamePlayers.filter(p => p !== '🤖 RoastBot 3000');
+      if (humanPlayers.every(p => roastPlayerStates[p].step >= 6)) startRoastVotingPhase();
     }
 
-    function startVotingPhase() {
-      votingQueue = [];
+    function startRoastVotingPhase() {
+      roastVotingQueue = [];
       for (let i = 0; i < 3; i++) {
-        let submissions = activeGamePlayers.map(player => ({
-          player: player,
-          card: playerStates[player].selectedCards[i]
-        }));
-        votingQueue.push({
-          photoIndex: i,
-          photo: sharedRoundPhotos[i].dataUrl,
-          submissions: submissions.sort(() => Math.random() - 0.5)
-        });
+        let subs = activeGamePlayers.map(p => ({ player: p, card: roastPlayerStates[p].selectedCards[i] }));
+        roastVotingQueue.push({ photoIndex: i, photo: sharedRoundPhotos[i].dataUrl, submissions: subs.sort(() => Math.random() - 0.5) });
       }
-
-      currentVotingIndex = 0;
-      currentVotingVoterIdx = 0;
-      renderVotingScreen();
+      currentRoastVotingIndex = 0;
+      currentRoastVoterIdx = 0;
+      renderRoastVotingScreen();
     }
 
-    function renderVotingScreen() {
-      if (currentVotingIndex >= votingQueue.length) {
-        showWinnerScreen();
-        return;
-      }
-
+    function renderRoastVotingScreen() {
+      if (currentRoastVotingIndex >= roastVotingQueue.length) { showRoastWinnerScreen(); return; }
       let humanPlayers = activeGamePlayers.filter(p => p !== '🤖 RoastBot 3000');
-      if (humanPlayers.length === 0) humanPlayers = activeGamePlayers;
-
-      if (currentVotingVoterIdx >= humanPlayers.length) {
-        currentVotingIndex++;
-        currentVotingVoterIdx = 0;
-        renderVotingScreen();
-        return;
-      }
-
-      const voter = humanPlayers[currentVotingVoterIdx];
-      const item = votingQueue[currentVotingIndex];
-      const container = document.getElementById('roast-game-view');
-      
-      container.innerHTML = `
-        <div id="voting-stage">
+      if (currentRoastVoterIdx >= humanPlayers.length) { currentRoastVotingIndex++; currentRoastVoterIdx = 0; renderRoastVotingScreen(); return; }
+      const voter = humanPlayers[currentRoastVoterIdx];
+      const item = roastVotingQueue[currentRoastVotingIndex];
+      document.getElementById('roast-game-view').innerHTML = `
+        <div id="voting-stage" style="padding-top:72px;">
           <div class="vote-arena">
-            <h2 style="color:var(--accent-gold);">🗳️ Voting: Photo ${currentVotingIndex + 1} of 3</h2>
-            <div style="background:rgba(56, 189, 248, 0.2); border:1px solid var(--accent-blue); padding:6px 16px; border-radius:20px; font-weight:bold; color:var(--accent-blue);">
-              Pass device to: <span style="color:#fff; text-decoration:underline;">${voter}</span>
-            </div>
-            
-            <img src="${item.photo}" class="vote-photo-center">
-
-            <p style="color:var(--text-muted); font-size:0.85rem;">Select the funniest anonymous caption:</p>
-
+            <h2 style="color:var(--accent-gold);">🗳️ Voting: Photo ${currentRoastVotingIndex + 1} of 3</h2>
+            <div style="background:rgba(56, 189, 248, 0.2); border:1px solid var(--accent-blue); padding:6px 16px; border-radius:20px; font-weight:bold; color:var(--accent-blue);">Pass device to: <span style="color:#fff; text-decoration:underline;">${voter}</span></div>
+            <img src="${item.photo}" class="vote-photo-center" style="max-height:28vh;">
             <div class="submissions-around-grid">
-              ${item.submissions.map((sub) => `
-                <div class="cah-card" onclick="castVoterBallot('${voter}', '${sub.player}')" style="background:#fff; cursor:pointer;">
-                  <div>
-                    <div style="font-size:0.75rem; color:#94a3b8; font-weight:bold; margin-bottom:4px;">Anonymous Submission</div>
-                    <span style="font-size:1.05rem; font-style:italic;">"${sub.card}"</span>
-                  </div>
-                  <div class="cah-card-footer" style="color:var(--accent-red); font-weight:bold; text-align:right;">👉 Vote for this (+10 pts)</div>
-                </div>
-              `).join('')}
+              ${item.submissions.map(sub => `
+                <div class="cah-card" onclick="castRoastBallot('${voter}', '${sub.player}')" style="background:#fff; cursor:pointer;">
+                  <span style="font-size:1rem; font-style:italic;">"${sub.card}"</span>
+                  <div class="cah-card-footer" style="color:var(--accent-red); font-weight:bold;">👉 Vote (+10 pts)</div>
+                </div>`).join('')}
             </div>
           </div>
-        </div>
-      `;
+        </div>`;
     }
 
-    function castVoterBallot(voterName, winningPlayer) {
-      playerScores[winningPlayer] += 10;
-      showToast(`🗳️ ${voterName} cast their vote! (+10 pts to author)`);
-      currentVotingVoterIdx++;
-      setTimeout(renderVotingScreen, 400);
+    function castRoastBallot(voterName, winningPlayer) {
+      roastPlayerScores[winningPlayer] += 10;
+      showToast(`🗳️ ${voterName} voted! (+10 pts)`);
+      currentRoastVoterIdx++;
+      setTimeout(renderRoastVotingScreen, 300);
     }
 
-    function showWinnerScreen() {
-      let sorted = [...activeGamePlayers].sort((a, b) => playerScores[b] - playerScores[a]);
+    function showRoastWinnerScreen() {
+      let sorted = [...activeGamePlayers].sort((a, b) => roastPlayerScores[b] - roastPlayerScores[a]);
       let winner = sorted[0];
-
-      const container = document.getElementById('roast-game-view');
-      container.innerHTML = `
-        <div id="voting-stage">
+      document.getElementById('roast-game-view').innerHTML = `
+        <div id="voting-stage" style="padding-top:72px;">
           <div class="vote-arena" style="text-align:center;">
             <h1 style="color:var(--accent-gold); font-size:2.5rem;">👑 Roast Battle Winner!</h1>
-            <h2 style="color:#fff; font-size:1.8rem; margin:10px 0;">${winner} with ${playerScores[winner]} points!</h2>
-            
+            <h2 style="color:#fff; font-size:1.8rem; margin:10px 0;">${winner} with ${roastPlayerScores[winner]} points!</h2>
             <div style="width:100%; margin:15px 0; border-top:1px solid rgba(255,255,255,0.15); padding-top:15px;">
-              <h3 style="color:var(--text-muted); margin-bottom:8px;">Final Scoreboard</h3>
-              ${sorted.map(p => `<div style="display:flex; justify-content:space-between; font-weight:bold; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.08);"><span>${p}</span><span style="color:var(--accent-gold);">${playerScores[p]} pts</span></div>`).join('')}
+              ${sorted.map(p => `<div style="display:flex; justify-content:space-between; font-weight:bold; padding:6px 0;"><span>${p}</span><span style="color:var(--accent-gold);">${roastPlayerScores[p]} pts</span></div>`).join('')}
             </div>
-
-            <div style="display:flex; gap:12px; width:100%; margin-top:10px;">
+            <div style="display:flex; gap:12px; width:100%;">
               <button class="btn btn-secondary" style="flex:1;" onclick="toggleView('main')">📸 Exit to Gallery</button>
               <button class="btn btn-red" style="flex:1;" onclick="openRoastSetupModal()">🔄 Play Again</button>
             </div>
           </div>
-        </div>
-      `;
+        </div>`;
     }
 
-    /* --- MEMORY PAIRS GAME LOGIC --- */
-    let memPlayerName = 'Bee';
-    let memGridSize = 36;
-    let memCards = [];
-    let memFlippedCards = [];
-    let memMatchedCount = 0;
-    let memTotalPairs = 0;
-    let memMoves = 0;
-    let memStartTime = null;
-    let memTimerInterval = null;
-    let memElapsedSeconds = 0;
-    let memIsProcessing = false;
+    // --- MEMORY GAME ---
+    let memoryGameMode = 'solo';
+    let memorySelectedPlayers = ['Bee'];
+    let memoryGridSize = 12;
+    let memoryState = {};
 
     function openMemorySetupModal() {
-      if (photosList.length === 0) {
-        alert("Please upload photos using '+ Select Photos' before playing the Memory Game!");
+      let requiredUnique = Math.floor(memoryGridSize / 2);
+      if (photosList.length < requiredUnique) {
+        alert(`Please upload at least ${requiredUnique} photos first! You currently have ${photosList.length} photos uploaded.`);
         return;
       }
+      document.getElementById('screensaver-view').classList.add('hidden');
+      document.getElementById('main-view').classList.add('hidden');
+      document.getElementById('roast-game-view').classList.add('hidden');
+      document.getElementById('memory-game-view').classList.remove('hidden');
       document.getElementById('memory-setup-modal').classList.remove('hidden');
+      renderLeaderboard(12);
     }
 
     function closeMemorySetupModal() {
       document.getElementById('memory-setup-modal').classList.add('hidden');
     }
 
-    function selectMemPlayerPreset(name, btnEl) {
-      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
-      btnEl.classList.add('selected');
-      memPlayerName = name;
-      document.getElementById('mem-custom-name').value = '';
+    function setMemoryMode(mode) {
+      memoryGameMode = mode;
+      document.getElementById('mem-mode-solo').className = mode === 'solo' ? 'grid-chip selected' : 'grid-chip';
+      document.getElementById('mem-mode-battle').className = mode === 'battle' ? 'grid-chip selected' : 'grid-chip';
+      memorySelectedPlayers = mode === 'battle' ? ['Bee', 'Christine'] : ['Bee'];
+      updateMemoryPlayerChipsUI();
+    }
+
+    function toggleMemoryPlayer(name) {
+      if (memoryGameMode === 'solo') {
+        memorySelectedPlayers = [name];
+      } else {
+        if (memorySelectedPlayers.includes(name)) {
+          if (memorySelectedPlayers.length > 1) memorySelectedPlayers = memorySelectedPlayers.filter(p => p !== name);
+        } else {
+          if (memorySelectedPlayers.length < 2) memorySelectedPlayers.push(name);
+          else memorySelectedPlayers = [memorySelectedPlayers[1], name];
+        }
+      }
+      updateMemoryPlayerChipsUI();
+    }
+
+    function updateMemoryPlayerChipsUI() {
+      const chips = document.querySelectorAll('#memory-player-chips .player-chip');
+      chips.forEach(chip => {
+        if (memorySelectedPlayers.includes(chip.innerText)) chip.classList.add('selected');
+        else chip.classList.remove('selected');
+      });
+    }
+
+    function setMemoryGridSize(size) {
+      memoryGridSize = size;
+      [12, 36, 48].forEach(s => {
+        document.getElementById(`grid-btn-${s}`).className = s === size ? 'grid-chip selected' : 'grid-chip';
+      });
     }
 
     function startMemoryGame() {
-      const customName = document.getElementById('mem-custom-name').value.trim();
-      if (customName) memPlayerName = customName;
-
-      memGridSize = parseInt(document.getElementById('mem-grid-size-select').value);
-      memTotalPairs = memGridSize / 2;
-
-      if (photosList.length < memTotalPairs) {
-        alert(`Not enough photos loaded! For a ${memGridSize} Grid, you need at least ${memTotalPairs} unique photos. You currently have ${photosList.length}.\n\nPlease upload more photos!`);
+      let requiredUnique = Math.floor(memoryGridSize / 2);
+      if (photosList.length < requiredUnique) {
+        alert(`Not enough photos! You need at least ${requiredUnique} unique photos for a ${memoryGridSize} grid.`);
         return;
       }
-
       closeMemorySetupModal();
       toggleView('memory');
 
-      // Unique photos setup: pick exactly memTotalPairs distinct photos from list (NO DUPLICATES across pairs)
-      let shuffledUniquePool = [...photosList].sort(() => Math.random() - 0.5).slice(0, memTotalPairs);
+      memoryState = {};
+      memorySelectedPlayers.forEach(player => {
+        memoryState[player] = {
+          cards: generateMemoryCardsDeck(memoryGridSize),
+          firstCard: null,
+          lockBoard: false,
+          matchesFound: 0,
+          secondsElapsed: 0,
+          timerInterval: null,
+          completed: false
+        };
+      });
 
-      // Duplicate each unique photo once to create pairs
+      renderMemoryBoards();
+      memorySelectedPlayers.forEach(player => startMemoryTimer(player));
+    }
+
+    function generateMemoryCardsDeck(size) {
+      let uniquePairsCount = size / 2;
+      let shuffledPool = [...photosList].sort(() => Math.random() - 0.5);
+      let selectedPhotos = shuffledPool.slice(0, uniquePairsCount);
       let deck = [];
-      shuffledUniquePool.forEach((photoObj, idx) => {
-        deck.push({ id: `card_${idx}_A`, pairId: photoObj.id, dataUrl: photoObj.dataUrl });
-        deck.push({ id: `card_${idx}_B`, pairId: photoObj.id, dataUrl: photoObj.dataUrl });
+      selectedPhotos.forEach((photo, idx) => {
+        deck.push({ id: `p_${idx}_a`, photoId: photo.id, dataUrl: photo.dataUrl, flipped: false, matched: false });
+        deck.push({ id: `p_${idx}_b`, photoId: photo.id, dataUrl: photo.dataUrl, flipped: false, matched: false });
       });
+      return deck.sort(() => Math.random() - 0.5);
+    }
 
-      memCards = deck.sort(() => Math.random() - 0.5);
-      memFlippedCards = [];
-      memMatchedCount = 0;
-      memMoves = 0;
-      memElapsedSeconds = 0;
-      memIsProcessing = false;
-
-      document.getElementById('mem-player-display').innerText = memPlayerName;
-      document.getElementById('mem-moves-display').innerText = '0';
-      document.getElementById('mem-pairs-display').innerText = `0 / ${memTotalPairs}`;
-      document.getElementById('mem-timer-display').innerText = '0s';
-
-      if (memTimerInterval) clearInterval(memTimerInterval);
-      memStartTime = Date.now();
-      memTimerInterval = setInterval(() => {
-        memElapsedSeconds = Math.floor((Date.now() - memStartTime) / 1000);
-        document.getElementById('mem-timer-display').innerText = `${memElapsedSeconds}s`;
+    function startMemoryTimer(player) {
+      if (memoryState[player].timerInterval) clearInterval(memoryState[player].timerInterval);
+      memoryState[player].timerInterval = setInterval(() => {
+        if (!memoryState[player].completed) {
+          memoryState[player].secondsElapsed++;
+          const timerEl = document.getElementById(`mem-timer-${player}`);
+          if (timerEl) timerEl.innerText = formatTime(memoryState[player].secondsElapsed);
+        }
       }, 1000);
-
-      renderMemoryBoard();
     }
 
-    function renderMemoryBoard() {
-      const board = document.getElementById('memory-board');
-      board.className = `memory-board grid-${memGridSize}`;
-      board.innerHTML = '';
+    function formatTime(totalSecs) {
+      let m = Math.floor(totalSecs / 60);
+      let s = totalSecs % 60;
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
 
-      memCards.forEach((card, index) => {
-        const cardEl = document.createElement('div');
-        cardEl.className = 'memory-card';
-        cardEl.id = `mem-card-${index}`;
-        cardEl.onclick = () => flipMemoryCard(index);
-
-        cardEl.innerHTML = `
-          <div class="memory-card-inner">
-            <div class="memory-card-front">?</div>
-            <div class="memory-card-back">
-              <img src="${card.dataUrl}" alt="Family Card">
-            </div>
+    function renderMemoryBoards() {
+      const wrap = document.getElementById('memory-boards-wrap');
+      wrap.className = `memory-boards-wrap layout-${memorySelectedPlayers.length}`;
+      wrap.innerHTML = '';
+      memorySelectedPlayers.forEach(player => {
+        const pane = document.createElement('div');
+        pane.className = 'memory-player-pane';
+        pane.innerHTML = `
+          <div class="quad-header">
+            <span class="quad-title">🧠 ${player} (${memoryGridSize} Grid)</span>
+            <span class="quad-score">⏱️ <span id="mem-timer-${player}">0:00</span></span>
           </div>
-        `;
-        board.appendChild(cardEl);
+          <div class="memory-grid grid-${memoryGridSize}" id="mem-grid-${player}">
+            ${memoryState[player].cards.map((card, cIdx) => `
+              <div class="memory-card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}" 
+                   onclick="handleMemoryCardClick('${player}', ${cIdx})"
+                   ontouchstart="handleMemoryCardClick('${player}', ${cIdx})">
+                <div class="card-face card-back">?</div>
+                <div class="card-face card-front">
+                  <img src="${card.dataUrl}">
+                </div>
+              </div>
+            `).join('')}
+          </div>`;
+        wrap.appendChild(pane);
       });
     }
 
-    function flipMemoryCard(index) {
-      if (memIsProcessing) return;
-      const cardEl = document.getElementById(`mem-card-${index}`);
-      if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+    function handleMemoryCardClick(player, cardIndex) {
+      let state = memoryState[player];
+      if (state.lockBoard || state.completed) return;
+      let card = state.cards[cardIndex];
+      if (card.flipped || card.matched) return;
 
-      cardEl.classList.add('flipped');
-      memFlippedCards.push({ index: index, card: memCards[index] });
+      card.flipped = true;
+      refreshMemoryGridDOM(player);
 
-      if (memFlippedCards.length === 2) {
-        memMoves++;
-        document.getElementById('mem-moves-display').innerText = memMoves;
-        memIsProcessing = true;
+      if (!state.firstCard) {
+        state.firstCard = { index: cardIndex, card: card };
+      } else {
+        let first = state.firstCard;
+        state.firstCard = null;
 
-        const card1 = memFlippedCards[0];
-        const card2 = memFlippedCards[1];
+        if (first.card.photoId === card.photoId) {
+          first.card.matched = true;
+          card.matched = true;
+          state.matchesFound++;
+          refreshMemoryGridDOM(player);
 
-        if (card1.card.pairId === card2.card.pairId) {
-          // MATCH FOUND
-          setTimeout(() => {
-            document.getElementById(`mem-card-${card1.index}`).classList.add('matched');
-            document.getElementById(`mem-card-${card2.index}`).classList.add('matched');
-            memMatchedCount++;
-            document.getElementById('mem-pairs-display').innerText = `${memMatchedCount} / ${memTotalPairs}`;
-            memFlippedCards = [];
-            memIsProcessing = false;
-
-            if (memMatchedCount === memTotalPairs) {
-              handleMemoryVictory();
-            }
-          }, 350);
+          if (state.matchesFound === memoryGridSize / 2) {
+            state.completed = true;
+            clearInterval(state.timerInterval);
+            saveMemoryScore(player, memoryGridSize, state.secondsElapsed);
+            showToast(`🎉 ${player} cleared grid in ${formatTime(state.secondsElapsed)}!`);
+            checkMemoryBattleWinner();
+          }
         } else {
-          // NO MATCH
+          state.lockBoard = true;
           setTimeout(() => {
-            document.getElementById(`mem-card-${card1.index}`).classList.remove('flipped');
-            document.getElementById(`mem-card-${card2.index}`).classList.remove('flipped');
-            memFlippedCards = [];
-            memIsProcessing = false;
-          }, 900);
+            first.card.flipped = false;
+            card.flipped = false;
+            state.lockBoard = false;
+            refreshMemoryGridDOM(player);
+          }, 650);
         }
       }
     }
 
-    function handleMemoryVictory() {
-      if (memTimerInterval) clearInterval(memTimerInterval);
-      
-      const record = {
-        player: memPlayerName,
-        moves: memMoves,
-        time: memElapsedSeconds,
-        date: new Date().toLocaleDateString()
-      };
-
-      saveLeaderboardScore(memGridSize, record);
-
-      setTimeout(() => {
-        alert(`🎉 CONGRATULATIONS ${memPlayerName}!\n\nYou matched all ${memTotalPairs} unique photo pairs in ${memMoves} moves and ${memElapsedSeconds} seconds!`);
-        openLeaderboardModal(memGridSize);
-      }, 500);
+    function refreshMemoryGridDOM(player) {
+      let gridEl = document.getElementById(`mem-grid-${player}`);
+      if (!gridEl) return;
+      let state = memoryState[player];
+      gridEl.innerHTML = state.cards.map((card, cIdx) => `
+        <div class="memory-card ${card.flipped ? 'flipped' : ''} ${card.matched ? 'matched' : ''}" 
+             onclick="handleMemoryCardClick('${player}', ${cIdx})"
+             ontouchstart="handleMemoryCardClick('${player}', ${cIdx})">
+          <div class="card-face card-back">?</div>
+          <div class="card-face card-front">
+            <img src="${card.dataUrl}">
+          </div>
+        </div>`).join('');
     }
 
-    /* --- LEADERBOARD LOCALSTORAGE LOGIC --- */
-    function getLeaderboard(gridSize) {
-      const data = localStorage.getItem(`coyla_hub_lb_${gridSize}`);
-      return data ? JSON.parse(data) : [];
+    function checkMemoryBattleWinner() {
+      if (memoryGameMode === 'battle') {
+        if (memorySelectedPlayers.every(p => memoryState[p].completed)) {
+          let winner = memorySelectedPlayers.reduce((prev, curr) => 
+            memoryState[curr].secondsElapsed < memoryState[prev].secondsElapsed ? curr : prev
+          );
+          setTimeout(() => alert(`🏆 Memory Battle Winner: ${winner}!`), 300);
+        }
+      }
     }
 
-    function saveLeaderboardScore(gridSize, record) {
-      let scores = getLeaderboard(gridSize);
-      scores.push(record);
-      // Sort by fewest moves, then fastest time
-      scores.sort((a, b) => a.moves - b.moves || a.time - b.time);
-      scores = scores.slice(0, 10); // Keep top 10
-      localStorage.setItem(`coyla_hub_lb_${gridSize}`, JSON.stringify(scores));
+    function saveMemoryScore(playerName, gridSize, seconds) {
+      let key = `coyla_hub_lb_${gridSize}`;
+      let lb = JSON.parse(localStorage.getItem(key) || '[]');
+      lb.push({ name: playerName, seconds: seconds, date: new Date().toLocaleDateString() });
+      lb.sort((a, b) => a.seconds - b.seconds);
+      localStorage.setItem(key, JSON.stringify(lb.slice(0, 10)));
     }
 
-    let activeLbTabSize = 12;
-
-    function openLeaderboardModal(defaultGridSize = 12) {
-      activeLbTabSize = defaultGridSize;
-      document.getElementById('leaderboard-modal').classList.remove('hidden');
-      renderLeaderboardView();
-    }
-
-    function closeLeaderboardModal() {
-      document.getElementById('leaderboard-modal').classList.add('hidden');
-    }
-
-    function switchLeaderboardTab(gridSize, tabEl) {
-      activeLbTabSize = gridSize;
-      document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
-      tabEl.classList.add('active');
-      renderLeaderboardView();
-    }
-
-    function renderLeaderboardView() {
-      const container = document.getElementById('lb-content-wrap');
-      const scores = getLeaderboard(activeLbTabSize);
-
-      if (scores.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:20px;">No high scores yet for the ${activeLbTabSize} Grid. Play a game to set the first score!</p>`;
+    function renderLeaderboard(gridSize) {
+      [12, 36, 48].forEach(s => {
+        const btn = document.getElementById(`lb-tab-${s}`);
+        if (btn) btn.className = s === gridSize ? 'speed-btn active' : 'speed-btn';
+      });
+      let lb = JSON.parse(localStorage.getItem(`coyla_hub_lb_${gridSize}`) || '[]');
+      let listEl = document.getElementById('leaderboard-list');
+      if (!listEl) return;
+      if (lb.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; padding:10px;">No high scores yet for ${gridSize} grid.</div>`;
         return;
       }
-
-      container.innerHTML = `
-        <table class="lb-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Player</th>
-              <th>Moves</th>
-              <th>Time</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${scores.map((s, idx) => `
-              <tr>
-                <td style="font-weight:bold; color:var(--accent-gold);">${idx + 1}</td>
-                <td style="font-weight:700;">${s.player}</td>
-                <td style="color:var(--accent-blue);">${s.moves}</td>
-                <td>${s.time}s</td>
-                <td style="color:var(--text-muted); font-size:0.75rem;">${s.date}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
+      listEl.innerHTML = lb.map((e, i) => `
+        <div style="display:flex; justify-content:space-between; padding:4px 8px; border-bottom:1px dashed rgba(255,255,255,0.08);">
+          <span>#${i+1} <strong>${e.name}</strong></span>
+          <span style="color:var(--accent-gold);">${formatTime(e.seconds)}</span>
+        </div>`).join('');
     }
 
-    /* --- GALLERY LOGIC --- */
+    // --- GALLERY & VIEW SWITCHING ---
     function renderGallery() {
       const grid = document.getElementById('gallery-grid');
       grid.innerHTML = '';
@@ -1306,13 +1050,12 @@
           document.getElementById('lightbox-img').src = photo.dataUrl;
           document.getElementById('lightbox-modal').classList.remove('hidden');
         };
-
         const delBtn = document.createElement('button');
         delBtn.className = 'delete-card-btn';
         delBtn.innerText = '🗑️';
         delBtn.onclick = async (e) => {
           e.stopPropagation();
-          if (confirm("Delete this photo from gallery?")) {
+          if (confirm("Delete this photo?")) {
             photosList = photosList.filter(p => p.id !== photo.id);
             activeScreensaverPool = activeScreensaverPool.filter(p => p.id !== photo.id);
             await deletePhotoFromDB(photo.id);
@@ -1320,11 +1063,9 @@
             showToast("Photo deleted");
           }
         };
-
         const wrap = document.createElement('div');
         wrap.className = 'photo-card-img-wrap';
         wrap.innerHTML = `<img src="${photo.dataUrl}">`;
-
         card.appendChild(delBtn);
         card.appendChild(wrap);
         grid.appendChild(card);
@@ -1333,7 +1074,6 @@
 
     function closeLightbox() { document.getElementById('lightbox-modal').classList.add('hidden'); }
 
-    /* --- VIEW SWITCHER --- */
     function toggleView(view) {
       document.getElementById('screensaver-view').classList.add('hidden');
       document.getElementById('main-view').classList.add('hidden');
@@ -1342,7 +1082,6 @@
       document.getElementById('main-header').classList.remove('saver-hidden');
       closeRoastSetupModal();
       closeMemorySetupModal();
-      closeLeaderboardModal();
       closeLightbox();
 
       if (view === 'saver') {
